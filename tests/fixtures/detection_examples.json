@@ -1,0 +1,209 @@
+{
+  "schema_version": "1.0",
+  "note": "Synthetic mathematical cases; not production output.",
+  "cases": [
+    {
+      "name": "entry_exit",
+      "a": {
+        "flight_id": "A",
+        "x_m": -6000,
+        "y_m": 0,
+        "alt_m": 6000,
+        "vx_mps": 250,
+        "vy_mps": 0,
+        "vz_mps": 0
+      },
+      "b": {
+        "flight_id": "B",
+        "x_m": 0,
+        "y_m": 0,
+        "alt_m": 6000,
+        "vx_mps": -250,
+        "vy_mps": 0,
+        "vz_mps": 0
+      },
+      "horizontal_m": 1000,
+      "vertical_m": 300,
+      "duration_s": 20,
+      "expected_intervals": [
+        {
+          "start_s": 10,
+          "end_s": 14,
+          "start_inclusive": false,
+          "end_inclusive": false
+        }
+      ]
+    },
+    {
+      "name": "vertical_equality_safe",
+      "a": {
+        "flight_id": "A",
+        "x_m": -6000,
+        "y_m": 0,
+        "alt_m": 6000,
+        "vx_mps": 250,
+        "vy_mps": 0,
+        "vz_mps": 0
+      },
+      "b": {
+        "flight_id": "B",
+        "x_m": 0,
+        "y_m": 0,
+        "alt_m": 6300,
+        "vx_mps": -250,
+        "vy_mps": 0,
+        "vz_mps": 0
+      },
+      "horizontal_m": 1000,
+      "vertical_m": 300,
+      "duration_s": 20,
+      "expected_intervals": []
+    },
+    {
+      "name": "vertical_304_8",
+      "a": {
+        "flight_id": "A",
+        "x_m": -6000,
+        "y_m": 0,
+        "alt_m": 6000,
+        "vx_mps": 250,
+        "vy_mps": 0,
+        "vz_mps": 0
+      },
+      "b": {
+        "flight_id": "B",
+        "x_m": 0,
+        "y_m": 0,
+        "alt_m": 6300,
+        "vx_mps": -250,
+        "vy_mps": 0,
+        "vz_mps": 0
+      },
+      "horizontal_m": 1000,
+      "vertical_m": 304.8,
+      "duration_s": 20,
+      "expected_intervals": [
+        {
+          "start_s": 10,
+          "end_s": 14,
+          "start_inclusive": false,
+          "end_inclusive": false
+        }
+      ]
+    },
+    {
+      "name": "stationary_relative_initial",
+      "a": {
+        "flight_id": "A",
+        "x_m": 0,
+        "y_m": 0,
+        "alt_m": 6000,
+        "vx_mps": 250,
+        "vy_mps": 0,
+        "vz_mps": 0
+      },
+      "b": {
+        "flight_id": "B",
+        "x_m": 500,
+        "y_m": 0,
+        "alt_m": 6000,
+        "vx_mps": 250,
+        "vy_mps": 0,
+        "vz_mps": 0
+      },
+      "horizontal_m": 1000,
+      "vertical_m": 300,
+      "duration_s": 20,
+      "expected_intervals": [
+        {
+          "start_s": 0,
+          "end_s": 20,
+          "start_inclusive": true,
+          "end_inclusive": true
+        }
+      ]
+    },
+    {
+      "name": "tangent_safe",
+      "a": {
+        "flight_id": "A",
+        "x_m": -6000,
+        "y_m": 1000,
+        "alt_m": 6000,
+        "vx_mps": 250,
+        "vy_mps": 0,
+        "vz_mps": 0
+      },
+      "b": {
+        "flight_id": "B",
+        "x_m": 0,
+        "y_m": 0,
+        "alt_m": 6000,
+        "vx_mps": -250,
+        "vy_mps": 0,
+        "vz_mps": 0
+      },
+      "horizontal_m": 1000,
+      "vertical_m": 300,
+      "duration_s": 20,
+      "expected_intervals": []
+    },
+    {
+      "name": "horizon_clipping",
+      "a": {
+        "flight_id": "A",
+        "x_m": -6000,
+        "y_m": 0,
+        "alt_m": 6000,
+        "vx_mps": 250,
+        "vy_mps": 0,
+        "vz_mps": 0
+      },
+      "b": {
+        "flight_id": "B",
+        "x_m": 0,
+        "y_m": 0,
+        "alt_m": 6000,
+        "vx_mps": -250,
+        "vy_mps": 0,
+        "vz_mps": 0
+      },
+      "horizontal_m": 1000,
+      "vertical_m": 300,
+      "duration_s": 12,
+      "expected_intervals": [
+        {
+          "start_s": 10,
+          "end_s": 12,
+          "start_inclusive": false,
+          "end_inclusive": true
+        }
+      ]
+    },
+    {
+      "name": "disjoint_dimensions",
+      "a": {
+        "flight_id": "A",
+        "x_m": 0,
+        "y_m": 0,
+        "alt_m": 7000,
+        "vx_mps": 250,
+        "vy_mps": 0,
+        "vz_mps": -100
+      },
+      "b": {
+        "flight_id": "B",
+        "x_m": 0,
+        "y_m": 0,
+        "alt_m": 6000,
+        "vx_mps": -250,
+        "vy_mps": 0,
+        "vz_mps": 0
+      },
+      "horizontal_m": 1000,
+      "vertical_m": 300,
+      "duration_s": 20,
+      "expected_intervals": []
+    }
+  ]
+}

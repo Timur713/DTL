@@ -1,0 +1,2285 @@
+{
+  "duration_s": 1200,
+  "scenario": {
+    "units": "SI: meters, seconds, m/s. Origin at airspace center, x east, y north.",
+    "snapshot_time_s": 0,
+    "airspace": {
+      "x_min_m": -200000,
+      "x_max_m": 200000,
+      "y_min_m": -200000,
+      "y_max_m": 200000,
+      "alt_min_m": 3000,
+      "alt_max_m": 12000
+    },
+    "target": {
+      "x_m": 1000000,
+      "y_m": 1000000
+    },
+    "hostile_object": {
+      "x_m": 1000000,
+      "y_m": 1000000,
+      "alt_m": 4000,
+      "vx_mps": 96,
+      "vy_mps": -72,
+      "vz_mps": 0
+    },
+    "flights_file": "synthetic_fixture"
+  },
+  "flights": [
+    {
+      "flight_id": "CASE_A",
+      "x_m": -10000,
+      "y_m": 0,
+      "alt_m": 6000,
+      "vx_mps": 250,
+      "vy_mps": 0,
+      "vz_mps": 0
+    },
+    {
+      "flight_id": "CASE_B",
+      "x_m": 10000,
+      "y_m": 0,
+      "alt_m": 6000,
+      "vx_mps": -250,
+      "vy_mps": 0,
+      "vz_mps": 0
+    }
+  ],
+  "rules": {
+    "schema_version": "1.1",
+    "duration_s": 1200,
+    "units": "SI: m, s, m/s, m/s^2; angles explicitly labelled",
+    "defaults": {
+      "profile_id": "metric",
+      "mode_id": "nominal",
+      "variant_id": "base"
+    },
+    "profiles": [
+      {
+        "id": "metric",
+        "label": "Метрический: 9260 м / 300 м",
+        "horizontal_m": 9260,
+        "vertical_m": 300
+      },
+      {
+        "id": "feet_reference",
+        "label": "Футовый ориентир: 9260 м / 304,8 м",
+        "horizontal_m": 9260,
+        "vertical_m": 304.8
+      }
+    ],
+    "modes": [
+      {
+        "id": "nominal",
+        "label": "Точные исходные состояния",
+        "severity": "nominal_violation",
+        "error_bounds": {
+          "position_horizontal_m": 0,
+          "position_vertical_m": 0,
+          "velocity_horizontal_mps": 0,
+          "velocity_vertical_mps": 0
+        }
+      },
+      {
+        "id": "bounded_stress",
+        "label": "Ограниченные ошибки: потеря гарантии",
+        "severity": "possible_violation",
+        "error_bounds": {
+          "position_horizontal_m": 100,
+          "position_vertical_m": 20,
+          "velocity_horizontal_mps": 1,
+          "velocity_vertical_mps": 0.1
+        }
+      }
+    ],
+    "uncertainty": {
+      "applies_to": [
+        "aircraft",
+        "threat"
+      ],
+      "target_exact": true,
+      "horizontal_set": "euclidean_disk",
+      "vertical_set": "symmetric_interval",
+      "reference_time_s": 0,
+      "reset_on_frame": false,
+      "horizontal_formula": "position_horizontal_m + velocity_horizontal_mps * t",
+      "vertical_formula": "position_vertical_m + velocity_vertical_mps * t",
+      "sphere_error_bound": "horizontal_plus_vertical",
+      "pair_combination": "sum_of_individual_bounds",
+      "interpretation": "deterministic_bounds_not_probabilities"
+    },
+    "zones": {
+      "aircraft": {
+        "shape": "relative_cylinder",
+        "thresholds_from": "profile",
+        "violation": "horizontal_distance < horizontal_m AND absolute_vertical_distance < vertical_m"
+      },
+      "threat": {
+        "shape": "sphere",
+        "radius_m": 5000,
+        "violation": "distance_3d < effective_radius",
+        "stress_expansion": "e_h_aircraft + e_z_aircraft + e_h_threat + e_z_threat"
+      },
+      "target": {
+        "shape": "sphere",
+        "radius_m": 5000,
+        "center_alt_m": 0,
+        "violation": "distance_3d < effective_radius",
+        "stress_expansion": "e_h_aircraft + e_z_aircraft"
+      },
+      "altitude": {
+        "bounds_from": "scenario.airspace",
+        "min_key": "alt_min_m",
+        "max_key": "alt_max_m",
+        "allowed_boundary_inclusive": true,
+        "applies_to": "aircraft",
+        "stress_rule": "z - e_z < alt_min_m OR z + e_z > alt_max_m"
+      },
+      "horizontal_airspace": {
+        "bounds_from": "scenario.airspace",
+        "safety_constraint": false,
+        "retain_objects_outside": true
+      }
+    },
+    "motion_limits": {
+      "model": "generic_jet_assumption",
+      "maneuvers_implemented": false,
+      "aircraft": {
+        "horizontal_speed_min_mps": 200,
+        "horizontal_speed_max_mps": 260,
+        "horizontal_acceleration_abs_max_mps2": 0.5,
+        "horizontal_acceleration_definition": "absolute_derivative_of_horizontal_speed_not_total_horizontal_vector_acceleration",
+        "vertical_speed_abs_max_mps": 15,
+        "vertical_acceleration_abs_max_mps2": 0.5,
+        "bank_abs_max_deg": 25,
+        "gravity_mps2": 9.80665,
+        "turn_rate_formula": "g * tan(bank_abs_max_deg * pi / 180) / horizontal_speed_mps",
+        "turn_rate_unit": "rad/s",
+        "wind_mps": [
+          0,
+          0,
+          0
+        ]
+      },
+      "checks_apply_to": "all_admissible_constant_velocity_aircraft_trajectories_in_selected_mode",
+      "stress_horizontal_speed_interval": "[max(0, norm(v_xy) - velocity_horizontal_mps), norm(v_xy) + velocity_horizontal_mps]",
+      "stress_vertical_speed_interval": "[vz - velocity_vertical_mps, vz + velocity_vertical_mps]",
+      "velocity_error_constant_over_horizon": true,
+      "baseline_acceleration_mps2": [
+        0,
+        0,
+        0
+      ],
+      "baseline_turn_rate_radps": 0
+    },
+    "delays": {
+      "observation_s": 0,
+      "communication_s": 0,
+      "execution_s": 0,
+      "positive_delays_supported": false
+    },
+    "comparison": {
+      "distance_violation_operator": "strict_less_than",
+      "equality_is_safe": true,
+      "horizon_closed": true,
+      "method": "continuous_affine_motion_quadratic_intervals",
+      "time_epsilon_s": 1e-09,
+      "distance_epsilon_m": 1e-07,
+      "epsilon_is_physical_buffer": false,
+      "epsilon_policy": "numerical_root_residual_only_never_expand_or_shrink_safety_thresholds"
+    },
+    "assumptions": {
+      "motion": "p(t) = p0 + v*t for all aircraft and threat over [0,1200]",
+      "coordinate_system": "local_cartesian_east_north_geometric_altitude",
+      "target_motion": "static_xyz",
+      "threat_after_target_xy": "continue_same_velocity_and_altitude",
+      "vehicle_geometry": "point_with_protected_volume",
+      "aircraft_destination": "original_baseline_position_at_duration_s",
+      "excluded": [
+        "maneuver_planning",
+        "wake_turbulence",
+        "6DOF",
+        "wing_geometry",
+        "terrain",
+        "weather",
+        "earth_curvature",
+        "regulatory_compliance_claim"
+      ],
+      "unknown": [
+        "aircraft_type",
+        "mass",
+        "flight_envelope",
+        "equipment",
+        "RVSM_approval",
+        "pressure_altitude",
+        "navigation_accuracy",
+        "surveillance_service",
+        "wind",
+        "threat_effects"
+      ]
+    },
+    "sensitivity": {
+      "method": "one_parameter_at_a_time",
+      "vertical_m": [
+        300,
+        304.8
+      ],
+      "threat_radius_m": [
+        3000,
+        5000,
+        10000
+      ],
+      "target_radius_m": [
+        3000,
+        5000,
+        10000
+      ],
+      "variants": [
+        {
+          "id": "base",
+          "label": "Базовые радиусы",
+          "overrides": {}
+        },
+        {
+          "id": "threat_3000",
+          "label": "Дрон: 3000 м",
+          "overrides": {
+            "threat_radius_m": 3000
+          }
+        },
+        {
+          "id": "threat_10000",
+          "label": "Дрон: 10000 м",
+          "overrides": {
+            "threat_radius_m": 10000
+          }
+        },
+        {
+          "id": "target_3000",
+          "label": "Цель: 3000 м",
+          "overrides": {
+            "target_radius_m": 3000
+          }
+        },
+        {
+          "id": "target_10000",
+          "label": "Цель: 10000 м",
+          "overrides": {
+            "target_radius_m": 10000
+          }
+        }
+      ],
+      "run_product": [
+        "profiles",
+        "modes",
+        "variants"
+      ],
+      "expected_run_count": 20
+    },
+    "sources": [
+      {
+        "id": "faa_horizontal",
+        "url": "https://www.faa.gov/air_traffic/publications/atpubs/atc_html/chap5_section_5.html",
+        "sections": [
+          "5-5-4"
+        ],
+        "role": "conditional_5_NM_reference_not_universal_rule"
+      },
+      {
+        "id": "faa_vertical",
+        "url": "https://www.faa.gov/air_traffic/publications/atpubs/atc_html/chap4_section_5.html",
+        "sections": [
+          "4-5-1"
+        ],
+        "role": "conditional_1000_ft_reference"
+      },
+      {
+        "id": "icao_rvsm",
+        "url": "https://store.icao.int/en/manual-on-implementation-vertical-separation-doc-9574",
+        "sections": [
+          "official_product_description"
+        ],
+        "role": "300_m_1000_ft_published_convention_not_exact_conversion"
+      },
+      {
+        "id": "eurocontrol_mtcd",
+        "url": "https://www.eurocontrol.int/sites/default/files/publication/files/EUROCONTROL-SPEC-0139%20MTCD%20Ed%202.0.pdf",
+        "sections": [
+          "3.1.1.4-3.1.1.11"
+        ],
+        "role": "separation_and_growing_uncertainty_design_reference"
+      },
+      {
+        "id": "nasa_daidalus",
+        "url": "https://nasa.github.io/daidalus/",
+        "sections": [
+          "Introduction",
+          "Adding Sensor Uncertainty",
+          "Horizontal Direction Bands",
+          "Horizontal Speed Bands",
+          "Vertical Speed Bands"
+        ],
+        "role": "separate_uncertainty_and_kinematics_design_reference_no_algorithm_or_threshold_adoption"
+      },
+      {
+        "id": "eurocontrol_bada",
+        "url": "https://www.eurocontrol.int/model/bada",
+        "sections": [
+          "Replicate the performance of any aircraft",
+          "Access procedure"
+        ],
+        "role": "type_specific_performance_reference_no_BADA_dataset_used"
+      }
+    ]
+  },
+  "analysis": {
+    "schema_version": "1.1",
+    "duration_s": 1200,
+    "fixture": true,
+    "notes": [
+      "Synthetic pair-only UI contract fixture; not a full production analysis."
+    ],
+    "runs": [
+      {
+        "id": "metric__nominal__base",
+        "profile_id": "metric",
+        "mode_id": "nominal",
+        "variant_id": "base",
+        "thresholds": {
+          "horizontal_m": 9260,
+          "vertical_m": 300,
+          "threat_radius_m": 5000,
+          "target_radius_m": 5000,
+          "alt_min_m": 3000,
+          "alt_max_m": 12000,
+          "target_alt_m": 0
+        },
+        "events": [
+          {
+            "id": "metric__nominal__base__aircraft_aircraft__CASE_A__CASE_B__0",
+            "type": "aircraft_aircraft",
+            "rule_id": "aircraft_separation",
+            "participants": [
+              "CASE_A",
+              "CASE_B"
+            ],
+            "flight_ids": [
+              "CASE_A",
+              "CASE_B"
+            ],
+            "profile_id": "metric",
+            "mode_id": "nominal",
+            "variant_id": "base",
+            "start_s": 21.48,
+            "end_s": 58.52,
+            "start_inclusive": false,
+            "end_inclusive": false,
+            "initial_violation": false,
+            "continues_at_horizon": false,
+            "severity": "nominal_violation",
+            "representative_s": 40,
+            "duration_s": 37.040000000000006,
+            "thresholds": {
+              "horizontal": {
+                "intercept_m": 9260,
+                "slope_mps": 0
+              },
+              "vertical": {
+                "intercept_m": 300,
+                "slope_mps": 0
+              }
+            },
+            "metrics": {
+              "horizontal_min": {
+                "value_m": 0,
+                "time_s": 40,
+                "attained": true
+              },
+              "vertical_min": {
+                "value_m": 0,
+                "time_s": 40,
+                "attained": true
+              },
+              "distance_3d_min": {
+                "value_m": 0,
+                "time_s": 40,
+                "attained": true
+              }
+            }
+          }
+        ],
+        "summary": {
+          "event_count": 1,
+          "aircraft_pair_count": 1,
+          "affected_flight_count": 2,
+          "affected_flight_ids": [
+            "CASE_A",
+            "CASE_B"
+          ],
+          "initial_event_count": 0,
+          "counts_by_type": {
+            "aircraft_aircraft": 1,
+            "aircraft_threat": 0,
+            "aircraft_target": 0,
+            "altitude": 0,
+            "motion": 0
+          },
+          "first_event_s": 21.48,
+          "total_event_duration_s": 37.040000000000006
+        },
+        "initial_state": {
+          "has_violations": false,
+          "event_ids": []
+        },
+        "motion_checks": {
+          "all_pass": true,
+          "scope": "constant_velocity_baseline",
+          "checks": []
+        }
+      },
+      {
+        "id": "metric__nominal__threat_3000",
+        "profile_id": "metric",
+        "mode_id": "nominal",
+        "variant_id": "threat_3000",
+        "thresholds": {
+          "horizontal_m": 9260,
+          "vertical_m": 300,
+          "threat_radius_m": 3000,
+          "target_radius_m": 5000,
+          "alt_min_m": 3000,
+          "alt_max_m": 12000,
+          "target_alt_m": 0
+        },
+        "events": [
+          {
+            "id": "metric__nominal__threat_3000__aircraft_aircraft__CASE_A__CASE_B__0",
+            "type": "aircraft_aircraft",
+            "rule_id": "aircraft_separation",
+            "participants": [
+              "CASE_A",
+              "CASE_B"
+            ],
+            "flight_ids": [
+              "CASE_A",
+              "CASE_B"
+            ],
+            "profile_id": "metric",
+            "mode_id": "nominal",
+            "variant_id": "threat_3000",
+            "start_s": 21.48,
+            "end_s": 58.52,
+            "start_inclusive": false,
+            "end_inclusive": false,
+            "initial_violation": false,
+            "continues_at_horizon": false,
+            "severity": "nominal_violation",
+            "representative_s": 40,
+            "duration_s": 37.040000000000006,
+            "thresholds": {
+              "horizontal": {
+                "intercept_m": 9260,
+                "slope_mps": 0
+              },
+              "vertical": {
+                "intercept_m": 300,
+                "slope_mps": 0
+              }
+            },
+            "metrics": {
+              "horizontal_min": {
+                "value_m": 0,
+                "time_s": 40,
+                "attained": true
+              },
+              "vertical_min": {
+                "value_m": 0,
+                "time_s": 40,
+                "attained": true
+              },
+              "distance_3d_min": {
+                "value_m": 0,
+                "time_s": 40,
+                "attained": true
+              }
+            }
+          }
+        ],
+        "summary": {
+          "event_count": 1,
+          "aircraft_pair_count": 1,
+          "affected_flight_count": 2,
+          "affected_flight_ids": [
+            "CASE_A",
+            "CASE_B"
+          ],
+          "initial_event_count": 0,
+          "counts_by_type": {
+            "aircraft_aircraft": 1,
+            "aircraft_threat": 0,
+            "aircraft_target": 0,
+            "altitude": 0,
+            "motion": 0
+          },
+          "first_event_s": 21.48,
+          "total_event_duration_s": 37.040000000000006
+        },
+        "initial_state": {
+          "has_violations": false,
+          "event_ids": []
+        },
+        "motion_checks": {
+          "all_pass": true,
+          "scope": "constant_velocity_baseline",
+          "checks": []
+        }
+      },
+      {
+        "id": "metric__nominal__threat_10000",
+        "profile_id": "metric",
+        "mode_id": "nominal",
+        "variant_id": "threat_10000",
+        "thresholds": {
+          "horizontal_m": 9260,
+          "vertical_m": 300,
+          "threat_radius_m": 10000,
+          "target_radius_m": 5000,
+          "alt_min_m": 3000,
+          "alt_max_m": 12000,
+          "target_alt_m": 0
+        },
+        "events": [
+          {
+            "id": "metric__nominal__threat_10000__aircraft_aircraft__CASE_A__CASE_B__0",
+            "type": "aircraft_aircraft",
+            "rule_id": "aircraft_separation",
+            "participants": [
+              "CASE_A",
+              "CASE_B"
+            ],
+            "flight_ids": [
+              "CASE_A",
+              "CASE_B"
+            ],
+            "profile_id": "metric",
+            "mode_id": "nominal",
+            "variant_id": "threat_10000",
+            "start_s": 21.48,
+            "end_s": 58.52,
+            "start_inclusive": false,
+            "end_inclusive": false,
+            "initial_violation": false,
+            "continues_at_horizon": false,
+            "severity": "nominal_violation",
+            "representative_s": 40,
+            "duration_s": 37.040000000000006,
+            "thresholds": {
+              "horizontal": {
+                "intercept_m": 9260,
+                "slope_mps": 0
+              },
+              "vertical": {
+                "intercept_m": 300,
+                "slope_mps": 0
+              }
+            },
+            "metrics": {
+              "horizontal_min": {
+                "value_m": 0,
+                "time_s": 40,
+                "attained": true
+              },
+              "vertical_min": {
+                "value_m": 0,
+                "time_s": 40,
+                "attained": true
+              },
+              "distance_3d_min": {
+                "value_m": 0,
+                "time_s": 40,
+                "attained": true
+              }
+            }
+          }
+        ],
+        "summary": {
+          "event_count": 1,
+          "aircraft_pair_count": 1,
+          "affected_flight_count": 2,
+          "affected_flight_ids": [
+            "CASE_A",
+            "CASE_B"
+          ],
+          "initial_event_count": 0,
+          "counts_by_type": {
+            "aircraft_aircraft": 1,
+            "aircraft_threat": 0,
+            "aircraft_target": 0,
+            "altitude": 0,
+            "motion": 0
+          },
+          "first_event_s": 21.48,
+          "total_event_duration_s": 37.040000000000006
+        },
+        "initial_state": {
+          "has_violations": false,
+          "event_ids": []
+        },
+        "motion_checks": {
+          "all_pass": true,
+          "scope": "constant_velocity_baseline",
+          "checks": []
+        }
+      },
+      {
+        "id": "metric__nominal__target_3000",
+        "profile_id": "metric",
+        "mode_id": "nominal",
+        "variant_id": "target_3000",
+        "thresholds": {
+          "horizontal_m": 9260,
+          "vertical_m": 300,
+          "threat_radius_m": 5000,
+          "target_radius_m": 3000,
+          "alt_min_m": 3000,
+          "alt_max_m": 12000,
+          "target_alt_m": 0
+        },
+        "events": [
+          {
+            "id": "metric__nominal__target_3000__aircraft_aircraft__CASE_A__CASE_B__0",
+            "type": "aircraft_aircraft",
+            "rule_id": "aircraft_separation",
+            "participants": [
+              "CASE_A",
+              "CASE_B"
+            ],
+            "flight_ids": [
+              "CASE_A",
+              "CASE_B"
+            ],
+            "profile_id": "metric",
+            "mode_id": "nominal",
+            "variant_id": "target_3000",
+            "start_s": 21.48,
+            "end_s": 58.52,
+            "start_inclusive": false,
+            "end_inclusive": false,
+            "initial_violation": false,
+            "continues_at_horizon": false,
+            "severity": "nominal_violation",
+            "representative_s": 40,
+            "duration_s": 37.040000000000006,
+            "thresholds": {
+              "horizontal": {
+                "intercept_m": 9260,
+                "slope_mps": 0
+              },
+              "vertical": {
+                "intercept_m": 300,
+                "slope_mps": 0
+              }
+            },
+            "metrics": {
+              "horizontal_min": {
+                "value_m": 0,
+                "time_s": 40,
+                "attained": true
+              },
+              "vertical_min": {
+                "value_m": 0,
+                "time_s": 40,
+                "attained": true
+              },
+              "distance_3d_min": {
+                "value_m": 0,
+                "time_s": 40,
+                "attained": true
+              }
+            }
+          }
+        ],
+        "summary": {
+          "event_count": 1,
+          "aircraft_pair_count": 1,
+          "affected_flight_count": 2,
+          "affected_flight_ids": [
+            "CASE_A",
+            "CASE_B"
+          ],
+          "initial_event_count": 0,
+          "counts_by_type": {
+            "aircraft_aircraft": 1,
+            "aircraft_threat": 0,
+            "aircraft_target": 0,
+            "altitude": 0,
+            "motion": 0
+          },
+          "first_event_s": 21.48,
+          "total_event_duration_s": 37.040000000000006
+        },
+        "initial_state": {
+          "has_violations": false,
+          "event_ids": []
+        },
+        "motion_checks": {
+          "all_pass": true,
+          "scope": "constant_velocity_baseline",
+          "checks": []
+        }
+      },
+      {
+        "id": "metric__nominal__target_10000",
+        "profile_id": "metric",
+        "mode_id": "nominal",
+        "variant_id": "target_10000",
+        "thresholds": {
+          "horizontal_m": 9260,
+          "vertical_m": 300,
+          "threat_radius_m": 5000,
+          "target_radius_m": 10000,
+          "alt_min_m": 3000,
+          "alt_max_m": 12000,
+          "target_alt_m": 0
+        },
+        "events": [
+          {
+            "id": "metric__nominal__target_10000__aircraft_aircraft__CASE_A__CASE_B__0",
+            "type": "aircraft_aircraft",
+            "rule_id": "aircraft_separation",
+            "participants": [
+              "CASE_A",
+              "CASE_B"
+            ],
+            "flight_ids": [
+              "CASE_A",
+              "CASE_B"
+            ],
+            "profile_id": "metric",
+            "mode_id": "nominal",
+            "variant_id": "target_10000",
+            "start_s": 21.48,
+            "end_s": 58.52,
+            "start_inclusive": false,
+            "end_inclusive": false,
+            "initial_violation": false,
+            "continues_at_horizon": false,
+            "severity": "nominal_violation",
+            "representative_s": 40,
+            "duration_s": 37.040000000000006,
+            "thresholds": {
+              "horizontal": {
+                "intercept_m": 9260,
+                "slope_mps": 0
+              },
+              "vertical": {
+                "intercept_m": 300,
+                "slope_mps": 0
+              }
+            },
+            "metrics": {
+              "horizontal_min": {
+                "value_m": 0,
+                "time_s": 40,
+                "attained": true
+              },
+              "vertical_min": {
+                "value_m": 0,
+                "time_s": 40,
+                "attained": true
+              },
+              "distance_3d_min": {
+                "value_m": 0,
+                "time_s": 40,
+                "attained": true
+              }
+            }
+          }
+        ],
+        "summary": {
+          "event_count": 1,
+          "aircraft_pair_count": 1,
+          "affected_flight_count": 2,
+          "affected_flight_ids": [
+            "CASE_A",
+            "CASE_B"
+          ],
+          "initial_event_count": 0,
+          "counts_by_type": {
+            "aircraft_aircraft": 1,
+            "aircraft_threat": 0,
+            "aircraft_target": 0,
+            "altitude": 0,
+            "motion": 0
+          },
+          "first_event_s": 21.48,
+          "total_event_duration_s": 37.040000000000006
+        },
+        "initial_state": {
+          "has_violations": false,
+          "event_ids": []
+        },
+        "motion_checks": {
+          "all_pass": true,
+          "scope": "constant_velocity_baseline",
+          "checks": []
+        }
+      },
+      {
+        "id": "metric__bounded_stress__base",
+        "profile_id": "metric",
+        "mode_id": "bounded_stress",
+        "variant_id": "base",
+        "thresholds": {
+          "horizontal_m": 9260,
+          "vertical_m": 300,
+          "threat_radius_m": 5000,
+          "target_radius_m": 5000,
+          "alt_min_m": 3000,
+          "alt_max_m": 12000,
+          "target_alt_m": 0
+        },
+        "events": [
+          {
+            "id": "metric__bounded_stress__base__aircraft_aircraft__CASE_A__CASE_B__0",
+            "type": "aircraft_aircraft",
+            "rule_id": "aircraft_separation",
+            "participants": [
+              "CASE_A",
+              "CASE_B"
+            ],
+            "flight_ids": [
+              "CASE_A",
+              "CASE_B"
+            ],
+            "profile_id": "metric",
+            "mode_id": "bounded_stress",
+            "variant_id": "base",
+            "start_s": 20.99601593625498,
+            "end_s": 59.1566265060241,
+            "start_inclusive": false,
+            "end_inclusive": false,
+            "initial_violation": false,
+            "continues_at_horizon": false,
+            "severity": "possible_violation",
+            "representative_s": 40,
+            "duration_s": 38.16061056976912,
+            "thresholds": {
+              "horizontal": {
+                "intercept_m": 9460,
+                "slope_mps": 2
+              },
+              "vertical": {
+                "intercept_m": 340,
+                "slope_mps": 0.2
+              }
+            },
+            "metrics": {
+              "horizontal_min": {
+                "value_m": 0,
+                "time_s": 40,
+                "attained": true
+              },
+              "vertical_min": {
+                "value_m": 0,
+                "time_s": 40,
+                "attained": true
+              },
+              "distance_3d_min": {
+                "value_m": 0,
+                "time_s": 40,
+                "attained": true
+              }
+            }
+          }
+        ],
+        "summary": {
+          "event_count": 1,
+          "aircraft_pair_count": 1,
+          "affected_flight_count": 2,
+          "affected_flight_ids": [
+            "CASE_A",
+            "CASE_B"
+          ],
+          "initial_event_count": 0,
+          "counts_by_type": {
+            "aircraft_aircraft": 1,
+            "aircraft_threat": 0,
+            "aircraft_target": 0,
+            "altitude": 0,
+            "motion": 0
+          },
+          "first_event_s": 20.99601593625498,
+          "total_event_duration_s": 38.16061056976912
+        },
+        "initial_state": {
+          "has_violations": false,
+          "event_ids": []
+        },
+        "motion_checks": {
+          "all_pass": true,
+          "scope": "constant_velocity_baseline",
+          "checks": []
+        }
+      },
+      {
+        "id": "metric__bounded_stress__threat_3000",
+        "profile_id": "metric",
+        "mode_id": "bounded_stress",
+        "variant_id": "threat_3000",
+        "thresholds": {
+          "horizontal_m": 9260,
+          "vertical_m": 300,
+          "threat_radius_m": 3000,
+          "target_radius_m": 5000,
+          "alt_min_m": 3000,
+          "alt_max_m": 12000,
+          "target_alt_m": 0
+        },
+        "events": [
+          {
+            "id": "metric__bounded_stress__threat_3000__aircraft_aircraft__CASE_A__CASE_B__0",
+            "type": "aircraft_aircraft",
+            "rule_id": "aircraft_separation",
+            "participants": [
+              "CASE_A",
+              "CASE_B"
+            ],
+            "flight_ids": [
+              "CASE_A",
+              "CASE_B"
+            ],
+            "profile_id": "metric",
+            "mode_id": "bounded_stress",
+            "variant_id": "threat_3000",
+            "start_s": 20.99601593625498,
+            "end_s": 59.1566265060241,
+            "start_inclusive": false,
+            "end_inclusive": false,
+            "initial_violation": false,
+            "continues_at_horizon": false,
+            "severity": "possible_violation",
+            "representative_s": 40,
+            "duration_s": 38.16061056976912,
+            "thresholds": {
+              "horizontal": {
+                "intercept_m": 9460,
+                "slope_mps": 2
+              },
+              "vertical": {
+                "intercept_m": 340,
+                "slope_mps": 0.2
+              }
+            },
+            "metrics": {
+              "horizontal_min": {
+                "value_m": 0,
+                "time_s": 40,
+                "attained": true
+              },
+              "vertical_min": {
+                "value_m": 0,
+                "time_s": 40,
+                "attained": true
+              },
+              "distance_3d_min": {
+                "value_m": 0,
+                "time_s": 40,
+                "attained": true
+              }
+            }
+          }
+        ],
+        "summary": {
+          "event_count": 1,
+          "aircraft_pair_count": 1,
+          "affected_flight_count": 2,
+          "affected_flight_ids": [
+            "CASE_A",
+            "CASE_B"
+          ],
+          "initial_event_count": 0,
+          "counts_by_type": {
+            "aircraft_aircraft": 1,
+            "aircraft_threat": 0,
+            "aircraft_target": 0,
+            "altitude": 0,
+            "motion": 0
+          },
+          "first_event_s": 20.99601593625498,
+          "total_event_duration_s": 38.16061056976912
+        },
+        "initial_state": {
+          "has_violations": false,
+          "event_ids": []
+        },
+        "motion_checks": {
+          "all_pass": true,
+          "scope": "constant_velocity_baseline",
+          "checks": []
+        }
+      },
+      {
+        "id": "metric__bounded_stress__threat_10000",
+        "profile_id": "metric",
+        "mode_id": "bounded_stress",
+        "variant_id": "threat_10000",
+        "thresholds": {
+          "horizontal_m": 9260,
+          "vertical_m": 300,
+          "threat_radius_m": 10000,
+          "target_radius_m": 5000,
+          "alt_min_m": 3000,
+          "alt_max_m": 12000,
+          "target_alt_m": 0
+        },
+        "events": [
+          {
+            "id": "metric__bounded_stress__threat_10000__aircraft_aircraft__CASE_A__CASE_B__0",
+            "type": "aircraft_aircraft",
+            "rule_id": "aircraft_separation",
+            "participants": [
+              "CASE_A",
+              "CASE_B"
+            ],
+            "flight_ids": [
+              "CASE_A",
+              "CASE_B"
+            ],
+            "profile_id": "metric",
+            "mode_id": "bounded_stress",
+            "variant_id": "threat_10000",
+            "start_s": 20.99601593625498,
+            "end_s": 59.1566265060241,
+            "start_inclusive": false,
+            "end_inclusive": false,
+            "initial_violation": false,
+            "continues_at_horizon": false,
+            "severity": "possible_violation",
+            "representative_s": 40,
+            "duration_s": 38.16061056976912,
+            "thresholds": {
+              "horizontal": {
+                "intercept_m": 9460,
+                "slope_mps": 2
+              },
+              "vertical": {
+                "intercept_m": 340,
+                "slope_mps": 0.2
+              }
+            },
+            "metrics": {
+              "horizontal_min": {
+                "value_m": 0,
+                "time_s": 40,
+                "attained": true
+              },
+              "vertical_min": {
+                "value_m": 0,
+                "time_s": 40,
+                "attained": true
+              },
+              "distance_3d_min": {
+                "value_m": 0,
+                "time_s": 40,
+                "attained": true
+              }
+            }
+          }
+        ],
+        "summary": {
+          "event_count": 1,
+          "aircraft_pair_count": 1,
+          "affected_flight_count": 2,
+          "affected_flight_ids": [
+            "CASE_A",
+            "CASE_B"
+          ],
+          "initial_event_count": 0,
+          "counts_by_type": {
+            "aircraft_aircraft": 1,
+            "aircraft_threat": 0,
+            "aircraft_target": 0,
+            "altitude": 0,
+            "motion": 0
+          },
+          "first_event_s": 20.99601593625498,
+          "total_event_duration_s": 38.16061056976912
+        },
+        "initial_state": {
+          "has_violations": false,
+          "event_ids": []
+        },
+        "motion_checks": {
+          "all_pass": true,
+          "scope": "constant_velocity_baseline",
+          "checks": []
+        }
+      },
+      {
+        "id": "metric__bounded_stress__target_3000",
+        "profile_id": "metric",
+        "mode_id": "bounded_stress",
+        "variant_id": "target_3000",
+        "thresholds": {
+          "horizontal_m": 9260,
+          "vertical_m": 300,
+          "threat_radius_m": 5000,
+          "target_radius_m": 3000,
+          "alt_min_m": 3000,
+          "alt_max_m": 12000,
+          "target_alt_m": 0
+        },
+        "events": [
+          {
+            "id": "metric__bounded_stress__target_3000__aircraft_aircraft__CASE_A__CASE_B__0",
+            "type": "aircraft_aircraft",
+            "rule_id": "aircraft_separation",
+            "participants": [
+              "CASE_A",
+              "CASE_B"
+            ],
+            "flight_ids": [
+              "CASE_A",
+              "CASE_B"
+            ],
+            "profile_id": "metric",
+            "mode_id": "bounded_stress",
+            "variant_id": "target_3000",
+            "start_s": 20.99601593625498,
+            "end_s": 59.1566265060241,
+            "start_inclusive": false,
+            "end_inclusive": false,
+            "initial_violation": false,
+            "continues_at_horizon": false,
+            "severity": "possible_violation",
+            "representative_s": 40,
+            "duration_s": 38.16061056976912,
+            "thresholds": {
+              "horizontal": {
+                "intercept_m": 9460,
+                "slope_mps": 2
+              },
+              "vertical": {
+                "intercept_m": 340,
+                "slope_mps": 0.2
+              }
+            },
+            "metrics": {
+              "horizontal_min": {
+                "value_m": 0,
+                "time_s": 40,
+                "attained": true
+              },
+              "vertical_min": {
+                "value_m": 0,
+                "time_s": 40,
+                "attained": true
+              },
+              "distance_3d_min": {
+                "value_m": 0,
+                "time_s": 40,
+                "attained": true
+              }
+            }
+          }
+        ],
+        "summary": {
+          "event_count": 1,
+          "aircraft_pair_count": 1,
+          "affected_flight_count": 2,
+          "affected_flight_ids": [
+            "CASE_A",
+            "CASE_B"
+          ],
+          "initial_event_count": 0,
+          "counts_by_type": {
+            "aircraft_aircraft": 1,
+            "aircraft_threat": 0,
+            "aircraft_target": 0,
+            "altitude": 0,
+            "motion": 0
+          },
+          "first_event_s": 20.99601593625498,
+          "total_event_duration_s": 38.16061056976912
+        },
+        "initial_state": {
+          "has_violations": false,
+          "event_ids": []
+        },
+        "motion_checks": {
+          "all_pass": true,
+          "scope": "constant_velocity_baseline",
+          "checks": []
+        }
+      },
+      {
+        "id": "metric__bounded_stress__target_10000",
+        "profile_id": "metric",
+        "mode_id": "bounded_stress",
+        "variant_id": "target_10000",
+        "thresholds": {
+          "horizontal_m": 9260,
+          "vertical_m": 300,
+          "threat_radius_m": 5000,
+          "target_radius_m": 10000,
+          "alt_min_m": 3000,
+          "alt_max_m": 12000,
+          "target_alt_m": 0
+        },
+        "events": [
+          {
+            "id": "metric__bounded_stress__target_10000__aircraft_aircraft__CASE_A__CASE_B__0",
+            "type": "aircraft_aircraft",
+            "rule_id": "aircraft_separation",
+            "participants": [
+              "CASE_A",
+              "CASE_B"
+            ],
+            "flight_ids": [
+              "CASE_A",
+              "CASE_B"
+            ],
+            "profile_id": "metric",
+            "mode_id": "bounded_stress",
+            "variant_id": "target_10000",
+            "start_s": 20.99601593625498,
+            "end_s": 59.1566265060241,
+            "start_inclusive": false,
+            "end_inclusive": false,
+            "initial_violation": false,
+            "continues_at_horizon": false,
+            "severity": "possible_violation",
+            "representative_s": 40,
+            "duration_s": 38.16061056976912,
+            "thresholds": {
+              "horizontal": {
+                "intercept_m": 9460,
+                "slope_mps": 2
+              },
+              "vertical": {
+                "intercept_m": 340,
+                "slope_mps": 0.2
+              }
+            },
+            "metrics": {
+              "horizontal_min": {
+                "value_m": 0,
+                "time_s": 40,
+                "attained": true
+              },
+              "vertical_min": {
+                "value_m": 0,
+                "time_s": 40,
+                "attained": true
+              },
+              "distance_3d_min": {
+                "value_m": 0,
+                "time_s": 40,
+                "attained": true
+              }
+            }
+          }
+        ],
+        "summary": {
+          "event_count": 1,
+          "aircraft_pair_count": 1,
+          "affected_flight_count": 2,
+          "affected_flight_ids": [
+            "CASE_A",
+            "CASE_B"
+          ],
+          "initial_event_count": 0,
+          "counts_by_type": {
+            "aircraft_aircraft": 1,
+            "aircraft_threat": 0,
+            "aircraft_target": 0,
+            "altitude": 0,
+            "motion": 0
+          },
+          "first_event_s": 20.99601593625498,
+          "total_event_duration_s": 38.16061056976912
+        },
+        "initial_state": {
+          "has_violations": false,
+          "event_ids": []
+        },
+        "motion_checks": {
+          "all_pass": true,
+          "scope": "constant_velocity_baseline",
+          "checks": []
+        }
+      },
+      {
+        "id": "feet_reference__nominal__base",
+        "profile_id": "feet_reference",
+        "mode_id": "nominal",
+        "variant_id": "base",
+        "thresholds": {
+          "horizontal_m": 9260,
+          "vertical_m": 304.8,
+          "threat_radius_m": 5000,
+          "target_radius_m": 5000,
+          "alt_min_m": 3000,
+          "alt_max_m": 12000,
+          "target_alt_m": 0
+        },
+        "events": [
+          {
+            "id": "feet_reference__nominal__base__aircraft_aircraft__CASE_A__CASE_B__0",
+            "type": "aircraft_aircraft",
+            "rule_id": "aircraft_separation",
+            "participants": [
+              "CASE_A",
+              "CASE_B"
+            ],
+            "flight_ids": [
+              "CASE_A",
+              "CASE_B"
+            ],
+            "profile_id": "feet_reference",
+            "mode_id": "nominal",
+            "variant_id": "base",
+            "start_s": 21.48,
+            "end_s": 58.52,
+            "start_inclusive": false,
+            "end_inclusive": false,
+            "initial_violation": false,
+            "continues_at_horizon": false,
+            "severity": "nominal_violation",
+            "representative_s": 40,
+            "duration_s": 37.040000000000006,
+            "thresholds": {
+              "horizontal": {
+                "intercept_m": 9260,
+                "slope_mps": 0
+              },
+              "vertical": {
+                "intercept_m": 304.8,
+                "slope_mps": 0
+              }
+            },
+            "metrics": {
+              "horizontal_min": {
+                "value_m": 0,
+                "time_s": 40,
+                "attained": true
+              },
+              "vertical_min": {
+                "value_m": 0,
+                "time_s": 40,
+                "attained": true
+              },
+              "distance_3d_min": {
+                "value_m": 0,
+                "time_s": 40,
+                "attained": true
+              }
+            }
+          }
+        ],
+        "summary": {
+          "event_count": 1,
+          "aircraft_pair_count": 1,
+          "affected_flight_count": 2,
+          "affected_flight_ids": [
+            "CASE_A",
+            "CASE_B"
+          ],
+          "initial_event_count": 0,
+          "counts_by_type": {
+            "aircraft_aircraft": 1,
+            "aircraft_threat": 0,
+            "aircraft_target": 0,
+            "altitude": 0,
+            "motion": 0
+          },
+          "first_event_s": 21.48,
+          "total_event_duration_s": 37.040000000000006
+        },
+        "initial_state": {
+          "has_violations": false,
+          "event_ids": []
+        },
+        "motion_checks": {
+          "all_pass": true,
+          "scope": "constant_velocity_baseline",
+          "checks": []
+        }
+      },
+      {
+        "id": "feet_reference__nominal__threat_3000",
+        "profile_id": "feet_reference",
+        "mode_id": "nominal",
+        "variant_id": "threat_3000",
+        "thresholds": {
+          "horizontal_m": 9260,
+          "vertical_m": 304.8,
+          "threat_radius_m": 3000,
+          "target_radius_m": 5000,
+          "alt_min_m": 3000,
+          "alt_max_m": 12000,
+          "target_alt_m": 0
+        },
+        "events": [
+          {
+            "id": "feet_reference__nominal__threat_3000__aircraft_aircraft__CASE_A__CASE_B__0",
+            "type": "aircraft_aircraft",
+            "rule_id": "aircraft_separation",
+            "participants": [
+              "CASE_A",
+              "CASE_B"
+            ],
+            "flight_ids": [
+              "CASE_A",
+              "CASE_B"
+            ],
+            "profile_id": "feet_reference",
+            "mode_id": "nominal",
+            "variant_id": "threat_3000",
+            "start_s": 21.48,
+            "end_s": 58.52,
+            "start_inclusive": false,
+            "end_inclusive": false,
+            "initial_violation": false,
+            "continues_at_horizon": false,
+            "severity": "nominal_violation",
+            "representative_s": 40,
+            "duration_s": 37.040000000000006,
+            "thresholds": {
+              "horizontal": {
+                "intercept_m": 9260,
+                "slope_mps": 0
+              },
+              "vertical": {
+                "intercept_m": 304.8,
+                "slope_mps": 0
+              }
+            },
+            "metrics": {
+              "horizontal_min": {
+                "value_m": 0,
+                "time_s": 40,
+                "attained": true
+              },
+              "vertical_min": {
+                "value_m": 0,
+                "time_s": 40,
+                "attained": true
+              },
+              "distance_3d_min": {
+                "value_m": 0,
+                "time_s": 40,
+                "attained": true
+              }
+            }
+          }
+        ],
+        "summary": {
+          "event_count": 1,
+          "aircraft_pair_count": 1,
+          "affected_flight_count": 2,
+          "affected_flight_ids": [
+            "CASE_A",
+            "CASE_B"
+          ],
+          "initial_event_count": 0,
+          "counts_by_type": {
+            "aircraft_aircraft": 1,
+            "aircraft_threat": 0,
+            "aircraft_target": 0,
+            "altitude": 0,
+            "motion": 0
+          },
+          "first_event_s": 21.48,
+          "total_event_duration_s": 37.040000000000006
+        },
+        "initial_state": {
+          "has_violations": false,
+          "event_ids": []
+        },
+        "motion_checks": {
+          "all_pass": true,
+          "scope": "constant_velocity_baseline",
+          "checks": []
+        }
+      },
+      {
+        "id": "feet_reference__nominal__threat_10000",
+        "profile_id": "feet_reference",
+        "mode_id": "nominal",
+        "variant_id": "threat_10000",
+        "thresholds": {
+          "horizontal_m": 9260,
+          "vertical_m": 304.8,
+          "threat_radius_m": 10000,
+          "target_radius_m": 5000,
+          "alt_min_m": 3000,
+          "alt_max_m": 12000,
+          "target_alt_m": 0
+        },
+        "events": [
+          {
+            "id": "feet_reference__nominal__threat_10000__aircraft_aircraft__CASE_A__CASE_B__0",
+            "type": "aircraft_aircraft",
+            "rule_id": "aircraft_separation",
+            "participants": [
+              "CASE_A",
+              "CASE_B"
+            ],
+            "flight_ids": [
+              "CASE_A",
+              "CASE_B"
+            ],
+            "profile_id": "feet_reference",
+            "mode_id": "nominal",
+            "variant_id": "threat_10000",
+            "start_s": 21.48,
+            "end_s": 58.52,
+            "start_inclusive": false,
+            "end_inclusive": false,
+            "initial_violation": false,
+            "continues_at_horizon": false,
+            "severity": "nominal_violation",
+            "representative_s": 40,
+            "duration_s": 37.040000000000006,
+            "thresholds": {
+              "horizontal": {
+                "intercept_m": 9260,
+                "slope_mps": 0
+              },
+              "vertical": {
+                "intercept_m": 304.8,
+                "slope_mps": 0
+              }
+            },
+            "metrics": {
+              "horizontal_min": {
+                "value_m": 0,
+                "time_s": 40,
+                "attained": true
+              },
+              "vertical_min": {
+                "value_m": 0,
+                "time_s": 40,
+                "attained": true
+              },
+              "distance_3d_min": {
+                "value_m": 0,
+                "time_s": 40,
+                "attained": true
+              }
+            }
+          }
+        ],
+        "summary": {
+          "event_count": 1,
+          "aircraft_pair_count": 1,
+          "affected_flight_count": 2,
+          "affected_flight_ids": [
+            "CASE_A",
+            "CASE_B"
+          ],
+          "initial_event_count": 0,
+          "counts_by_type": {
+            "aircraft_aircraft": 1,
+            "aircraft_threat": 0,
+            "aircraft_target": 0,
+            "altitude": 0,
+            "motion": 0
+          },
+          "first_event_s": 21.48,
+          "total_event_duration_s": 37.040000000000006
+        },
+        "initial_state": {
+          "has_violations": false,
+          "event_ids": []
+        },
+        "motion_checks": {
+          "all_pass": true,
+          "scope": "constant_velocity_baseline",
+          "checks": []
+        }
+      },
+      {
+        "id": "feet_reference__nominal__target_3000",
+        "profile_id": "feet_reference",
+        "mode_id": "nominal",
+        "variant_id": "target_3000",
+        "thresholds": {
+          "horizontal_m": 9260,
+          "vertical_m": 304.8,
+          "threat_radius_m": 5000,
+          "target_radius_m": 3000,
+          "alt_min_m": 3000,
+          "alt_max_m": 12000,
+          "target_alt_m": 0
+        },
+        "events": [
+          {
+            "id": "feet_reference__nominal__target_3000__aircraft_aircraft__CASE_A__CASE_B__0",
+            "type": "aircraft_aircraft",
+            "rule_id": "aircraft_separation",
+            "participants": [
+              "CASE_A",
+              "CASE_B"
+            ],
+            "flight_ids": [
+              "CASE_A",
+              "CASE_B"
+            ],
+            "profile_id": "feet_reference",
+            "mode_id": "nominal",
+            "variant_id": "target_3000",
+            "start_s": 21.48,
+            "end_s": 58.52,
+            "start_inclusive": false,
+            "end_inclusive": false,
+            "initial_violation": false,
+            "continues_at_horizon": false,
+            "severity": "nominal_violation",
+            "representative_s": 40,
+            "duration_s": 37.040000000000006,
+            "thresholds": {
+              "horizontal": {
+                "intercept_m": 9260,
+                "slope_mps": 0
+              },
+              "vertical": {
+                "intercept_m": 304.8,
+                "slope_mps": 0
+              }
+            },
+            "metrics": {
+              "horizontal_min": {
+                "value_m": 0,
+                "time_s": 40,
+                "attained": true
+              },
+              "vertical_min": {
+                "value_m": 0,
+                "time_s": 40,
+                "attained": true
+              },
+              "distance_3d_min": {
+                "value_m": 0,
+                "time_s": 40,
+                "attained": true
+              }
+            }
+          }
+        ],
+        "summary": {
+          "event_count": 1,
+          "aircraft_pair_count": 1,
+          "affected_flight_count": 2,
+          "affected_flight_ids": [
+            "CASE_A",
+            "CASE_B"
+          ],
+          "initial_event_count": 0,
+          "counts_by_type": {
+            "aircraft_aircraft": 1,
+            "aircraft_threat": 0,
+            "aircraft_target": 0,
+            "altitude": 0,
+            "motion": 0
+          },
+          "first_event_s": 21.48,
+          "total_event_duration_s": 37.040000000000006
+        },
+        "initial_state": {
+          "has_violations": false,
+          "event_ids": []
+        },
+        "motion_checks": {
+          "all_pass": true,
+          "scope": "constant_velocity_baseline",
+          "checks": []
+        }
+      },
+      {
+        "id": "feet_reference__nominal__target_10000",
+        "profile_id": "feet_reference",
+        "mode_id": "nominal",
+        "variant_id": "target_10000",
+        "thresholds": {
+          "horizontal_m": 9260,
+          "vertical_m": 304.8,
+          "threat_radius_m": 5000,
+          "target_radius_m": 10000,
+          "alt_min_m": 3000,
+          "alt_max_m": 12000,
+          "target_alt_m": 0
+        },
+        "events": [
+          {
+            "id": "feet_reference__nominal__target_10000__aircraft_aircraft__CASE_A__CASE_B__0",
+            "type": "aircraft_aircraft",
+            "rule_id": "aircraft_separation",
+            "participants": [
+              "CASE_A",
+              "CASE_B"
+            ],
+            "flight_ids": [
+              "CASE_A",
+              "CASE_B"
+            ],
+            "profile_id": "feet_reference",
+            "mode_id": "nominal",
+            "variant_id": "target_10000",
+            "start_s": 21.48,
+            "end_s": 58.52,
+            "start_inclusive": false,
+            "end_inclusive": false,
+            "initial_violation": false,
+            "continues_at_horizon": false,
+            "severity": "nominal_violation",
+            "representative_s": 40,
+            "duration_s": 37.040000000000006,
+            "thresholds": {
+              "horizontal": {
+                "intercept_m": 9260,
+                "slope_mps": 0
+              },
+              "vertical": {
+                "intercept_m": 304.8,
+                "slope_mps": 0
+              }
+            },
+            "metrics": {
+              "horizontal_min": {
+                "value_m": 0,
+                "time_s": 40,
+                "attained": true
+              },
+              "vertical_min": {
+                "value_m": 0,
+                "time_s": 40,
+                "attained": true
+              },
+              "distance_3d_min": {
+                "value_m": 0,
+                "time_s": 40,
+                "attained": true
+              }
+            }
+          }
+        ],
+        "summary": {
+          "event_count": 1,
+          "aircraft_pair_count": 1,
+          "affected_flight_count": 2,
+          "affected_flight_ids": [
+            "CASE_A",
+            "CASE_B"
+          ],
+          "initial_event_count": 0,
+          "counts_by_type": {
+            "aircraft_aircraft": 1,
+            "aircraft_threat": 0,
+            "aircraft_target": 0,
+            "altitude": 0,
+            "motion": 0
+          },
+          "first_event_s": 21.48,
+          "total_event_duration_s": 37.040000000000006
+        },
+        "initial_state": {
+          "has_violations": false,
+          "event_ids": []
+        },
+        "motion_checks": {
+          "all_pass": true,
+          "scope": "constant_velocity_baseline",
+          "checks": []
+        }
+      },
+      {
+        "id": "feet_reference__bounded_stress__base",
+        "profile_id": "feet_reference",
+        "mode_id": "bounded_stress",
+        "variant_id": "base",
+        "thresholds": {
+          "horizontal_m": 9260,
+          "vertical_m": 304.8,
+          "threat_radius_m": 5000,
+          "target_radius_m": 5000,
+          "alt_min_m": 3000,
+          "alt_max_m": 12000,
+          "target_alt_m": 0
+        },
+        "events": [
+          {
+            "id": "feet_reference__bounded_stress__base__aircraft_aircraft__CASE_A__CASE_B__0",
+            "type": "aircraft_aircraft",
+            "rule_id": "aircraft_separation",
+            "participants": [
+              "CASE_A",
+              "CASE_B"
+            ],
+            "flight_ids": [
+              "CASE_A",
+              "CASE_B"
+            ],
+            "profile_id": "feet_reference",
+            "mode_id": "bounded_stress",
+            "variant_id": "base",
+            "start_s": 20.99601593625498,
+            "end_s": 59.1566265060241,
+            "start_inclusive": false,
+            "end_inclusive": false,
+            "initial_violation": false,
+            "continues_at_horizon": false,
+            "severity": "possible_violation",
+            "representative_s": 40,
+            "duration_s": 38.16061056976912,
+            "thresholds": {
+              "horizontal": {
+                "intercept_m": 9460,
+                "slope_mps": 2
+              },
+              "vertical": {
+                "intercept_m": 344.8,
+                "slope_mps": 0.2
+              }
+            },
+            "metrics": {
+              "horizontal_min": {
+                "value_m": 0,
+                "time_s": 40,
+                "attained": true
+              },
+              "vertical_min": {
+                "value_m": 0,
+                "time_s": 40,
+                "attained": true
+              },
+              "distance_3d_min": {
+                "value_m": 0,
+                "time_s": 40,
+                "attained": true
+              }
+            }
+          }
+        ],
+        "summary": {
+          "event_count": 1,
+          "aircraft_pair_count": 1,
+          "affected_flight_count": 2,
+          "affected_flight_ids": [
+            "CASE_A",
+            "CASE_B"
+          ],
+          "initial_event_count": 0,
+          "counts_by_type": {
+            "aircraft_aircraft": 1,
+            "aircraft_threat": 0,
+            "aircraft_target": 0,
+            "altitude": 0,
+            "motion": 0
+          },
+          "first_event_s": 20.99601593625498,
+          "total_event_duration_s": 38.16061056976912
+        },
+        "initial_state": {
+          "has_violations": false,
+          "event_ids": []
+        },
+        "motion_checks": {
+          "all_pass": true,
+          "scope": "constant_velocity_baseline",
+          "checks": []
+        }
+      },
+      {
+        "id": "feet_reference__bounded_stress__threat_3000",
+        "profile_id": "feet_reference",
+        "mode_id": "bounded_stress",
+        "variant_id": "threat_3000",
+        "thresholds": {
+          "horizontal_m": 9260,
+          "vertical_m": 304.8,
+          "threat_radius_m": 3000,
+          "target_radius_m": 5000,
+          "alt_min_m": 3000,
+          "alt_max_m": 12000,
+          "target_alt_m": 0
+        },
+        "events": [
+          {
+            "id": "feet_reference__bounded_stress__threat_3000__aircraft_aircraft__CASE_A__CASE_B__0",
+            "type": "aircraft_aircraft",
+            "rule_id": "aircraft_separation",
+            "participants": [
+              "CASE_A",
+              "CASE_B"
+            ],
+            "flight_ids": [
+              "CASE_A",
+              "CASE_B"
+            ],
+            "profile_id": "feet_reference",
+            "mode_id": "bounded_stress",
+            "variant_id": "threat_3000",
+            "start_s": 20.99601593625498,
+            "end_s": 59.1566265060241,
+            "start_inclusive": false,
+            "end_inclusive": false,
+            "initial_violation": false,
+            "continues_at_horizon": false,
+            "severity": "possible_violation",
+            "representative_s": 40,
+            "duration_s": 38.16061056976912,
+            "thresholds": {
+              "horizontal": {
+                "intercept_m": 9460,
+                "slope_mps": 2
+              },
+              "vertical": {
+                "intercept_m": 344.8,
+                "slope_mps": 0.2
+              }
+            },
+            "metrics": {
+              "horizontal_min": {
+                "value_m": 0,
+                "time_s": 40,
+                "attained": true
+              },
+              "vertical_min": {
+                "value_m": 0,
+                "time_s": 40,
+                "attained": true
+              },
+              "distance_3d_min": {
+                "value_m": 0,
+                "time_s": 40,
+                "attained": true
+              }
+            }
+          }
+        ],
+        "summary": {
+          "event_count": 1,
+          "aircraft_pair_count": 1,
+          "affected_flight_count": 2,
+          "affected_flight_ids": [
+            "CASE_A",
+            "CASE_B"
+          ],
+          "initial_event_count": 0,
+          "counts_by_type": {
+            "aircraft_aircraft": 1,
+            "aircraft_threat": 0,
+            "aircraft_target": 0,
+            "altitude": 0,
+            "motion": 0
+          },
+          "first_event_s": 20.99601593625498,
+          "total_event_duration_s": 38.16061056976912
+        },
+        "initial_state": {
+          "has_violations": false,
+          "event_ids": []
+        },
+        "motion_checks": {
+          "all_pass": true,
+          "scope": "constant_velocity_baseline",
+          "checks": []
+        }
+      },
+      {
+        "id": "feet_reference__bounded_stress__threat_10000",
+        "profile_id": "feet_reference",
+        "mode_id": "bounded_stress",
+        "variant_id": "threat_10000",
+        "thresholds": {
+          "horizontal_m": 9260,
+          "vertical_m": 304.8,
+          "threat_radius_m": 10000,
+          "target_radius_m": 5000,
+          "alt_min_m": 3000,
+          "alt_max_m": 12000,
+          "target_alt_m": 0
+        },
+        "events": [
+          {
+            "id": "feet_reference__bounded_stress__threat_10000__aircraft_aircraft__CASE_A__CASE_B__0",
+            "type": "aircraft_aircraft",
+            "rule_id": "aircraft_separation",
+            "participants": [
+              "CASE_A",
+              "CASE_B"
+            ],
+            "flight_ids": [
+              "CASE_A",
+              "CASE_B"
+            ],
+            "profile_id": "feet_reference",
+            "mode_id": "bounded_stress",
+            "variant_id": "threat_10000",
+            "start_s": 20.99601593625498,
+            "end_s": 59.1566265060241,
+            "start_inclusive": false,
+            "end_inclusive": false,
+            "initial_violation": false,
+            "continues_at_horizon": false,
+            "severity": "possible_violation",
+            "representative_s": 40,
+            "duration_s": 38.16061056976912,
+            "thresholds": {
+              "horizontal": {
+                "intercept_m": 9460,
+                "slope_mps": 2
+              },
+              "vertical": {
+                "intercept_m": 344.8,
+                "slope_mps": 0.2
+              }
+            },
+            "metrics": {
+              "horizontal_min": {
+                "value_m": 0,
+                "time_s": 40,
+                "attained": true
+              },
+              "vertical_min": {
+                "value_m": 0,
+                "time_s": 40,
+                "attained": true
+              },
+              "distance_3d_min": {
+                "value_m": 0,
+                "time_s": 40,
+                "attained": true
+              }
+            }
+          }
+        ],
+        "summary": {
+          "event_count": 1,
+          "aircraft_pair_count": 1,
+          "affected_flight_count": 2,
+          "affected_flight_ids": [
+            "CASE_A",
+            "CASE_B"
+          ],
+          "initial_event_count": 0,
+          "counts_by_type": {
+            "aircraft_aircraft": 1,
+            "aircraft_threat": 0,
+            "aircraft_target": 0,
+            "altitude": 0,
+            "motion": 0
+          },
+          "first_event_s": 20.99601593625498,
+          "total_event_duration_s": 38.16061056976912
+        },
+        "initial_state": {
+          "has_violations": false,
+          "event_ids": []
+        },
+        "motion_checks": {
+          "all_pass": true,
+          "scope": "constant_velocity_baseline",
+          "checks": []
+        }
+      },
+      {
+        "id": "feet_reference__bounded_stress__target_3000",
+        "profile_id": "feet_reference",
+        "mode_id": "bounded_stress",
+        "variant_id": "target_3000",
+        "thresholds": {
+          "horizontal_m": 9260,
+          "vertical_m": 304.8,
+          "threat_radius_m": 5000,
+          "target_radius_m": 3000,
+          "alt_min_m": 3000,
+          "alt_max_m": 12000,
+          "target_alt_m": 0
+        },
+        "events": [
+          {
+            "id": "feet_reference__bounded_stress__target_3000__aircraft_aircraft__CASE_A__CASE_B__0",
+            "type": "aircraft_aircraft",
+            "rule_id": "aircraft_separation",
+            "participants": [
+              "CASE_A",
+              "CASE_B"
+            ],
+            "flight_ids": [
+              "CASE_A",
+              "CASE_B"
+            ],
+            "profile_id": "feet_reference",
+            "mode_id": "bounded_stress",
+            "variant_id": "target_3000",
+            "start_s": 20.99601593625498,
+            "end_s": 59.1566265060241,
+            "start_inclusive": false,
+            "end_inclusive": false,
+            "initial_violation": false,
+            "continues_at_horizon": false,
+            "severity": "possible_violation",
+            "representative_s": 40,
+            "duration_s": 38.16061056976912,
+            "thresholds": {
+              "horizontal": {
+                "intercept_m": 9460,
+                "slope_mps": 2
+              },
+              "vertical": {
+                "intercept_m": 344.8,
+                "slope_mps": 0.2
+              }
+            },
+            "metrics": {
+              "horizontal_min": {
+                "value_m": 0,
+                "time_s": 40,
+                "attained": true
+              },
+              "vertical_min": {
+                "value_m": 0,
+                "time_s": 40,
+                "attained": true
+              },
+              "distance_3d_min": {
+                "value_m": 0,
+                "time_s": 40,
+                "attained": true
+              }
+            }
+          }
+        ],
+        "summary": {
+          "event_count": 1,
+          "aircraft_pair_count": 1,
+          "affected_flight_count": 2,
+          "affected_flight_ids": [
+            "CASE_A",
+            "CASE_B"
+          ],
+          "initial_event_count": 0,
+          "counts_by_type": {
+            "aircraft_aircraft": 1,
+            "aircraft_threat": 0,
+            "aircraft_target": 0,
+            "altitude": 0,
+            "motion": 0
+          },
+          "first_event_s": 20.99601593625498,
+          "total_event_duration_s": 38.16061056976912
+        },
+        "initial_state": {
+          "has_violations": false,
+          "event_ids": []
+        },
+        "motion_checks": {
+          "all_pass": true,
+          "scope": "constant_velocity_baseline",
+          "checks": []
+        }
+      },
+      {
+        "id": "feet_reference__bounded_stress__target_10000",
+        "profile_id": "feet_reference",
+        "mode_id": "bounded_stress",
+        "variant_id": "target_10000",
+        "thresholds": {
+          "horizontal_m": 9260,
+          "vertical_m": 304.8,
+          "threat_radius_m": 5000,
+          "target_radius_m": 10000,
+          "alt_min_m": 3000,
+          "alt_max_m": 12000,
+          "target_alt_m": 0
+        },
+        "events": [
+          {
+            "id": "feet_reference__bounded_stress__target_10000__aircraft_aircraft__CASE_A__CASE_B__0",
+            "type": "aircraft_aircraft",
+            "rule_id": "aircraft_separation",
+            "participants": [
+              "CASE_A",
+              "CASE_B"
+            ],
+            "flight_ids": [
+              "CASE_A",
+              "CASE_B"
+            ],
+            "profile_id": "feet_reference",
+            "mode_id": "bounded_stress",
+            "variant_id": "target_10000",
+            "start_s": 20.99601593625498,
+            "end_s": 59.1566265060241,
+            "start_inclusive": false,
+            "end_inclusive": false,
+            "initial_violation": false,
+            "continues_at_horizon": false,
+            "severity": "possible_violation",
+            "representative_s": 40,
+            "duration_s": 38.16061056976912,
+            "thresholds": {
+              "horizontal": {
+                "intercept_m": 9460,
+                "slope_mps": 2
+              },
+              "vertical": {
+                "intercept_m": 344.8,
+                "slope_mps": 0.2
+              }
+            },
+            "metrics": {
+              "horizontal_min": {
+                "value_m": 0,
+                "time_s": 40,
+                "attained": true
+              },
+              "vertical_min": {
+                "value_m": 0,
+                "time_s": 40,
+                "attained": true
+              },
+              "distance_3d_min": {
+                "value_m": 0,
+                "time_s": 40,
+                "attained": true
+              }
+            }
+          }
+        ],
+        "summary": {
+          "event_count": 1,
+          "aircraft_pair_count": 1,
+          "affected_flight_count": 2,
+          "affected_flight_ids": [
+            "CASE_A",
+            "CASE_B"
+          ],
+          "initial_event_count": 0,
+          "counts_by_type": {
+            "aircraft_aircraft": 1,
+            "aircraft_threat": 0,
+            "aircraft_target": 0,
+            "altitude": 0,
+            "motion": 0
+          },
+          "first_event_s": 20.99601593625498,
+          "total_event_duration_s": 38.16061056976912
+        },
+        "initial_state": {
+          "has_violations": false,
+          "event_ids": []
+        },
+        "motion_checks": {
+          "all_pass": true,
+          "scope": "constant_velocity_baseline",
+          "checks": []
+        }
+      }
+    ]
+  }
+}

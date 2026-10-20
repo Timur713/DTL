@@ -1,0 +1,27 @@
+# Local Python environments and caches
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Browser-test dependencies and temporary output
+node_modules/
+playwright-report/
+test-results/
+*.log
+*.tmp
+
+# Local settings and credentials
+.DS_Store
+.idea/
+.vscode/
+.env
+.env.*
+!.env.example
+
+# Keep baseline.html, reports/, fixtures and source inputs versioned.
