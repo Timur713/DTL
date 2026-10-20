@@ -1,79 +1,79 @@
-# Модель и правила анализа исходного движения
+# Model and rules for analyzing baseline motion
 
-Это исследовательская модель исходных траекторий за 1200 с. `rules.json` содержит выбранные пороги и пределы для анализатора и интерфейса. Здесь нет манёвров, оптимизации, разрешения конфликтов или заявления, что исходное движение безопасно. Проверка обнаруживает нарушения выбранных правил и показывает чувствительность вывода к правилам и ограниченным ошибкам.
+This is a research model of source trajectories over 1200 s. `rules.json` contains the thresholds and limits selected for the analyzer and interface. There are no maneuvers, optimization, conflict resolution or claims that source motion is safe. The analysis detects violations of the selected rules and shows how conclusions depend on those rules and bounded errors.
 
-## Входные данные и область модели
+## Inputs and model scope
 
-`flights.csv` содержит 40 самолётов и единственный снимок при `t=0`: декартовы координаты, высоту, три компоненты скорости. `scenario.json` задаёт оси X на восток, Y на север, область ±200 км по X/Y, высоты 3000–12000 м, неподвижные XY цели и состояние дрона. В `Task1_details.pdf` выбор собственных размеров защитных зон и характеристик самолётов прямо оставлен исполнителю. В его sanity facts есть опечатка: 230×1200=276 км соответствует **20**, а не 15 минутам.
+`flights.csv` contains 40 aircraft and a single snapshot at `t=0`: Cartesian coordinates, altitude and three velocity components. `scenario.json` defines X east, Y north, a ±200 km X/Y region, altitudes of 3000–12000 m, fixed target XY and the drone state. `Task1_details.pdf` explicitly leaves the choice of protected zone sizes and aircraft characteristics to the implementer. Its sanity facts contain a typo: 230×1200=276 km corresponds to **20**, rather than 15 minutes.
 
-Каждый самолёт — материальная точка с заданным относительным защищённым объёмом. Размеры фюзеляжа и крыльев, wake turbulence и 6DOF не моделируются. Неизвестны типы самолётов, масса, оборудование, допуск RVSM, атмосферное давление, действительная точность навигации/наблюдения, ветер и физические эффекты угрозы. Эти сведения нельзя восстановить из снимка.
+Each aircraft is a point mass with a defined relative protected volume. Fuselage and wing dimensions, wake turbulence and 6DOF are not modeled. Aircraft types, mass, equipment, RVSM approval, atmospheric pressure, actual navigation/surveillance accuracy, wind and physical threat effects are unknown. These cannot be recovered from the snapshot.
 
-Высоты считаются геометрической координатой модели. Они не являются эшелонами или подтверждёнными барометрическими высотами. Плоская локальная геометрия принята на весь горизонт, без геодезической поправки и кривизны Земли. Это допущение исходной задачи, его физическая погрешность не оценена и не включена в stress bounds.
+Altitude is treated as a geometric model coordinate. It is not a flight level or a verified pressure altitude. Flat local geometry is assumed throughout the horizon, without geodetic correction or Earth curvature. This is an assumption of the source task; its physical error has not been assessed or included in stress bounds.
 
-Для каждого движущегося объекта:
+For every moving object:
 
 ```text
 p(t) = p0 + v*t, 0 <= t <= 1200 s.
 ```
 
-Объекты за XY-границами сохраняются и участвуют во всех проверках. XY-рамка — визуальная область, не обязательный коридор безопасности. Диапазон высот самолётов берётся из `scenario.airspace.alt_min_m/alt_max_m`, включая границы. Дрон не подчинён выбранным пределам скорости generic jet и высотным ограничениям самолётов.
+Objects outside XY boundaries are retained and participate in all checks. The XY frame is a visual region, not a mandatory safety corridor. Aircraft altitude bounds come from `scenario.airspace.alt_min_m/alt_max_m`, including boundaries. The drone is not subject to the selected generic jet speed limits or aircraft altitude limits.
 
-Цель имеет неизменные XY=(20000,−10000) м. Её высота во входных данных не задана; принимаем `rules.zones.target.center_alt_m=0` м в системе координат сценария. Это явное допущение о наземной точке, без модели рельефа. Дрон летит из (−60000,50000,4000) м со скоростью (96,−72,0) м/с. При `t=2500/3≈833.333333` с он проходит XY цели на высоте 4000 м, затем продолжает прежнее движение. При 1200 с он находится в (55200,−36400,4000) м. Удар, остановка, исчезновение или смена траектории не предполагаются. Условное назначение каждого самолёта для будущего планировщика — его исходная точка `p0+v*1200`; сейчас самолёт просто следует этой прямой.
+The target has fixed XY=(20000,−10000) m. Its altitude is absent from the inputs; we assume `rules.zones.target.center_alt_m=0` m in the scenario coordinate system. This explicitly assumes a ground point without a terrain model. The drone flies from (−60000,50000,4000) m with velocity (96,−72,0) m/s. At `t=2500/3≈833.333333` s it passes the target XY at altitude 4000 m, then continues the same motion. At 1200 s it is at (55200,−36400,4000) m. Impact, stopping, disappearance or a trajectory change are not assumed. Each aircraft's provisional destination for a future planner is the endpoint of its original trajectory, `p0+v*1200`; currently it simply follows this straight line.
 
-## Заимствованные ориентиры и собственный выбор
+## External references and our choices
 
-Проверены первичные официальные источники. Они объясняют выбор масштаба и архитектуры модели; их эксплуатационные условия в исходных данных не подтверждены.
+Primary official sources were checked. They explain the choice of scale and model architecture; their operational conditions are not confirmed by the inputs.
 
-| Источник и точный раздел | Что он поддерживает | Как используется здесь |
+| Source and exact section | What it supports | Use here |
 | --- | --- | --- |
-| [FAA JO 7110.65, §5-5-4(d)(1), ERAM](https://www.faa.gov/air_traffic/publications/atpubs/atc_html/chap5_section_5.html) | Для ERAM ниже FL600 указан ориентир 5 NM; в том же разделе есть другие минимумы и условия применения. | `H=5*1852=9260` м — собственный общий горизонтальный порог. Это не универсальная норма для любых самолётов/условий. |
-| [FAA JO 7110.65, §4-5-1(a–c)](https://www.faa.gov/air_traffic/publications/atpubs/atc_html/chap4_section_5.html) | 1000 ft до FL410 включительно, с оговорками для non-RVSM и другими высотами. | Профиль `feet_reference` использует точное преобразование `1000*0.3048=304.8` м. Применимость FAA/RVSM не утверждается. |
-| [ICAO Doc 9574, 3-е изд. 2012, официальное описание товара](https://store.icao.int/en/manual-on-implementation-vertical-separation-doc-9574) | Описание использует формулировку 300 м (1000 ft) для VSM выше FL290 и связывает внедрение с критериями/требованиями ICAO. | Профиль `metric` принимает **ровно 300 м по соглашению**. Это не точное преобразование футов. Полный платный документ не использован и не заявлен как прочитанный. |
-| [EUROCONTROL MTCD Ed.2, §§3.1.1.4–3.1.1.11, печатная стр.16/PDF стр.17](https://www.eurocontrol.int/sites/default/files/publication/files/EUROCONTROL-SPEC-0139%20MTCD%20Ed%202.0.pdf) | §§4–8 допускают настройку разделения по пространству и измерениям, учитывают RVSM и deemed-separated маршруты; §9 требует роста неопределённости с упреждением; §§10–11 допускают корреляцию и вероятностный подход. | Настраиваем пороги отдельно от растущей неопределённости. Выбранные линейные bounds собственные, корреляции и вероятность не моделируются; соответствие всей спецификации не заявляется. |
-| [NASA DAIDALUS v2, Introduction; Adding Sensor Uncertainty; Horizontal Direction/Speed/Vertical Speed Bands](https://nasa.github.io/daidalus/) | Есть отдельные модели неопределённости положений/скоростей и кинематических ограничений: bank/turn rate и ускорения. Сенсорные входы описаны через standard deviations. | Заимствована идея разделять геометрию, неопределённость и кинематику. Наши bounds детерминированные, не standard deviations; формулы DAIDALUS, DAA thresholds и его результаты в проект не переносились. |
-| [EUROCONTROL BADA, Replicate the performance of any aircraft; Access procedure](https://www.eurocontrol.int/model/bada) | Реалистичная модель требует спецификаций и специальных наборов характеристик; доступ регулируется лицензированием. | Типовых данных у нас нет, BADA не установлен и его характеристики не использованы. Generic jet ниже — явное собственное допущение. |
+| [FAA JO 7110.65, §5-5-4(d)(1), ERAM](https://www.faa.gov/air_traffic/publications/atpubs/atc_html/chap5_section_5.html) | A 5 NM reference is specified for ERAM below FL600; the same section gives other minima and applicability conditions. | `H=5*1852=9260` m is our common horizontal threshold. It is not a universal standard for all aircraft/conditions. |
+| [FAA JO 7110.65, §4-5-1(a–c)](https://www.faa.gov/air_traffic/publications/atpubs/atc_html/chap4_section_5.html) | 1000 ft through FL410 inclusive, with qualifications for non-RVSM and other altitudes. | The `feet_reference` profile uses the exact conversion `1000*0.3048=304.8` m. FAA/RVSM applicability is not claimed. |
+| [ICAO Doc 9574, 3rd edition 2012, official product description](https://store.icao.int/en/manual-on-implementation-vertical-separation-doc-9574) | The description uses 300 m (1000 ft) for VSM above FL290 and ties implementation to ICAO criteria/requirements. | The `metric` profile assumes **exactly 300 m by convention**. This is not an exact conversion from feet. The full paid document was not used and is not claimed to have been read. |
+| [EUROCONTROL MTCD Ed.2, §§3.1.1.4–3.1.1.11, printed p.16/PDF p.17](https://www.eurocontrol.int/sites/default/files/publication/files/EUROCONTROL-SPEC-0139%20MTCD%20Ed%202.0.pdf) | §§4–8 allow separation configuration by airspace and dimensions, account for RVSM and deemed-separated routes; §9 requires uncertainty growth with look-ahead time; §§10–11 allow correlation and a probabilistic approach. | Thresholds are configured separately from growing uncertainty. Our linear bounds are our own choice; correlations and probability are not modeled, and compliance with the full specification is not claimed. |
+| [NASA DAIDALUS v2, Introduction; Adding Sensor Uncertainty; Horizontal Direction/Speed/Vertical Speed Bands](https://nasa.github.io/daidalus/) | Separate position/velocity uncertainty models and kinematic limits: bank/turn rate and accelerations. Sensor inputs are described using standard deviations. | We adopt the idea of separating geometry, uncertainty and kinematics. Our bounds are deterministic, not standard deviations; DAIDALUS formulas, DAA thresholds and its results were not incorporated into this project. |
+| [EUROCONTROL BADA, Replicate the performance of any aircraft; Access procedure](https://www.eurocontrol.int/model/bada) | A realistic model requires specifications and dedicated performance datasets; access is licensed. | Aircraft type data are unavailable, BADA is not installed and its performance data are not used. The generic jet below is our explicit assumption. |
 
-Основной профиль — `metric`: H=9260 м, V=300 м. Альтернатива — `feet_reference`: H=9260 м, V=304.8 м. Общий метрический порог применён на всех высотах входного сценария как исследовательское соглашение, а не буквальная реализация FAA. Нормативное соответствие, пригодность к реальному управлению или разрешение эксплуатации не следуют из результата.
+The primary profile is `metric`: H=9260 m, V=300 m. The alternative is `feet_reference`: H=9260 m, V=304.8 m. A common metric threshold is applied at all input scenario altitudes as a research convention, rather than a literal FAA implementation. Regulatory compliance, suitability for real control or operational approval do not follow from the result.
 
-## Геометрия нарушений
+## Violation geometry
 
-Для пары самолётов определим относительные координаты `r=p_i−p_j`, горизонтальное расстояние `d_h=hypot(r_x,r_y)` и вертикальное `d_z=abs(r_z)`. Нарушение есть только при одновременном выполнении:
+For an aircraft pair, define relative coordinates `r=p_i−p_j`, horizontal distance `d_h=hypot(r_x,r_y)` and vertical distance `d_z=abs(r_z)`. A violation exists only when both conditions hold:
 
 ```text
 d_h(t) < H  AND  d_z(t) < V.
 ```
 
-Это относительный цилиндр с горизонтальным радиусом H и вертикальной полувысотой V. H/V — расстояния между центрами пары; их нельзя ещё раз суммировать как радиусы двух самолётов. Безопасность по этому правилу означает `d_h>=H OR d_z>=V`; равенство любого порога безопасно.
+This is a relative cylinder with horizontal radius H and vertical half-height V. H/V are distances between the pair's centers; do not add them again as radii of two aircraft. Safety under this rule means `d_h>=H OR d_z>=V`; equality at either threshold is safe.
 
-Угроза — **сфера радиуса 5000 м** вокруг текущей 3D-точки дрона: нарушение `distance_3d<R_threat`. Цель — **сфера радиуса 5000 м** вокруг неподвижной точки `(x_target,y_target,z_target)`, по умолчанию `z_target=0`: нарушение `sqrt((x−x_target)²+(y−y_target)²+(z−z_target)²)<R_target`. Обе зоны активны на всём горизонте. Радиусы одинаковы только по исходному соглашению; это два независимых параметра. Они не являются радиусами поражения, оценкой мощности оружия или авиационными нормативами. Все нарушения обозначают вход в выбранные защитные зоны, а не физическое столкновение.
+The threat is a **sphere of radius 5000 m** around the drone's current 3D point: a violation is `distance_3d<R_threat`. The target is a **sphere of radius 5000 m** around the fixed point `(x_target,y_target,z_target)`, with default `z_target=0`: a violation is `sqrt((x−x_target)²+(y−y_target)²+(z−z_target)²)<R_target`. Both zones are active throughout the horizon. The radii are equal only by the initial convention; they are independent parameters. They are not damage radii, weapon power estimates or aviation standards. All violations represent entry into selected protected zones, rather than physical collisions.
 
-Условие допускает 2D- или 3D-зону цели. Выбранная сфера задаёт минимальное пространственное расстояние до наземного объекта и учитывает высоту самолёта. Она заменяет прежнее допущение о бесконечном вертикальном цилиндре; краткое решение — в [target-zone-decision.md](target-zone-decision.md). Например, на высоте 3000 м сечение сферы 5000 м имеет радиус 4000 м, а на высоте 8100 м сечения нет. Радиус остаётся рабочим допущением, проверяемым анализом чувствительности.
+The task permits a 2D or 3D target zone. The selected sphere defines a minimum spatial distance to a ground object and accounts for aircraft altitude. It replaces the earlier assumption of an infinite vertical cylinder; the brief decision is in [target-zone-decision.md](target-zone-decision.md). For example, at altitude 3000 m a 5000 m sphere has a section radius of 4000 m, while at altitude 8100 m there is no section. The radius remains a working assumption assessed through sensitivity analysis.
 
-Отдельное высотное правило для каждого самолёта: `alt_min<=z<=alt_max`. Номинальное `z=3000` м законно в этой модели. Проверки угрозы/цели не ограничиваются XY-рамкой или высотной областью.
+A separate altitude rule applies to each aircraft: `alt_min<=z<=alt_max`. Nominal `z=3000` m is allowed in this model. Threat/target checks are not restricted to the XY frame or altitude region.
 
-## Точный режим и ограниченные ошибки
+## Exact mode and bounded errors
 
-`nominal` предполагает точные p0/v и нулевые ошибки и задержки. Это действительные нарушения **внутри принятой детерминированной модели**, а не подтверждение фактического положения реального самолёта.
+`nominal` assumes exact p0/v, zero errors and zero delays. These are actual violations **within the adopted deterministic model**, not confirmation of a real aircraft's actual position.
 
-`bounded_stress` задаёт для **каждого самолёта и дрона** горизонтальный диск ошибки начального положения радиусом 100 м, вертикальный интервал ±20 м, горизонтальный диск ошибки скорости радиусом 1 м/с и вертикальную ошибку скорости ±0.1 м/с. Цель точная. Ошибка скорости каждого объекта постоянна на горизонте; начальная ошибка тоже выбирается один раз. Для положений при времени t получаются границы:
+`bounded_stress` assigns **each aircraft and the drone** an initial horizontal position error disk of radius 100 m, a vertical interval of ±20 m, a horizontal velocity error disk of radius 1 m/s and vertical velocity error of ±0.1 m/s. The target is exact. Each object's velocity error is constant throughout the horizon; its initial error is also chosen once. Position bounds at time t are:
 
 ```text
 e_h(t) = 100 + 1*t m,
 e_z(t) = 20 + 0.1*t m.
 ```
 
-Эти bounds отсчитываются от единственного снимка t0: нет новых наблюдений, обновления снимка или сброса при кадрах/перемотке. Указание задачи о знании положения остальных объектов интерпретируется в baseline как доступ к общей номинальной модели; stress — отдельный эксперимент устойчивости к ошибке этого снимка. В stress при t=1200 каждый объект имеет e_h=1300 м и e_z=140 м. Это выбранные максимальные ошибки, не RMS, σ, доверительный интервал или вероятность.
+These bounds start at the single t0 snapshot: there are no new observations, snapshot updates or resets on frames/seeking. The task's statement about knowing other objects' positions is interpreted in the baseline as access to the common nominal model; stress is a separate experiment on robustness to snapshot errors. In stress mode at t=1200, each object has e_h=1300 m and e_z=140 m. These are selected maximum errors, not RMS, σ, confidence intervals or probabilities.
 
-Для пары складываются индивидуальные bounds:
+Individual bounds are added for a pair:
 
 ```text
 H_eff(t) = H + e_hi(t) + e_hj(t) = H + 200 + 2*t,
 V_eff(t) = V + e_zi(t) + e_zj(t) = V + 40 + 0.2*t.
 ```
 
-Проверяется то же строгое сочетание с H_eff/V_eff. В отдельный момент для диска×интервала это точное условие существования допустимой ошибки, способной нарушить пороги. Непрерывный интервал возможных нарушений — объединение таких возможностей по времени; он не утверждает, что одна фиксированная реализация ошибок нарушает правило в каждой его точке. Независимость здесь означает отсутствие ограничений на совместный выбор ошибок, а не статистическую независимость.
+The same strict conjunction is checked with H_eff/V_eff. At an individual instant, for a disk×interval this is the exact condition for the existence of an admissible error that can violate the thresholds. A continuous possible-violation interval is the union of such possibilities over time; it does not assert that one fixed error realization violates the rule at every point of the interval. Independence here means an absence of constraints on joint error choices, not statistical independence.
 
-Для обеих сфер используем намеренно консервативную аффинную оценку нормы 3D-ошибки. Цель точная, поэтому для неё учитывается ошибка только самолёта:
+For both spheres we use a deliberately conservative affine bound on 3D error magnitude. The target is exact, so only aircraft error is included for it:
 
 ```text
 |delta_p| <= hypot(e_h,e_z) <= e_h+e_z =: e_3d,
@@ -83,94 +83,94 @@ R_threat_eff(t) = R_threat+e_3di(t)+e_3d_drone(t)
                 = R_threat+240+2.2*t.
 ```
 
-Для любой из двух зон, если `distance_3d>=R_eff`, то по неравенству треугольника фактическое расстояние не меньше её исходного R для всех разрешённых ошибок: это **достаточная оценка безопасности**. Обратное неверно. Сфера, расширенная на сумму применимых e_h+e_z, содержит точную сумму Минковского сферы и цилиндрических error sets; она не равна ей. Поэтому stress-событие сферы может быть ложной тревогой даже для множества допустимых ошибок. Оно означает возможную потерю гарантии, не вероятность столкновения и не доказанное фактическое нарушение. Аффинная верхняя граница сохраняет непрерывное решение через квадратичные неравенства. Более точная геометрия возможна позднее, сейчас выбран простейший проверяемый достаточный bound.
+For either zone, if `distance_3d>=R_eff`, the triangle inequality guarantees that the actual distance is at least its original R for all allowed errors: this is a **sufficient safety bound**. The converse is false. A sphere expanded by the sum of applicable e_h+e_z contains the exact Minkowski sum of the sphere and cylindrical error sets; it is not equal to that sum. A stress sphere event can therefore be a false alarm even for the admissible error set. It indicates possible loss of guarantee, not a collision probability or a proven actual violation. The affine upper bound preserves a continuous solution through quadratic inequalities. More precise geometry could be added later; the simplest verifiable sufficient bound is currently selected.
 
-Высотная гарантия в stress требует `z−e_z>=alt_min AND z+e_z<=alt_max`. Поэтому у F031 и F040 на высоте 3000 м уже при t0 есть `possible_violation`: нижний допустимый уровень 2980 м. Исходная номинальная высота при этом разрешена. Нельзя скрыть эти события добавлением запаса к исходным данным или произвольно сдвинуть самолёты.
+The stress altitude guarantee requires `z−e_z>=alt_min AND z+e_z<=alt_max`. Thus F031 and F040 at altitude 3000 m already have `possible_violation` at t0: the lowest admissible altitude is 2980 m. Their original nominal altitude is allowed. Do not hide these events by adding margins to source inputs or arbitrarily moving aircraft.
 
-## Динамика generic jet
+## Generic jet dynamics
 
-Все следующие значения — моделирующие допущения, а не характеристики неизвестных реальных типов:
+All following values are modeling assumptions, not characteristics of unknown real types:
 
-| Параметр | Принято |
+| Parameter | Assumed value |
 | --- | --- |
-| Горизонтальная скорость | 200–260 м/с включительно |
-| Разгон/торможение | `abs(d norm(v_xy)/dt)<=0.5` м/с² |
-| Вертикальная скорость | `abs(v_z)<=15` м/с |
-| Вертикальное ускорение | `abs(a_z)<=0.5` м/с² |
-| Крен | не более 25° по модулю |
-| Гравитационное ускорение | 9.80665 м/с² |
-| Ветер | нулевой в кинематическом приближении |
+| Horizontal speed | 200–260 m/s inclusive |
+| Acceleration/deceleration | `abs(d norm(v_xy)/dt)<=0.5` m/s² |
+| Vertical speed | `abs(v_z)<=15` m/s |
+| Vertical acceleration | `abs(a_z)<=0.5` m/s² |
+| Bank angle | absolute value no greater than 25° |
+| Gravitational acceleration | 9.80665 m/s² |
+| Wind | zero in the kinematic approximation |
 
-Разгон/торможение — предел **изменения модуля горизонтальной скорости**, а не нормы всего XY-ускорения. Поворот создаёт дополнительное боковое ускорение. Для согласованного горизонтального разворота при нулевом ветре:
+Acceleration/deceleration limits the **change in horizontal speed magnitude**, rather than the magnitude of the full XY acceleration. Turning creates additional lateral acceleration. For a coordinated level turn in zero wind:
 
 ```text
 |omega|max(v_h) = g*tan(25°)/v_h rad/s,
 R_min(v_h) = v_h^2/(g*tan(25°)).
 ```
 
-При 200–260 м/с это 1.310044–1.007726 °/с; при 230 м/с R_min≈11568.111 м. Это упрощение согласованного разворота, не модель тяги, аэродинамики и совместной достижимости всех предельных режимов. Ограничение 0.5 м/с² на тангенциальное ускорение согласуется с отдельным боковым ускорением `g*tan25≈4.573` м/с². При разгоне 200→260 м/с нужно минимум 120 с. Предел 15 м/с даёт 20 с на 300 м только при уже установленном вертикальном режиме; для старта и окончания с vz=0 при az=0.5 м/с² треугольный профиль потребовал бы ≈48.990 с. Телепортация или мгновенная смена направления этим будущим пределам не соответствует.
+At 200–260 m/s this is 1.310044–1.007726 °/s; at 230 m/s, R_min≈11568.111 m. This is a simplified coordinated turn, not a model of thrust, aerodynamics or joint feasibility of all limiting regimes. The 0.5 m/s² tangential acceleration limit is consistent with separate lateral acceleration `g*tan25≈4.573` m/s². Accelerating from 200→260 m/s requires at least 120 s. A 15 m/s limit gives 20 s per 300 m only with an already established vertical regime; starting and ending with vz=0 at az=0.5 m/s², a triangular profile would require ≈48.990 s. Teleportation or instantaneous direction changes would not satisfy these future limits.
 
-В исходном baseline ускорения и поворот равны нулю, vz=0. Проверенные модули горизонтальных скоростей входных самолётов лежат в [212.65,248.431854] м/с и проходят выбранные пределы. В stress каждый допустимый истинный baseline также прямолинеен с постоянной ошибкой скорости. Проверяются интервалы:
+In the source baseline, accelerations and turn rate are zero, vz=0. Checked horizontal speed magnitudes of the input aircraft lie in [212.65,248.431854] m/s and satisfy the selected limits. In stress mode, each admissible true baseline is also straight with constant velocity error. The checked intervals are:
 
 ```text
 v_h_true in [max(0,norm(v_xy)−e_vh), norm(v_xy)+e_vh],
 v_z_true in [v_z−e_vz, v_z+e_vz].
 ```
 
-При e_vh=1 и e_vz=0.1 все исходные самолёты проходят: общий диапазон [211.65,249.431854] м/с и vz в [−0.1,0.1]. Ускорения и turn остаются нулевыми у каждой допустимой траектории. Это не дифференцирование растущей оболочки положения. Будущие произвольные манёвры потребуют отдельного анализа производных, переходов между сегментами и реальной достижимости; он сейчас не реализуется. Пределы высот — отдельная проверка из scenario, не дублированные динамические константы.
+With e_vh=1 and e_vz=0.1 all input aircraft pass: the overall range is [211.65,249.431854] m/s and vz is in [−0.1,0.1]. Accelerations and turn rate remain zero for every admissible trajectory. This is not differentiation of the growing position envelope. Future arbitrary maneuvers will require separate analysis of derivatives, segment transitions and actual feasibility; this is not currently implemented. Altitude limits are a separate check from the scenario, not duplicated dynamic constants.
 
-## Задержки и численная точность
+## Delays and numerical accuracy
 
-Задержки наблюдения, передачи и исполнения приняты равными нулю. Положительные задержки не поддерживаются; их нельзя считать учтёнными ограниченными ошибками без отдельной модели. Ни размеры зон, ни uncertainty bounds не выводятся из системных задержек.
+Observation, communication and execution delays are assumed zero. Positive delays are unsupported; they cannot be considered covered by bounded errors without a separate model. Neither zone sizes nor uncertainty bounds are derived from system delays.
 
-Анализ должен быть непрерывным по времени, а не зависеть от кадров или частоты семплирования. Для относительной аффинной траектории `r=r0+w*t` и аффинного положительного порога `L=a+b*t` условие `norm(r)<L` эквивалентно:
+Analysis must be continuous in time, independent of frames or sampling frequency. For relative affine motion `r=r0+w*t` and an affine positive threshold `L=a+b*t`, the condition `norm(r)<L` is equivalent to:
 
 ```text
 (w·w−b²)*t² + 2*(r0·w−a*b)*t + (r0·r0−a²) < 0.
 ```
 
-Для XY используются две компоненты, для сферы — три. Вертикальное условие раскладывается на две строгие линейные неравенства. Полученные множества пересекаются друг с другом и закрытым горизонтом [0,1200]. Нужны обработки нулевого относительного движения, нулевого квадратичного коэффициента, двойных корней и касания. Точка касания ровно порога не создаёт события; два открытых интервала, разделённые безопасной точкой, не склеиваются.
+Use two components for XY and three for a sphere. The vertical condition splits into two strict linear inequalities. Intersect the resulting sets with each other and the closed horizon [0,1200]. Handle zero relative motion, a zero quadratic coefficient, double roots and tangency. Exact threshold tangency does not create an event; two open intervals separated by a safe point are not merged.
 
-`time_epsilon_s=1e−9`, `distance_epsilon_m=1e−7` — предельные малые допуски вычисления/остатков, не физические буферы. Они не расширяют и не сужают выбранные H/V/R, не превращают `<` в `<=`, не используются для слияния безопасных промежутков. Сравнение с квадратами требует соответствующего масштаба погрешности: нельзя применить допуск в метрах непосредственно к м². Разница 4.8 м между вертикальными профилями обязана сохраняться. Округление показанных чисел не изменяет исходный event или его endpoint flags; для неоднозначности граничных случаев предпочтительны точная исходная арифметика либо проверка корневых остатков.
+`time_epsilon_s=1e−9`, `distance_epsilon_m=1e−7` are small numerical calculation/residual tolerances, not physical buffers. They do not expand or shrink the selected H/V/R, turn `<` into `<=`, or merge safe gaps. Squared comparisons require appropriately scaled error: do not apply a tolerance in meters directly to m². The 4.8 m difference between vertical profiles must be preserved. Rounding displayed numbers does not change the source event or its endpoint flags; exact input arithmetic or root residual checks are preferred for ambiguous boundary cases.
 
-## Чувствительность и проверяемые примеры
+## Sensitivity and verifiable examples
 
-Проверяются оба V, а для каждого сочетания profile/mode пять вариантов радиусов: base (5000/5000), threat_3000 (3000/5000), threat_10000 (10000/5000), target_3000 (5000/3000), target_10000 (5000/10000). Меняется один параметр за раз. 5000 уже входит в base; дополнительный дубликат не нужен. Итого 2 профиля × 2 режима × 5 вариантов = **20 runs**. Результаты разных вариантов не суммируются как независимые события одной симуляции.
+Both V values are checked, with five radius variants for each profile/mode combination: base (5000/5000), threat_3000 (3000/5000), threat_10000 (10000/5000), target_3000 (5000/3000), target_10000 (5000/10000). One parameter changes at a time. 5000 is already included in base; no duplicate is needed. Total: 2 profiles × 2 modes × 5 variants = **20 runs**. Results of different variants are not added as independent events of a single simulation.
 
-Простые synthetic cases ниже имеют произвольные SI-пороги для ручного контроля интервалов; они не меняют рабочие правила:
+The simple synthetic cases below use arbitrary SI thresholds for manual interval checks; they do not change the working rules:
 
-| Случай | Данные относительного движения | Ожидание |
+| Case | Relative motion data | Expected result |
 | --- | --- | --- |
-| Вход и выход | T=20, H=10, V=3; r0=(20,0,0), w=(−2,0,0) | Один интервал (5,15), обе границы открыты; 3D/XY минимум 0 при t=10. |
-| Строгое вертикальное равенство | Те же XY, но rz=3 и wz=0 | Нет события: равенство V безопасно. При V=3.048 событие появляется. |
-| Нулевая относительная скорость внутри | T=20, H=10, V=3; r0=(5,0,0), w=0 | [0,20], initial_violation=true, continues_at_horizon=true. |
-| Нулевая относительная скорость на пороге | r0=(10,0,0), w=0, те же пороги | Нет события. |
-| Порог при t0, затем вход | T=15, H=10, V=3; r0=(10,0,0), w=(−1,0,0) | (0,15], initial=false, end inclusive; при t=15 расстояние 5, движение остаётся внутри на горизонте. |
-| Вход только после горизонта | T=10, H=10, V=3; r0=(20,0,0), w=(−1,0,0) | Нет события: при T лишь равенство. |
-| Внутри на горизонте | Предыдущий случай с T=15 | (10,15], continues_at_horizon=true. |
-| Касание | T=20, H=10, V=3; r0=(−10,10,0), w=(1,0,0) | Нет события: минимальное XY=10 при t=10. |
-| Stress без фактического нарушения | Совместно движущиеся объекты, d_h=110, dz=0, H=100; каждый e_h0=10 | Nominal: нет. Stress: возможная потеря гарантии, H_eff=120. |
+| Entry and exit | T=20, H=10, V=3; r0=(20,0,0), w=(−2,0,0) | One interval (5,15), both boundaries open; 3D/XY minimum 0 at t=10. |
+| Exact vertical equality | Same XY, but rz=3 and wz=0 | No event: equality at V is safe. An event appears for V=3.048. |
+| Zero relative velocity inside | T=20, H=10, V=3; r0=(5,0,0), w=0 | [0,20], initial_violation=true, continues_at_horizon=true. |
+| Zero relative velocity at threshold | r0=(10,0,0), w=0, same thresholds | No event. |
+| Threshold at t0, then entry | T=15, H=10, V=3; r0=(10,0,0), w=(−1,0,0) | (0,15], initial=false, end inclusive; at t=15 distance is 5, motion remains inside at the horizon. |
+| Entry only after horizon | T=10, H=10, V=3; r0=(20,0,0), w=(−1,0,0) | No event: only equality at T. |
+| Inside at horizon | Previous case with T=15 | (10,15], continues_at_horizon=true. |
+| Tangency | T=20, H=10, V=3; r0=(−10,10,0), w=(1,0,0) | No event: minimum XY=10 at t=10. |
+| Stress without actual violation | Objects moving together, d_h=110, dz=0, H=100; each e_h0=10 | Nominal: none. Stress: possible loss of guarantee, H_eff=120. |
 
-Для настоящих исходных данных независимый расчёт корней при nominal/H=9260 получил 3 уникальные пары при V=300 и 24 при V=304.8, без парных нарушений t0. Это контрольные результаты, а не цели подгонки. Три метрических интервала: F018/F034 `(422.552354175,1200]`, F020/F038 `(280.313481630,311.964821195)`, F030/F039 `(1143.506224271,1200]`. Вертикальные координаты всех самолётов кратны 300 м, поэтому переход 300→304.8 включает пары с разностью высот ровно 300 м и заметно меняет число событий. Это важное свойство данных и строгого неравенства, а не численная погрешность. Полные числа всех типов/режимов должен выдавать отдельный анализатор; этот документ не подменяет его отчёт.
+For the real source data, an independent root calculation at nominal/H=9260 found 3 unique pairs at V=300 and 24 at V=304.8, without pair violations at t0. These are reference results, not fitting targets. The three metric intervals are: F018/F034 `(422.552354175,1200]`, F020/F038 `(280.313481630,311.964821195)`, F030/F039 `(1143.506224271,1200]`. All aircraft vertical coordinates are multiples of 300 m, so changing 300→304.8 includes pairs with an altitude difference of exactly 300 m and substantially changes the event count. This is a significant property of the data and strict inequality, not numerical error. The separate analyzer must provide full counts for all types/modes; this document does not replace its report.
 
-## Контракт данных для анализатора и UI
+## Data contract for analyzer and UI
 
-`DATA={duration_s,scenario,flights,rules,analysis}`. `rules.schema_version` и `analysis.schema_version` — строки `"1.1"`. Версия 1.1 вводит сферическую цель, высоту её центра и соответствующие 3D-метрики. `analysis.runs[]` содержит ровно 20 комбинаций. Входные координаты и velocities остаются числовыми исходными значениями. Анализатор читает конфиг, UI читает готовые события и вычисляет позиции той же формулой, не определяет события по пикселям или кадрам. Окончательный машинный контракт фиксируется отдельно в `docs/contracts.md`; определения ниже задают обязательную семантику.
+`DATA={duration_s,scenario,flights,rules,analysis}`. `rules.schema_version` and `analysis.schema_version` are strings `"1.1"`. Version 1.1 introduces a spherical target, its center altitude and corresponding 3D metrics. `analysis.runs[]` contains exactly 20 combinations. Input coordinates and velocities remain their original numerical values. The analyzer reads the configuration; the UI reads precomputed events and calculates positions with the same formula, rather than detecting events from pixels or frames. The final machine contract is defined separately in `docs/contracts.md`; definitions below specify required semantics.
 
-У run: `id`, `profile_id`, `mode_id`, `variant_id`, `thresholds`, `events`, `summary`, `initial_state`, `motion_checks`. Предлагаемый id — `profile_id__mode_id__variant_id`. Пороговые числа run отражают реально выбранные параметры и override, без изменения rules. Ошибка каждого объекта — из выбранного mode.
+A run has: `id`, `profile_id`, `mode_id`, `variant_id`, `thresholds`, `events`, `summary`, `initial_state`, `motion_checks`. The proposed ID is `profile_id__mode_id__variant_id`. Run threshold values reflect the actual selected parameters and overrides, without changing rules. Each object's error comes from the selected mode.
 
-У event: `id`, `type` из `aircraft_aircraft/aircraft_threat/aircraft_target/altitude/motion`, `participants` (ID самолётов и при необходимости `THREAT`/`TARGET`), `flight_ids` (только самолёты), выбранные `profile_id/mode_id/variant_id`, `start_s/end_s`, `start_inclusive/end_inclusive`, `initial_violation`, `continues_at_horizon`, `severity`, `metrics`, `thresholds`, `representative_s`. Для altitude/motion возможен `constraint` с указанием нарушенного ограничения. События — максимальные связные интервалы нарушения одного правила/набора участников, с отдельными интервалами при безопасном разрыве.
+An event has: `id`, `type` from `aircraft_aircraft/aircraft_threat/aircraft_target/altitude/motion`, `participants` (aircraft IDs and, where needed, `THREAT`/`TARGET`), `flight_ids` (aircraft only), selected `profile_id/mode_id/variant_id`, `start_s/end_s`, `start_inclusive/end_inclusive`, `initial_violation`, `continues_at_horizon`, `severity`, `metrics`, `thresholds`, `representative_s`. For altitude/motion, `constraint` may identify the violated constraint. Events are maximal connected intervals of violation of one rule/participant set, with separate intervals where a safe gap exists.
 
-`severity=nominal_violation` означает нарушение nominal-модели; `possible_violation` — потерю гарантии в stress (включая консервативность сферы). Все stress-события маркируются одинаково, даже если номинальная траектория там тоже нарушает правило; сравнение с nominal run доступно отдельно.
+`severity=nominal_violation` means a nominal-model violation; `possible_violation` means loss of guarantee in stress mode (including sphere conservatism). All stress events are labeled alike even where the nominal trajectory also violates the rule; comparison with a nominal run is available separately.
 
-Равенство на пороге задаёт открытую границу. В t0/T граница закрыта только если строгий предикат нарушения там действительно выполнен. `initial_violation` означает предикат нарушения в t0, а не просто `start_s==0`. `continues_at_horizon` означает, что событие активно при T и ограничено концом анализа; продолжение после T не проверено. Начало в нулевой момент с открытой границей не является initial violation.
+Threshold equality defines an open boundary. At t0/T, a boundary is closed only if the strict violation predicate actually holds there. `initial_violation` means the violation predicate holds at t0, not merely `start_s==0`. `continues_at_horizon` means the event is active at T and limited by the analysis endpoint; continuation beyond T is unchecked. An open boundary at time zero is not an initial violation.
 
-`metrics` содержит минимумы **номинальных геометрических расстояний** на замыкании интервала: `horizontal_min`, `vertical_min`, `distance_3d_min`, где применимо, в формате `{value_m,time_s,attained}`. Для цели определены все три метрики относительно её 3D-центра. Если минимум только на исключённой границе, `attained=false`: это инфимум события. Если метрика постоянна на интервале, выбирается `representative_s` и `attained=true`; иначе используется минимизатор на замыкании с соответствующим `attained`. Несопоставимые метрики отсутствуют либо null по конечному контракту. Минимумы разных компонент могут наступать в разное время и не доказывают одновременное нарушение. `representative_s` — точка внутри интервала для перехода UI, обычно его середина; это не обязательно время всех минимумов.
+`metrics` contains minima of **nominal geometric distances** on the interval closure: `horizontal_min`, `vertical_min`, `distance_3d_min`, where applicable, in the format `{value_m,time_s,attained}`. All three metrics are defined for the target relative to its 3D center. If the minimum occurs only at an excluded boundary, `attained=false`: this is the event's infimum. If a metric is constant on the interval, choose `representative_s` and `attained=true`; otherwise use the minimizer on the closure with the corresponding `attained`. Inapplicable metrics are absent or null according to the final contract. Minima of different components may occur at different times and do not prove simultaneous violation. `representative_s` is an interior point for UI navigation, usually the midpoint; it is not necessarily the time of all minima.
 
-`event.thresholds` хранит эффективные пороги аффинно `{intercept_m,slope_mps}` в абсолютном времени от t0: `horizontal`, `vertical` для пары, `radius` для зон. Для altitude задаются bounds из scenario и e_z; для motion — измеренное значение/интервал и соответствующий предел. Не следует записывать только порог в representative_s и затем ошибочно применять его на всём событии.
+`event.thresholds` stores effective thresholds in affine form `{intercept_m,slope_mps}` in absolute time from t0: `horizontal`, `vertical` for a pair, `radius` for zones. For altitude, use scenario bounds and e_z; for motion, the measured value/interval and corresponding limit. Do not record only the threshold at representative_s and then mistakenly apply it throughout the event.
 
-`summary` различает число событий, число уникальных aircraft pairs, число затронутых самолётов, `counts_by_type`, число initial events. Несколько интервалов одной пары — несколько событий, одна уникальная пара. THREAT и TARGET не считаются самолётами или aircraft pair. `initial_state` сообщает нарушения выбранного run в t0 отдельно от будущих; `motion_checks` сообщает номинальный модуль либо stress-интервал скорости, vz-интервал, нулевые ускорения/turn и результаты проверок. Положительное число событий не является доказательством нерешаемости будущей задачи планирования.
+`summary` distinguishes event count, unique aircraft pair count, affected aircraft count, `counts_by_type` and initial event count. Multiple intervals for one pair mean multiple events and one unique pair. THREAT and TARGET are not counted as aircraft or aircraft pairs. `initial_state` reports the selected run's t0 violations separately from future ones; `motion_checks` reports nominal speed magnitude or the stress speed interval, vz interval, zero accelerations/turn rate and check results. A positive event count is not proof that a future planning problem is infeasible.
 
-## Границы вывода и дальнейшие вопросы
+## Limits of conclusions and future questions
 
-Выбраны все параметры, необходимые для текущего исходного анализа; неизвестные исходные сведения явно оставлены неизвестными. Блокирующих вопросов для этого этапа нет. Выбор допустимых манёвров, совместная динамическая достижимость, критерий возвращения к назначению, запас времени/маршрута и приоритеты оптимизации относятся к будущему планировщику. До его появления нельзя утверждать, что безопасность достигнута, выдавать baseline за безопасный маршрут или обещать устранение initial violations. Отсутствие nominal событий доказывает лишь выполнение собственных правил исходной модели; отсутствие bounded_stress событий даёт достаточную гарантию только в рамках объявленных bounds, кинематики и геометрии.
+All parameters needed for the current source analysis have been selected; unknown source information is explicitly left unknown. There are no blocking questions for this stage. Selecting admissible maneuvers, joint dynamic feasibility, the criterion for returning to the destination, time/route margins and optimization priorities belong to a future planner. Until it exists, do not claim safety has been achieved, present the baseline as a safe route or promise to eliminate initial violations. The absence of nominal events proves only compliance with our source-model rules; the absence of bounded_stress events gives a sufficient guarantee only within the declared bounds, kinematics and geometry.

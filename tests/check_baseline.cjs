@@ -20,6 +20,9 @@ const near = (actual, expected, epsilon = 1e-7) => assert.ok(Math.abs(actual - e
     page.on('request', request => requests.push(request.url()));
     await page.goto(pathToFileURL(process.env.HTML_PATH || path.join(root, 'baseline.html')).href);
     await page.waitForFunction(() => document.querySelector('#map').width > 1);
+    assert.equal(await page.locator('html').getAttribute('lang'), 'en');
+    assert.equal(await page.evaluate(() => fmt(1234.5)), '1,234.50');
+    assert.equal(await page.locator('#play').textContent(), '▶ Play');
     assert.equal(await page.locator('#flight-select option').count(), 40);
     const initial = await page.evaluate(() => ({ flights: DATA.flights, scenario: DATA.scenario, positions: flights.map(f => positionAt(f, 0)) }));
     assert.deepEqual(initial.flights, source);
@@ -62,8 +65,8 @@ const near = (actual, expected, epsilon = 1e-7) => assert.ok(Math.abs(actual - e
     const f = source[39], d = scenario.hostile_object;
     near(distances.drone, Math.hypot(f.x_m-d.x_m,f.y_m-d.y_m,f.alt_m-d.alt_m)/1000);
     near(distances.target, Math.hypot(f.x_m-scenario.target.x_m,f.y_m-scenario.target.y_m,f.alt_m)/1000);
-    const targetDetail = await page.evaluate(() => [...document.querySelectorAll('#details dt')].find(el=>el.textContent==='До цели (3D)').nextElementSibling.textContent);
-    const displayedTarget = Number(targetDetail.replace(/\s|км/g,'').replace(',','.'));
+    const targetDetail = await page.evaluate(() => [...document.querySelectorAll('#details dt')].find(el=>el.textContent==='Distance to target (3D)').nextElementSibling.textContent);
+    const displayedTarget = Number(targetDetail.replace(/\s|km|,/g,''));
     near(displayedTarget, distances.target, 0.00051);
     await page.locator('#labels').uncheck(); await page.locator('#trails').uncheck();
     await page.locator('#labels').check(); await page.locator('#trails').check();

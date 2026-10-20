@@ -1,51 +1,51 @@
-# Работа над DTL_task
+# Working on DTL_task
 
-## Назначение и источники истины
+## Purpose and sources of truth
 
-Проект исследует конфликты траекторий 40 самолётов, дрона и зоны цели. Это исследовательская модель, а не сертифицированная система управления воздушным движением. Объяснения пользователю и проектные документы пишем по-русски; идентификаторы и код — по-английски.
+The project studies trajectory conflicts involving 40 aircraft, a drone and a target zone. It is a research model, not a certified air traffic control system. Use English for user communications, project documentation, the UI, comments and reports; identifiers and code also use English.
 
-Перед изменениями прочитайте `README.md`, `rules.json`, `docs/model.md`, `docs/contracts.md` и относящиеся к задаче решения в `docs/`. Проверьте `git status` и актуальные файлы: обсуждение может описывать более раннюю версию. Прямые инструкции пользователя имеют приоритет над этим документом.
+Before making changes, read `README.md`, `rules.json`, `docs/model.md`, `docs/contracts.md` and the relevant decisions in `docs/`. Check `git status` and the current files: the discussion may describe an earlier version. Direct user instructions take precedence over this document.
 
-- `Task1_details.pdf`, `flights.csv`, `scenario.json` — исходные данные. Не исправляйте их ради удобства алгоритма. Новые траектории и эксперименты сохраняйте отдельно.
-- `rules.json` — исполняемая конфигурация baseline; `docs/model.md` объясняет её смысл и допущения. Числа не должны независимо копироваться в несколько расчётных модулей.
-- `docs/contracts.md` фиксирует формат baseline-отчётов и HTML. Новая модель должна иметь явный контракт; не выдавайте неподдерживаемую семантику за существующую.
-- `reports/` и `baseline.html` — воспроизводимые результаты. Они хранятся в Git; правки вносят в расчётный код/шаблон, затем пересоздают артефакты.
+- `Task1_details.pdf`, `flights.csv`, `scenario.json` are source inputs. Do not modify them for algorithmic convenience. Save new trajectories and experiments separately.
+- `rules.json` is the executable baseline configuration; `docs/model.md` explains its meaning and assumptions. Do not independently duplicate numerical values across calculation modules.
+- `docs/contracts.md` defines the format of baseline reports and HTML. A new model must have an explicit contract; do not present unsupported semantics as existing behavior.
+- `reports/` and `baseline.html` are reproducible outputs tracked in Git. Make changes in the calculation code/template, then regenerate the artifacts.
 
-## Принятые решения
+## Accepted decisions
 
-Текущее основное исследование: `metric / nominal / base`, горизонтальный порог 9260 м, вертикальный **300 м**, горизонт 1200 с. Профиль 304,8 м и `bounded_stress` нужны для сравнения. Новый режим не становится основным молча.
+The current primary study is `metric / nominal / base`, with a horizontal threshold of 9260 m, a vertical threshold of **300 m** and a horizon of 1200 s. The 304.8 m profile and `bounded_stress` are comparisons. Do not silently make a new mode the primary one.
 
-- Пара нарушает разделение, только когда одновременно `dh < H` и `abs(dz) < V`. Равенство безопасно; границы высоты также допустимы.
-- Зоны дрона и цели — **сферы** радиусом 5000 м в базовом варианте. Центр цели имеет XY из сценария и высоту `zones.target.center_alt_m=0`. Решение: `docs/target-zone-decision.md`. Старые выводы для бесконечного цилиндра цели неприменимы.
-- Исходные траектории линейны, включая движение дрона после прохождения XY цели. Объекты за XY-рамкой сохраняются; рамка не является ограничением безопасности.
-- Единицы SI, оси — восток, север, геометрическая высота; единицы углов указывайте явно. Самолёт — точка с защищённым объёмом.
-- `bounded_stress` — детерминированные границы ошибок начального состояния, растущие от t=0 без сброса при перемотке. Это возможная потеря гарантии, не вероятность и не измеренное нарушение. Применимость этих ошибок к новой динамике нужно обосновать отдельно.
-- Лимит горизонтального ускорения ограничивает производную **модуля горизонтальной скорости**, а не всё векторное ускорение в повороте. Лимиты generic jet — допущения; не называйте их характеристиками конкретного типа самолёта.
+- A pair violates separation only when `dh < H` and `abs(dz) < V` hold simultaneously. Equality is safe; altitude boundaries are also allowed.
+- The drone and target zones are **spheres** with a radius of 5000 m in the base variant. The target center uses XY from the scenario and altitude `zones.target.center_alt_m=0`. Decision: `docs/target-zone-decision.md`. Earlier conclusions for an infinite target cylinder do not apply.
+- Source trajectories are linear, including the drone's motion after passing the target XY. Retain objects outside the XY frame; the frame is not a safety constraint.
+- Use SI units and east, north, geometric altitude axes; state angle units explicitly. An aircraft is a point with a protected volume.
+- `bounded_stress` uses deterministic bounds on initial-state errors, growing from t=0 without resetting when seeking. It indicates possible loss of guarantee, not a probability or an observed violation. Applicability of these errors to new dynamics requires a separate justification.
+- The horizontal acceleration limit bounds the derivative of **horizontal speed magnitude**, not the full vector acceleration in a turn. Generic jet limits are assumptions; do not describe them as characteristics of a particular aircraft type.
 
-Изменение этих решений возможно по задаче пользователя. Зафиксируйте причину, влияние на контракт и результаты. Не меняйте пороги или геометрию ради исчезновения конфликтов. Разделяйте требования исходной задачи, внешние нормы, наши допущения и результаты вычислений; для новых внешних утверждений проверяйте первичные источники.
+These decisions may change at the user's request. Record the reason, contract impact and results. Do not change thresholds or geometry to make conflicts disappear. Distinguish original task requirements, external standards, our assumptions and computed results; verify primary sources for new external claims.
 
-## Расчётный код и интерфейс
+## Calculation code and interface
 
-- Python 3.9+, стандартная библиотека для расчётов и CLI. Дополнительную зависимость вводите только с обоснованием. Пути CLI по умолчанию должны работать независимо от cwd.
-- Математика находится в `airspace/`; `tools/` содержит CLI и генерацию. Расчётный модуль не зависит от HTML или генератора.
-- HTML использует готовые результаты Python. Не дублируйте детектор конфликтов в JavaScript. Сохраните автономную работу `file://` без сети.
-- Проверяйте числа на конечность, типы, единицы, ID, версии и поддерживаемость параметров. `bool` не численный параметр. Неподдерживаемые режимы должны отклоняться явно.
-- JSON/CSV детерминированы, без NaN/Infinity и произвольных timestamp. Сохраняйте происхождение входов и конфигурации.
-- Проверка безопасности непрерывна во времени. Выборка по секундам или кадрам годится для графика и диагностики, но не доказывает отсутствие нарушения между отсчётами.
-- Для манёвров сохраняйте непрерывность положения и скорости, проверяйте лимиты на всём сегменте и стыках. Не заменяйте физический поворот ломаной с мгновенным изменением скорости.
-- Если метод не может доказать допустимость интервала, возвращайте явное `unresolved`/неопределённость. Не превращайте численную погрешность в физический запас или изменение порога.
-- Различайте «найден допустимый пример», «проверенные варианты не подошли» и «доказано отсутствие решения». Неудачный перебор не доказывает неразрешимость.
+- Python 3.9+, standard library for calculations and CLI. Justify any additional dependency. Default CLI paths must work independently of cwd.
+- Mathematics belongs in `airspace/`; `tools/` contains CLI and generation code. Calculation modules must not depend on HTML or the generator.
+- HTML uses precomputed Python results. Do not duplicate the conflict detector in JavaScript. Preserve standalone `file://` operation without a network.
+- Validate finite numbers, types, units, IDs, versions and parameter support. `bool` is not a numerical parameter. Reject unsupported modes explicitly.
+- JSON/CSV must be deterministic, without NaN/Infinity or arbitrary timestamps. Preserve input and configuration provenance.
+- Safety checks must be continuous in time. Sampling by seconds or frames is suitable for plots and diagnostics, but does not prove the absence of violations between samples.
+- For maneuvers, preserve position and velocity continuity and check limits throughout each segment and at joins. Do not replace a physical turn with a polyline containing instantaneous velocity changes.
+- If a method cannot prove an interval admissible, return explicit `unresolved`/uncertainty. Do not turn numerical error into a physical margin or threshold change.
+- Distinguish “an admissible example was found,” “the checked candidates did not work” and “the absence of a solution was proved.” An unsuccessful search does not prove infeasibility.
 
-## Проверка и воспроизведение
+## Validation and reproduction
 
-Для расчётных изменений добавляйте содержательные тесты с независимо известным ответом: строгие границы, касание, короткое нарушение между отсчётами, начало/конец горизонта, стыки сегментов, предельные скорости/ускорения. Проверяйте регрессии на настоящих данных. Не пишите тесты, лишь повторяющие реализацию.
+For calculation changes, add meaningful tests with independently known answers: strict boundaries, tangency, a short violation between samples, horizon start/end, segment joins and limiting speeds/accelerations. Check regressions against real inputs. Do not write tests that merely repeat the implementation.
 
 ```sh
 python3 -m unittest discover -s tests -p 'test_*.py' -v
 python3 tools/generate_baseline.py
 ```
 
-При изменениях HTML, его данных или контракта выполните оба браузерных набора:
+For changes to HTML, its data or the contract, run both browser suites:
 
 ```sh
 npm install --prefix /tmp/dtl-baseline-check --no-save playwright
@@ -53,13 +53,13 @@ PLAYWRIGHT_MODULE=/tmp/dtl-baseline-check/node_modules/playwright node tests/che
 PLAYWRIGHT_MODULE=/tmp/dtl-baseline-check/node_modules/playwright node tests/check_analysis_ui.cjs
 ```
 
-Путь Chrome при необходимости задаётся через `CHROME_PATH`. Подробности и контрольные SHA-256 исходных файлов: `docs/validation.md`. После изменения формул/конфигурации пересоздайте затронутые отчёты; после изменения baseline-данных/шаблона — также HTML. Проверяйте соответствие документов фактическому результату. Для чисто текстовых правок достаточно проверки ссылок и diff.
+Set the Chrome path with `CHROME_PATH` if needed. Details and source-file SHA-256 checksums: `docs/validation.md`. After changing formulas/configuration, regenerate affected reports; after changing baseline data/template, regenerate HTML too. Check that documentation matches actual results. For text-only changes, checking links and the diff is sufficient.
 
-## Git и совместная работа
+## Git and collaboration
 
-- Работайте небольшими законченными изменениями. Перед завершением проверяйте `git diff --check`, diff и `git status`. Не включайте в коммит чужие изменения без понимания их происхождения.
-- Не откатывайте, не стирайте и не перезаписывайте чужую работу. Не переписывайте историю и не выполняйте публикацию/настройку remote без соответствующей задачи.
-- Кэши, виртуальные среды, node_modules, локальные настройки и секреты не коммитятся. Исходные входы, тестовые примеры, документы и воспроизводимые результаты коммитятся.
-- Субагентов запускайте только по явному разрешению пользователя или применимым инструкциям. Каждому задавайте полный контекст, критерии готовности и непересекающиеся области записи. Общий контракт меняет координатор и сообщает всем затронутым исполнителям.
-- В общей рабочей папке субагенты не делают Git-коммиты без отдельного назначения: это ответственность координатора. Не оставляйте временные файлы в проекте.
-- В итоговом сообщении указывайте сделанное, команды воспроизведения, реальные проверки и существенные ограничения. Не заявляйте прохождение проверок, которые не запускались.
+- Work in small, complete changes. Before finishing, check `git diff --check`, the diff and `git status`. Do not include others' changes in a commit without understanding their origin.
+- Do not revert, delete or overwrite others' work. Do not rewrite history or publish/configure remotes without a corresponding task.
+- Do not commit caches, virtual environments, node_modules, local settings or secrets. Commit source inputs, test examples, documentation and reproducible outputs.
+- Start subagents only with explicit user permission or applicable instructions. Give each full context, completion criteria and nonoverlapping write areas. The coordinator changes shared contracts and informs all affected contributors.
+- In a shared working directory, subagents do not make Git commits without a separate assignment: that is the coordinator's responsibility. Do not leave temporary files in the project.
+- In the final response, state what was done, reproduction commands, checks actually run and material limitations. Do not claim checks passed if they were not run.

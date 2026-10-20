@@ -1,15 +1,15 @@
-# Решение о зоне наземной цели
+# Ground target zone decision
 
-**Согласовано:** зона цели — сфера радиусом **5000 м** с центром в XY-координатах цели из `scenario.json`. Высоту центра принимаем равной **0 м** в системе координат сценария; во входных данных высота цели не задана. Зона действует на всём горизонте симуляции, от 0 до 1200 с.
+**Agreed:** the target zone is a sphere of radius **5000 m** centered at the target XY coordinates from `scenario.json`. Center altitude is assumed to be **0 m** in the scenario coordinate system; target altitude is absent from the inputs. The zone applies throughout the simulation horizon, from 0 to 1200 s.
 
-В режиме `nominal` нарушение определяется строгим условием:
+In `nominal` mode, a violation is defined by the strict condition:
 
 ```text
 (x - x_target)^2 + (y - y_target)^2 + z^2 < 5000^2
 ```
 
-Равенство порогу допустимо.
+Equality at the threshold is allowed.
 
-**Обоснование:** условие задачи допускает трёхмерную зону вокруг цели. Сфера задаёт минимальное пространственное расстояние до наземного объекта и учитывает высоту самолёта. Радиус 5 км — рабочее допущение сценария, а не нормативная дистанция или физически подтверждённый радиус поражения. Его влияние следует проверять анализом чувствительности.
+**Rationale:** the task permits a three-dimensional zone around the target. A sphere defines a minimum spatial distance to a ground object and accounts for aircraft altitude. The 5 km radius is a working scenario assumption, not a regulatory distance or a physically verified damage radius. Its effect should be assessed through sensitivity analysis.
 
-**Статус реализации:** сфера подключена в `rules.json`, анализаторе и HTML; отчёты пересозданы. Высота центра задана параметром `zones.target.center_alt_m=0`. В дополнительном `bounded_stress` радиус консервативно расширяется на `e_h+e_z` самолёта; цель считается точной. Правило 300 м между самолётами и выбранный режим `nominal` сохраняются. Формулы и формат данных — в [model.md](model.md) и [contracts.md](contracts.md).
+**Implementation status:** the sphere is integrated into `rules.json`, the analyzer and HTML; reports have been regenerated. Center altitude is specified by `zones.target.center_alt_m=0`. In the additional `bounded_stress` mode, the radius is conservatively expanded by the aircraft's `e_h+e_z`; the target is exact. The 300 m aircraft separation rule and selected `nominal` mode are retained. Formulas and data format are in [model.md](model.md) and [contracts.md](contracts.md).

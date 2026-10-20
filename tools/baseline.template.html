@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="ru">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Исходное движение · 20 минут</title>
+<title>Baseline motion · 20 minutes</title>
 <style>
 :root{color-scheme:dark;--bg:#0b1220;--panel:#131f30;--border:#2a3a50;--muted:#a9b8cb;--text:#edf3fa;--accent:#87dfef}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px/1.5 system-ui,sans-serif}button,select,input{font:inherit}button,select{background:#1c2d43;color:var(--text);border:1px solid #425672;border-radius:7px;padding:8px 12px;cursor:pointer}button:hover{background:#2c435e}button:focus-visible,select:focus-visible,input:focus-visible,canvas:focus-visible{outline:2px solid var(--accent);outline-offset:3px}header{padding:20px 26px 15px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;gap:14px}h1{font-size:23px;margin:0 0 3px;font-weight:650}p{margin:0}.muted{color:var(--muted)}.tag{font-size:12px;letter-spacing:.08em;color:var(--accent);white-space:nowrap;border:1px solid #376072;padding:5px 10px;border-radius:20px}.layout{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:16px;padding:16px 24px}.map-panel,aside,.timeline{background:var(--panel);border:1px solid var(--border);border-radius:12px}.map-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:12px;border-bottom:1px solid var(--border)}.map-tools .hint{margin-left:auto;font-size:12px}.viewport{position:relative;height:clamp(380px,60vh,760px);overflow:hidden;border-radius:0 0 12px 12px}canvas{width:100%;height:100%;display:block;touch-action:none;cursor:grab}.viewport .compass{pointer-events:none;position:absolute;top:12px;right:14px;color:var(--accent);text-align:center;font-size:12px;background:#0b1220d9;padding:6px 10px;border-radius:6px}aside{padding:18px}h2{font-size:16px;margin:0 0 12px}aside select{width:100%;margin-bottom:14px}dl{margin:0}dt{color:var(--muted);font-size:12px;margin-top:12px}dd{margin:2px 0 0;font-variant-numeric:tabular-nums}.legend{margin-top:22px;border-top:1px solid var(--border);padding-top:16px}.ramp{height:10px;border-radius:5px;background:linear-gradient(to right,#38bdf8,#2dd4bf,#a3e635,#fbbf24,#fb7185);margin:8px 0}.legend-labels{display:flex;justify-content:space-between;color:var(--muted);font-size:12px}.symbol{display:inline-block;font-size:18px;width:22px;text-align:center}.drone{color:#fb7185}.target{color:#f8d380}.legend p{margin-top:8px}.timeline{margin:0 24px;padding:15px 18px}.time-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}.time{font:600 25px/1.2 ui-monospace,monospace;color:var(--accent);min-width:80px}#play{min-width:110px;background:#246174}#time-slider{width:100%;margin:16px 0 3px;accent-color:var(--accent);cursor:pointer}.ticks{display:flex;justify-content:space-between;font-size:12px;color:var(--muted)}.checks{display:flex;gap:18px;margin-left:auto}.checks label{cursor:pointer;white-space:nowrap}input[type=checkbox]{accent-color:var(--accent)}footer{padding:16px 26px 24px;color:var(--muted);max-width:1150px;font-size:13px}footer p+p{margin-top:8px}.stats{font-size:12px;padding:10px 12px;border-top:1px solid var(--border);color:var(--muted)}#selection-title{color:var(--accent)}@media(max-width:900px){.layout{grid-template-columns:1fr;padding:12px}.timeline{margin:0 12px}aside{display:grid;grid-template-columns:1fr 1fr;gap:0 24px}.legend{margin:0;border:0;padding:0;grid-column:2;grid-row:1/4}header{padding:16px}.map-tools .hint{width:100%;margin:0}.checks{margin-left:0}footer{padding:16px}.viewport{height:55vh;min-height:350px}}@media(max-width:520px){aside{display:block}.legend{margin-top:20px}.tag{display:none}h1{font-size:20px}}
@@ -12,47 +12,47 @@
 </style>
 </head>
 <body>
-<header><div><h1>Исходное движение</h1><p class="muted" id="scenario-summary"></p></div><span class="tag">BASELINE / БЕЗ МАНЁВРОВ</span></header>
+<header><div><h1>Baseline motion</h1><p class="muted" id="scenario-summary"></p></div><span class="tag">BASELINE / NO MANEUVERS</span></header>
 <main>
-<section class="analysis-panel" aria-label="Анализ исходных траекторий">
-<h2>Прогноз по выбранным правилам · без манёвров</h2>
-<div class="analysis-controls"><label>Профиль<select id="profile-select"></select></label><label>Режим<select id="mode-select"></select></label><label>Радиусы зон<select id="variant-select"></select></label></div>
+<section class="analysis-panel" aria-label="Baseline trajectory analysis">
+<h2>Prediction under the selected rules · no maneuvers</h2>
+<div class="analysis-controls"><label>Profile<select id="profile-select"></select></label><label>Mode<select id="mode-select"></select></label><label>Zone radii<select id="variant-select"></select></label></div>
 <div id="run-metadata"></div><div class="summary-grid" id="analysis-summary"></div>
 <p id="thresholds"></p><p id="uncertainty" class="muted"></p><p id="current-state"></p><p id="next-event"></p><p id="nominal-comparison" class="muted"></p>
 </section>
 <div class="layout">
-<section class="map-panel" aria-label="Карта воздушной области">
-<div class="map-tools"><button id="fit-area">Исходная область</button><button id="fit-all">Все траектории за 20 минут</button><button id="zoom-in" aria-label="Увеличить масштаб">+</button><button id="zoom-out" aria-label="Уменьшить масштаб">−</button><span class="hint muted">Колесо / жест — масштаб · перетаскивание — сдвиг · клик — выбор</span></div>
-<div class="viewport"><canvas id="map" tabindex="0" aria-label="Вид сверху. Для выбора самолёта также доступен список справа. Стрелки сдвигают вид, плюс и минус меняют масштаб."></canvas><div class="compass">Север ↑ Y<br>Восток → X</div></div>
+<section class="map-panel" aria-label="Airspace map">
+<div class="map-tools"><button id="fit-area">Initial area</button><button id="fit-all">All trajectories over 20 minutes</button><button id="zoom-in" aria-label="Zoom in">+</button><button id="zoom-out" aria-label="Zoom out">−</button><span class="hint muted">Scroll / pinch to zoom · drag to pan · click to select</span></div>
+<div class="viewport"><canvas id="map" tabindex="0" aria-label="Top view. You can also select an aircraft from the list. Arrow keys pan the view; plus and minus zoom."></canvas><div class="compass">North ↑ Y<br>East → X</div></div>
 <div id="zone-note"></div><div class="stats" id="stats"></div>
 </section>
 <aside>
-<h2>Выбранный самолёт</h2><label for="flight-select" class="muted">Выбрать по flight_id</label><select id="flight-select"></select>
+<h2>Selected aircraft</h2><label for="flight-select" class="muted">Select by flight_id</label><select id="flight-select"></select>
 <div><h2 id="selection-title"></h2><dl id="details"></dl></div>
-<div class="legend"><h2>Высота самолёта</h2><div class="ramp"></div><div class="legend-labels" id="altitude-labels"></div><p class="muted">Шкала фиксирована на весь сценарий.</p><p><span class="symbol drone">◆</span> Опасный объект</p><p><span class="symbol target">⊕</span> Наземная цель</p><p><span class="symbol" style="color:#87dfef">▱</span> Граница области</p><p class="muted">Белый контур — выбранный самолёт. Сплошной красный / янтарный контур — участник текущего события; пунктир — участник выбранного события. Его путь до текущего времени показан всегда.</p></div>
+<div class="legend"><h2>Aircraft altitude</h2><div class="ramp"></div><div class="legend-labels" id="altitude-labels"></div><p class="muted">The scale is fixed for the entire scenario.</p><p><span class="symbol drone">◆</span> Threat</p><p><span class="symbol target">⊕</span> Ground target</p><p><span class="symbol" style="color:#87dfef">▱</span> Area boundary</p><p class="muted">A white outline marks the selected aircraft. A solid red / amber outline marks a participant in a current event; a dashed outline marks a participant in the selected event. The selected aircraft trail up to the current time is always shown.</p></div>
 </aside>
 </div>
-<section class="timeline" aria-label="Управление временем"><div class="time-row"><button id="play">▶ Запуск</button><button id="reset">К началу</button><output class="time" id="clock" for="time-slider">00:00</output><label for="speed">Скорость</label><select id="speed"><option value="1">1×</option><option value="10">10×</option><option value="30" selected>30×</option><option value="60">60×</option></select><div class="checks"><label><input type="checkbox" id="labels" checked> flight_id</label><label><input type="checkbox" id="trails" checked> Следы движения</label></div></div><input id="time-slider" aria-label="Время симуляции в секундах" type="range" min="0" max="1200" step="0.01" value="0"><div id="event-marks" aria-label="Интервалы событий на шкале времени"></div><div class="ticks"><span>00:00</span><span>05:00</span><span>10:00</span><span>15:00</span><span>20:00</span></div></section>
-<section class="analysis-panel" aria-label="События анализа"><h2>События за 20 минут</h2>
-<p class="event-legend"><span class="red">● Текущее номинальное</span> · <span class="amber">● Текущая потеря гарантии (stress)</span> · <span class="blue">● Будущее</span> · серое — прошедшее. Прогноз за весь горизонт не означает срочную тревогу.</p>
-<div class="event-filters"><label>Тип<select id="event-type"><option value="all">Все типы</option></select></label><label>Участник<select id="event-flight"><option value="all">Все самолёты</option></select></label><label>Время события<select id="event-status"><option value="all">Любое</option><option value="current">Текущее</option><option value="future">Будущее</option><option value="past">Прошедшее</option></select></label></div>
-<p id="event-count" class="muted"></p><div class="event-grid"><div id="event-list" class="event-list"></div><div><h2>Выбранное событие</h2><p id="event-empty" class="muted">Нажмите событие в списке или на шкале. Время остановится внутри его интервала; участники будут показаны на карте.</p><dl id="event-details"></dl><details id="technical-details"><summary>Технические сведения события</summary><p id="event-metadata" class="muted"></p></details></div></div></section>
+<section class="timeline" aria-label="Time controls"><div class="time-row"><button id="play">▶ Play</button><button id="reset">Reset</button><output class="time" id="clock" for="time-slider">00:00</output><label for="speed">Speed</label><select id="speed"><option value="1">1×</option><option value="10">10×</option><option value="30" selected>30×</option><option value="60">60×</option></select><div class="checks"><label><input type="checkbox" id="labels" checked> flight_id</label><label><input type="checkbox" id="trails" checked> Trails</label></div></div><input id="time-slider" aria-label="Simulation time in seconds" type="range" min="0" max="1200" step="0.01" value="0"><div id="event-marks" aria-label="Event intervals on the timeline"></div><div class="ticks"><span>00:00</span><span>05:00</span><span>10:00</span><span>15:00</span><span>20:00</span></div></section>
+<section class="analysis-panel" aria-label="Analysis events"><h2>Events over 20 minutes</h2>
+<p class="event-legend"><span class="red">● Current nominal violation</span> · <span class="amber">● Current loss of guarantee (stress)</span> · <span class="blue">● Future</span> · gray means past. A prediction over the full horizon does not imply an immediate alert.</p>
+<div class="event-filters"><label>Type<select id="event-type"><option value="all">All types</option></select></label><label>Participant<select id="event-flight"><option value="all">All aircraft</option></select></label><label>Event timing<select id="event-status"><option value="all">Any</option><option value="current">Current</option><option value="future">Future</option><option value="past">Past</option></select></label></div>
+<p id="event-count" class="muted"></p><div class="event-grid"><div id="event-list" class="event-list"></div><div><h2>Selected event</h2><p id="event-empty" class="muted">Click an event in the list or on the timeline. Playback will pause inside its interval and the map will show its participants.</p><dl id="event-details"></dl><details id="technical-details"><summary>Event technical details</summary><p id="event-metadata" class="muted"></p></details></div></div></section>
 </main>
-<footer><p>Пересечение траекторий на виде сверху не обязательно означает столкновение: самолёты могут находиться на разных высотах или проходить точку в разное время. Нарушения определены готовыми непрерывными интервалами анализа выбранных правил. Строгое равенство порогу безопасно; минимумы разных расстояний могут достигаться в разные моменты.</p><p>Все объекты движутся по исходным скоростям, включая движение за границами области. Наземная цель неподвижна. Опасный объект проходит её горизонтальные координаты на 13:53,33 и продолжает полёт с исходной высотой. Высоты и расстояния — в км; скорости — в м/с. Счётчики границ описывают положение, а не нарушение безопасности.</p></footer>
+<footer><p>Crossing paths in the top view do not necessarily imply a collision: aircraft may be at different altitudes or pass the same point at different times. Violations come from precomputed continuous intervals under the selected rules. Equality at a threshold is safe; different distance measures may reach their minima at different times.</p><p>All objects retain their initial velocities, including outside the area. The ground target is stationary. The threat passes its horizontal coordinates at 13:53.33 and continues at its original altitude. Altitudes and distances are in km; speeds are in m/s. Boundary counts describe positions, not safety violations.</p></footer>
 <script id="baseline-data" type="application/json">__BASELINE_DATA__</script>
 <script>
 'use strict';
 const DATA=JSON.parse(document.getElementById('baseline-data').textContent);
 const {flights,scenario,duration_s:DURATION}=DATA, area=scenario.airspace, threat=scenario.hostile_object, target=scenario.target;
 const $=id=>document.getElementById(id), canvas=$('map'), ctx=canvas.getContext('2d');
-$('scenario-summary').textContent=`${flights.length} самолётов · постоянные скорости · 20 минут наблюдения`;
+$('scenario-summary').textContent=`${flights.length} aircraft · constant velocities · 20-minute horizon`;
 const positionAt=(o,t)=>({x:o.x_m+o.vx_mps*t,y:o.y_m+o.vy_mps*t,z:o.alt_m+o.vz_mps*t});
 const flightById=new Map(flights.map(f=>[f.flight_id,f]));
 let time=0,playing=false,speed=30,anchorTime=0,anchorWall=0,selected=flights[0].flight_id;
 let width=1,height=1,view={x:0,y:0,scale:1},fitMode='area',pointers=new Map(),drag=null,pinch=null;
 const altitudeValues=[area.alt_min_m,area.alt_max_m,...flights.flatMap(f=>[f.alt_m,positionAt(f,DURATION).z])];
 const minAlt=Math.min(...altitudeValues),maxAlt=Math.max(...altitudeValues);
-const fmt=(n,d=2)=>n.toLocaleString('ru-RU',{minimumFractionDigits:d,maximumFractionDigits:d});
+const fmt=(n,d=2)=>n.toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d});
 const outsideXY=p=>p.x<area.x_min_m||p.x>area.x_max_m||p.y<area.y_min_m||p.y>area.y_max_m;
 const outside=p=>outsideXY(p)||p.z<area.alt_min_m||p.z>area.alt_max_m;
 function altitudeColor(z){
@@ -78,7 +78,7 @@ function drawGrid(){
   ctx.font='11px system-ui';ctx.fillStyle='#92a6be';
   for(let x=Math.ceil(lo.x/step)*step;x<=hi.x;x+=step){const a=screen({x,y:0});line({x:a.x,y:0},{x:a.x,y:height},Math.abs(x)<step*1e-6?'#3f546b':'#1d2c40');ctx.textAlign='center';ctx.fillText(`${fmt(x/1000,0)}`,a.x,height-10);}
   for(let y=Math.ceil(lo.y/step)*step;y<=hi.y;y+=step){const a=screen({x:0,y});line({x:0,y:a.y},{x:width,y:a.y},Math.abs(y)<step*1e-6?'#3f546b':'#1d2c40');ctx.textAlign='left';ctx.fillText(`${fmt(y/1000,0)}`,8,a.y-5);}
-  ctx.fillText('Y, км',8,17);ctx.textAlign='right';ctx.fillText('X, км',width-10,height-10);
+  ctx.fillText('Y, km',8,17);ctx.textAlign='right';ctx.fillText('X, km',width-10,height-10);
 }
 function drawTrail(o,isSelected=false,isThreat=false){
   const a=screen(positionAt(o,0)),b=screen(positionAt(o,time));
@@ -100,7 +100,7 @@ function drawSpecial(){
   ctx.strokeStyle='#f8d380';ctx.lineWidth=2;ctx.beginPath();ctx.arc(t.x,t.y,8,0,Math.PI*2);ctx.moveTo(t.x-13,t.y);ctx.lineTo(t.x+13,t.y);ctx.moveTo(t.x,t.y-13);ctx.lineTo(t.x,t.y+13);ctx.stroke();
   const d=screen(positionAt(threat,time));ctx.save();ctx.translate(d.x,d.y);ctx.rotate(Math.PI/4);ctx.fillStyle='#fb7185';ctx.fillRect(-6,-6,12,12);ctx.strokeStyle='#ffe4e6';ctx.strokeRect(-6,-6,12,12);ctx.restore();
   ctx.font='12px system-ui';ctx.textAlign='left';ctx.lineWidth=3;ctx.strokeStyle='#0b1220';
-  for(const [p,label,color] of [[t,'Цель','#f8d380'],[d,'Опасный объект','#fda4af']]){ctx.strokeText(label,p.x+15,p.y+18);ctx.fillStyle=color;ctx.fillText(label,p.x+15,p.y+18);}
+  for(const [p,label,color] of [[t,'Target','#f8d380'],[d,'Threat','#fda4af']]){ctx.strokeText(label,p.x+15,p.y+18);ctx.fillStyle=color;ctx.fillText(label,p.x+15,p.y+18);}
 }
 function render(){
   currentParticipants=new Set((activeRun?.events||[]).filter(e=>eventStatus(e)==='current').flatMap(e=>e.participants));
@@ -112,16 +112,16 @@ function render(){
   for(const f of flights)if(f.flight_id!==selected)drawAircraft(f);drawAircraft(flightById.get(selected));drawSpecial();
   const f=flightById.get(selected),p=positionAt(f,time),d=positionAt(threat,time);
   $('selection-title').textContent=f.flight_id;
-  const values=[['Координаты X / Y',`${fmt(p.x/1000)} / ${fmt(p.y/1000)} км`],['Высота',`${fmt(p.z/1000,3)} км`],['Скорость (3D)',`${fmt(Math.hypot(f.vx_mps,f.vy_mps,f.vz_mps))} м/с`],['Скорость Vx / Vy / Vz',`${fmt(f.vx_mps)} / ${fmt(f.vy_mps)} / ${fmt(f.vz_mps)} м/с`],['До опасного объекта (3D)',`${fmt(Math.hypot(p.x-d.x,p.y-d.y,p.z-d.z)/1000,3)} км`],['До цели (3D)',`${fmt(Math.hypot(p.x-target.x_m,p.y-target.y_m,p.z-rules.zones.target.center_alt_m)/1000,3)} км`],['До цели (по горизонтали)',`${fmt(Math.hypot(p.x-target.x_m,p.y-target.y_m)/1000,3)} км`],['Положение относительно области',outside(p)?'За границами':'В пределах области']];
+  const values=[['Coordinates X / Y',`${fmt(p.x/1000)} / ${fmt(p.y/1000)} km`],['Altitude',`${fmt(p.z/1000,3)} km`],['Speed (3D)',`${fmt(Math.hypot(f.vx_mps,f.vy_mps,f.vz_mps))} m/s`],['Velocity Vx / Vy / Vz',`${fmt(f.vx_mps)} / ${fmt(f.vy_mps)} / ${fmt(f.vz_mps)} m/s`],['Distance to threat (3D)',`${fmt(Math.hypot(p.x-d.x,p.y-d.y,p.z-d.z)/1000,3)} km`],['Distance to target (3D)',`${fmt(Math.hypot(p.x-target.x_m,p.y-target.y_m,p.z-rules.zones.target.center_alt_m)/1000,3)} km`],['Distance to target (horizontal)',`${fmt(Math.hypot(p.x-target.x_m,p.y-target.y_m)/1000,3)} km`],['Position relative to area',outside(p)?'Outside':'Inside the area']];
   $('details').replaceChildren(...values.flatMap(([label,value])=>{const dt=document.createElement('dt'),dd=document.createElement('dd');dt.textContent=label;dd.textContent=value;return [dt,dd];}));
   const positions=flights.map(f=>positionAt(f,time)),offscreen=positions.filter(p=>{const s=screen(p);return s.x<0||s.x>width||s.y<0||s.y>height;}).length;
-  $('stats').textContent=`В симуляции: ${flights.length} самолётов · За границами области (X/Y/высота): ${positions.filter(outside).length} · Вне текущего вида: ${offscreen} · Опасный объект: ${outside(d)?'за границами':'в области'}`;
+  $('stats').textContent=`In simulation: ${flights.length} aircraft · Outside area bounds (X/Y/altitude): ${positions.filter(outside).length} · Outside current view: ${offscreen} · Threat: ${outside(d)?'outside':'inside the area'}`;
   const seconds=Math.floor(time+1e-7);$('clock').textContent=`${String(Math.floor(seconds/60)).padStart(2,'0')}:${String(seconds%60).padStart(2,'0')}`;
   updateAnalysis();
-  $('time-slider').value=String(time);$('time-slider').setAttribute('aria-valuetext',`${fmt(time,2)} секунд`);
+  $('time-slider').value=String(time);$('time-slider').setAttribute('aria-valuetext',`${fmt(time,2)} seconds`);
 }
 function updateClock(now){if(playing){time=Math.min(DURATION,anchorTime+(now-anchorWall)/1000*speed);if(time>=DURATION){playing=false;updatePlay();}}}
-function updatePlay(){$('play').textContent=playing?'❚❚ Пауза':'▶ Запуск';$('play').setAttribute('aria-pressed',String(playing));}
+function updatePlay(){$('play').textContent=playing?'❚❚ Pause':'▶ Play';$('play').setAttribute('aria-pressed',String(playing));}
 function setTime(t){time=Math.max(0,Math.min(DURATION,Number(t)));anchorTime=time;anchorWall=performance.now();if(time===DURATION){playing=false;updatePlay();}render();}
 $('play').onclick=()=>{const now=performance.now();updateClock(now);if(!playing&&time>=DURATION)time=0;playing=!playing;anchorTime=time;anchorWall=now;updatePlay();render();};
 $('reset').onclick=()=>{playing=false;updatePlay();setTime(0);};
@@ -130,7 +130,7 @@ $('time-slider').oninput=e=>setTime(e.target.value);
 for(const id of ['labels','trails'])$(id).onchange=render;
 $('flight-select').replaceChildren(...flights.map(f=>{const o=document.createElement('option');o.value=f.flight_id;o.textContent=f.flight_id;return o;}));
 $('flight-select').onchange=()=>{selected=$('flight-select').value;render();};
-for(const altitude of [minAlt,maxAlt]){const label=document.createElement('span');label.textContent=`${fmt(altitude/1000,1)} км`;$('altitude-labels').append(label);}
+for(const altitude of [minAlt,maxAlt]){const label=document.createElement('span');label.textContent=`${fmt(altitude/1000,1)} km`;$('altitude-labels').append(label);}
 function zoom(factor,point={x:width/2,y:height/2}){fitMode=null;const before=world(point);view.scale=Math.max(0.00003,Math.min(0.15,view.scale*factor));const after=world(point);view.x+=before.x-after.x;view.y+=before.y-after.y;render();}
 $('fit-area').onclick=()=>fit('area');$('fit-all').onclick=()=>fit('all');$('zoom-in').onclick=()=>zoom(1.4);$('zoom-out').onclick=()=>zoom(1/1.4);
 function local(e){const r=canvas.getBoundingClientRect();return {x:e.clientX-r.left,y:e.clientY-r.top};}
@@ -153,7 +153,7 @@ new ResizeObserver(()=>{const r=canvas.getBoundingClientRect(),dpr=window.device
 
 // Events and statuses use the analyzer's intervals, never geometry or sampled minima.
 const rules=DATA.rules, runs=DATA.analysis?.runs||[];
-const typeLabels={aircraft_aircraft:'Пара самолётов',aircraft_threat:'Самолёт / дрон',aircraft_target:'Самолёт / цель',altitude:'Высота',motion:'Движение'};
+const typeLabels={aircraft_aircraft:'Aircraft pair',aircraft_threat:'Aircraft / drone',aircraft_target:'Aircraft / target',altitude:'Altitude',motion:'Motion'};
 let activeRun=null,selectedEvent=null,eventParticipants=new Set(),currentParticipants=new Set(),analysisCache='';
 function fillSelect(id,items){$(id).replaceChildren(...items.map(item=>{const o=document.createElement('option');o.value=item.id;o.textContent=item.label;return o;}));}
 fillSelect('profile-select',rules?.profiles||[]);fillSelect('mode-select',rules?.modes||[]);fillSelect('variant-select',rules?.sensitivity?.variants||[]);
@@ -161,8 +161,8 @@ for(const [key,label] of Object.entries(typeLabels)){const o=document.createElem
 for(const f of flights){const o=document.createElement('option');o.value=f.flight_id;o.textContent=f.flight_id;$('event-flight').append(o);}
 for(const [kind,key] of [['profile','profile_id'],['mode','mode_id'],['variant','variant_id']])if(rules?.defaults)$(kind+'-select').value=rules.defaults[key];
 const eventStatus=(e,t=time)=>((t>e.start_s||(t===e.start_s&&e.start_inclusive))&&(t<e.end_s||(t===e.end_s&&e.end_inclusive)))?'current':(t<e.start_s||(t===e.start_s&&!e.start_inclusive))?'future':'past';
-const statusLabel={current:'Текущее',future:'Будущее',past:'Прошедшее'};
-const intervalLabel=e=>`${e.start_inclusive?'[':'('}${fmt(e.start_s,3)}; ${fmt(e.end_s,3)}${e.end_inclusive?']':')'} с`;
+const statusLabel={current:'Current',future:'Future',past:'Past'};
+const intervalLabel=e=>`${e.start_inclusive?'[':'('}${fmt(e.start_s,3)}; ${fmt(e.end_s,3)}${e.end_inclusive?']':')'} s`;
 function boundsAt(t=time){const b=rules?.modes.find(m=>m.id===activeRun?.mode_id)?.error_bounds||{};return {eh:(b.position_horizontal_m||0)+(b.velocity_horizontal_mps||0)*t,ez:(b.position_vertical_m||0)+(b.velocity_vertical_mps||0)*t};}
 function sphereSection(radius,dz){return Math.abs(dz)>=radius?0:Math.sqrt(radius*radius-dz*dz);}
 function zoneGeometry(t=time,z=positionAt(flightById.get(selected),t).z){
@@ -176,35 +176,35 @@ function eventColor(){const status=selectedEvent&&eventStatus(selectedEvent);ret
 function drawEventHalo(p,id){if(currentParticipants.has(id)){ctx.beginPath();ctx.arc(p.x,p.y,20,0,2*Math.PI);ctx.strokeStyle=activeRun.mode_id==='bounded_stress'?'#fbbf24':'#fb7185';ctx.lineWidth=3;ctx.stroke();}if(eventParticipants.has(id)){ctx.beginPath();ctx.arc(p.x,p.y,26,0,2*Math.PI);ctx.strokeStyle=eventColor();ctx.lineWidth=2;ctx.setLineDash([5,3]);ctx.stroke();ctx.setLineDash([]);}}
 
 function detailRows(el,rows){el.replaceChildren(...rows.flatMap(([a,b])=>{const dt=document.createElement('dt'),dd=document.createElement('dd');dt.textContent=a;dd.textContent=b;return [dt,dd];}));}
-const metricLabels={horizontal_min:'Горизонтальное расстояние',vertical_min:'Вертикальное расстояние',distance_3d_min:'Расстояние 3D',altitude_min:'Минимальная высота',altitude_max:'Максимальная высота'};
+const metricLabels={horizontal_min:'Horizontal distance',vertical_min:'Vertical distance',distance_3d_min:'3D distance',altitude_min:'Minimum altitude',altitude_max:'Maximum altitude'};
 function readableValue(value){if(value===null)return '—';if(typeof value==='number')return fmt(value,3);if(typeof value!=='object')return String(value);return Object.entries(value).map(([k,v])=>`${k}: ${readableValue(v)}`).join('; ');}
 function showEventDetails(){if(!selectedEvent){$('event-details').replaceChildren();$('event-empty').hidden=false;$('technical-details').hidden=true;return;}$('event-empty').hidden=true;$('technical-details').hidden=false;const e=selectedEvent;
-const rows=[['Участники',e.participants.join(' / ')],['Тип / правило',`${typeLabels[e.type]||e.type} / ${e.rule_id}`],['Интервал',intervalLabel(e)],['Переход внутри интервала',`${fmt(e.representative_s,3)} с (не обязательно время минимума)`],['Смысл',e.severity==='possible_violation'?'Потеря гарантии при ограниченных ошибках. Не вероятность и не доказанное номинальное нарушение.':'Нарушение при точных номинальных состояниях'],['Края горизонта',`В начале: ${e.initial_violation?'да':'нет'}; продолжается при 1200 с: ${e.continues_at_horizon?'да':'нет'}`]];
-const thresholdLabels={horizontal:'H(t), горизонтальное расстояние',vertical:'V(t), вертикальное расстояние',radius:'R(t), радиус',alt_min_m:'Нижняя допустимая высота, м',alt_max_m:'Верхняя допустимая высота, м',error_vertical:'e_z(t), ошибка высоты',horizontal_speed_min_mps:'Минимальная горизонтальная скорость, м/с',horizontal_speed_max_mps:'Максимальная горизонтальная скорость, м/с',vertical_speed_abs_max_mps:'Модуль вертикальной скорости, м/с'};
-for(const [key,value] of Object.entries(e.thresholds||{})){const affine=value&&typeof value==='object'&&'intercept_m' in value;rows.push([thresholdLabels[key]||key,affine?`${fmt(value.intercept_m,3)} + ${fmt(value.slope_mps||0,3)} × t м; t в секундах от начала сценария`:readableValue(value)]);}
+const rows=[['Participants',e.participants.join(' / ')],['Type / rule',`${typeLabels[e.type]||e.type} / ${e.rule_id}`],['Interval',intervalLabel(e)],['Jump inside the interval',`${fmt(e.representative_s,3)} s (not necessarily the time of a minimum)`],['Meaning',e.severity==='possible_violation'?'Loss of guarantee under bounded errors. Not a probability or a confirmed nominal violation.':'Violation with exact nominal states'],['Horizon boundaries',`At the start: ${e.initial_violation?'yes':'no'}; continues at 1200 s: ${e.continues_at_horizon?'yes':'no'}`]];
+const thresholdLabels={horizontal:'H(t), horizontal distance',vertical:'V(t), vertical distance',radius:'R(t), radius',alt_min_m:'Minimum allowed altitude, m',alt_max_m:'Maximum allowed altitude, m',error_vertical:'e_z(t), altitude error',horizontal_speed_min_mps:'Minimum horizontal speed, m/s',horizontal_speed_max_mps:'Maximum horizontal speed, m/s',vertical_speed_abs_max_mps:'Absolute vertical speed, m/s'};
+for(const [key,value] of Object.entries(e.thresholds||{})){const affine=value&&typeof value==='object'&&'intercept_m' in value;rows.push([thresholdLabels[key]||key,affine?`${fmt(value.intercept_m,3)} + ${fmt(value.slope_mps||0,3)} × t m; t in seconds from the scenario start`:readableValue(value)]);}
 
-for(const [key,m] of Object.entries(e.metrics||{})){if(!m||typeof m!=='object')continue;rows.push([metricLabels[key]||key,`${typeof m.value_m==='number'?fmt(m.value_m,3)+' м':'—'} при t=${typeof m.time_s==='number'?fmt(m.time_s,3):'—'} с; ${m.attained?'достигается':'инфимум на открытом краю'}`]);}
-rows.push(['О минимумах','Номинальные центры. Каждая компонента минимизирована отдельно; времена могут различаться.']);detailRows($('event-details'),rows);$('event-metadata').textContent=`Запуск: ${activeRun.id} · Событие: ${e.id} · Правило: ${e.rule_id}`;}
+for(const [key,m] of Object.entries(e.metrics||{})){if(!m||typeof m!=='object')continue;rows.push([metricLabels[key]||key,`${typeof m.value_m==='number'?fmt(m.value_m,3)+' m':'—'} at t=${typeof m.time_s==='number'?fmt(m.time_s,3):'—'} s; ${m.attained?'attained':'infimum at an open endpoint'}`]);}
+rows.push(['About the minima','Nominal centers. Each component is minimized separately; the times may differ.']);detailRows($('event-details'),rows);$('event-metadata').textContent=`Run: ${activeRun.id} · Event: ${e.id} · Rule: ${e.rule_id}`;}
 function participantPoints(e){return e.participants.flatMap(id=>id==='TARGET'?[{x:target.x_m,y:target.y_m}]:id==='THREAT'?[positionAt(threat,time)]:flightById.has(id)?[positionAt(flightById.get(id),time)]:[]);}
 function jumpToEvent(e){playing=false;updatePlay();selectedEvent=e;eventParticipants=new Set(e.participants);if(e.flight_ids?.some(id=>flightById.has(id))){selected=e.flight_ids.find(id=>flightById.has(id));$('flight-select').value=selected;}setTime(e.representative_s);const pts=participantPoints(e);if(pts.length){const xs=pts.map(p=>p.x),ys=pts.map(p=>p.y),xmin=Math.min(...xs),xmax=Math.max(...xs),ymin=Math.min(...ys),ymax=Math.max(...ys);fitMode=null;view={x:(xmin+xmax)/2,y:(ymin+ymax)/2,scale:Math.min(Math.max(1,width-120)/Math.max(22000,xmax-xmin+12000),Math.max(1,height-120)/Math.max(22000,ymax-ymin+12000))};}analysisCache='';showEventDetails();render();}
 function chooseRun(){activeRun=runs.find(r=>r.profile_id===$('profile-select').value&&r.mode_id===$('mode-select').value&&r.variant_id===$('variant-select').value)||null;selectedEvent=null;eventParticipants=new Set();analysisCache='';showEventDetails();
-const s=activeRun?.summary;const entries=[['События',s?.event_count],['Уникальные пары',s?.aircraft_pair_count],['Самолёты с событиями',s?.affected_flight_count],['Исходные нарушения',s?.initial_event_count]];
+const s=activeRun?.summary;const entries=[['Events',s?.event_count],['Unique pairs',s?.aircraft_pair_count],['Aircraft with events',s?.affected_flight_count],['Initial violations',s?.initial_event_count]];
 $('analysis-summary').replaceChildren(...entries.map(([label,value])=>{const box=document.createElement('div');box.className='summary-cell';const strong=document.createElement('strong');strong.textContent=value??'—';box.append(strong,document.createTextNode(label));return box;}));
-$('run-metadata').textContent=activeRun?`${activeRun.id} · ${DURATION} с · интервалы непрерывного анализа`:'Анализ не загружен';render();}
+$('run-metadata').textContent=activeRun?`${activeRun.id} · ${DURATION} s · continuous analysis intervals`:'Analysis not loaded';render();}
 function updateAnalysis(){if(!activeRun)return;const events=activeRun.events,q=activeRun.thresholds,g=zoneGeometry(),stress=activeRun.mode_id==='bounded_stress',errors=rules.modes.find(m=>m.id===activeRun.mode_id).error_bounds;
-$('thresholds').textContent=`Пара: H < ${fmt(q.horizontal_m+2*g.eh,1)} м И |Δz| < ${fmt(q.vertical_m+2*g.ez,1)} м. Дрон: 3D < ${fmt(g.threatRadius,1)} м. Цель: 3D < ${fmt(g.targetRadius,1)} м; центр на высоте ${fmt(q.target_alt_m,0)} м. Высота самолётов: ${fmt(q.alt_min_m,0)}–${fmt(q.alt_max_m,0)} м.`;
-$('uncertainty').textContent=stress?`e_h(t) = ${fmt(errors.position_horizontal_m,1)} + ${fmt(errors.velocity_horizontal_mps,1)} × t = ${fmt(g.eh,1)} м; e_z(t) = ${fmt(errors.position_vertical_m,1)} + ${fmt(errors.velocity_vertical_mps,1)} × t = ${fmt(g.ez,1)} м. t от исходного состояния, без сброса. Для пары и дрона учтены ошибки обоих объектов; для точной цели — только e_h + e_z самолёта. Сферические расширения консервативны. Потеря гарантии — не вероятность.`:'Точные исходные состояния: e_h = e_z = 0. Границы неравенств строгие; равенство безопасно.';
-$('zone-note').textContent=`Показаны сечения сфер на высоте ${selected} (${fmt(g.z,0)} м). Цель: ${g.targetSection>0?'радиус сечения '+fmt(g.targetSection,0)+' м':'на этой высоте зоны нет'}. Дрон: ${g.threatSection>0?'радиус сечения '+fmt(g.threatSection,0)+' м':'на этой высоте зоны нет'}. Размеры зон — в физических метрах; значки схематические. ${stress?'Пунктир — расширенные границы stress.':''}`;
+$('thresholds').textContent=`Pair: H < ${fmt(q.horizontal_m+2*g.eh,1)} m AND |Δz| < ${fmt(q.vertical_m+2*g.ez,1)} m. Drone: 3D < ${fmt(g.threatRadius,1)} m. Target: 3D < ${fmt(g.targetRadius,1)} m; center altitude ${fmt(q.target_alt_m,0)} m. Aircraft altitude: ${fmt(q.alt_min_m,0)}–${fmt(q.alt_max_m,0)} m.`;
+$('uncertainty').textContent=stress?`e_h(t) = ${fmt(errors.position_horizontal_m,1)} + ${fmt(errors.velocity_horizontal_mps,1)} × t = ${fmt(g.eh,1)} m; e_z(t) = ${fmt(errors.position_vertical_m,1)} + ${fmt(errors.velocity_vertical_mps,1)} × t = ${fmt(g.ez,1)} m. t is measured from the initial state, with no reset. Pair and drone checks include errors from both objects; the exact target includes only the aircraft e_h + e_z. Sphere expansions are conservative. Loss of guarantee is not a probability.`:'Exact initial states: e_h = e_z = 0. Inequalities are strict; equality is safe.';
+$('zone-note').textContent=`Sphere cross-sections at the altitude of ${selected} (${fmt(g.z,0)} m). Target: ${g.targetSection>0?'section radius '+fmt(g.targetSection,0)+' m':'no zone at this altitude'}. Drone: ${g.threatSection>0?'section radius '+fmt(g.threatSection,0)+' m':'no zone at this altitude'}. Zone sizes use physical meters; icons are schematic. ${stress?'Dashed lines show expanded stress boundaries.':''}`;
 const states=events.map(e=>eventStatus(e)),current=states.filter(s=>s==='current').length,future=events.filter((e,i)=>states[i]==='future').sort((a,b)=>a.start_s-b.start_s);
-$('current-state').textContent=`Сейчас: ${current} ${stress?'интервалов потери гарантии':'номинальных нарушений'}. Будущих событий: ${future.length}.`;
-$('next-event').textContent=future.length?`До ближайшего прогнозируемого события: ${fmt(Math.max(0,future[0].start_s-time),2)} с · ${future[0].participants.join(' / ')}${!future[0].start_inclusive?' (граница интервала открыта)':''}`:'Будущих событий до конца горизонта нет.';
+$('current-state').textContent=`Now: ${current} ${stress?'loss-of-guarantee intervals':'nominal violations'}. Future events: ${future.length}.`;
+$('next-event').textContent=future.length?`Time to the next predicted event: ${fmt(Math.max(0,future[0].start_s-time),2)} s · ${future[0].participants.join(' / ')}${!future[0].start_inclusive?' (open interval boundary)':''}`:'No future events before the end of the horizon.';
 const nominal=runs.find(r=>r.profile_id===activeRun.profile_id&&r.mode_id==='nominal'&&r.variant_id===activeRun.variant_id);
-$('nominal-comparison').textContent=stress?`Отдельное сравнение: nominal — ${nominal?.summary.event_count??'—'} событий за горизонт, ${nominal?.events.filter(e=>eventStatus(e)==='current').length??'—'} сейчас. Эти счётчики не складываются со stress.`:'';
+$('nominal-comparison').textContent=stress?`Separate comparison: nominal — ${nominal?.summary.event_count??'—'} events over the horizon, ${nominal?.events.filter(e=>eventStatus(e)==='current').length??'—'} now. These counts are not added to stress counts.`:'';
 const filterType=$('event-type').value,filterFlight=$('event-flight').value,filterStatus=$('event-status').value,key=[activeRun.id,filterType,filterFlight,filterStatus,selectedEvent?.id,states.join(',')].join('|');if(key===analysisCache)return;analysisCache=key;
 const shown=events.filter((e,i)=>(filterType==='all'||e.type===filterType)&&(filterFlight==='all'||e.flight_ids?.includes(filterFlight))&&(filterStatus==='all'||states[i]===filterStatus));
-$('event-count').textContent=`Показано ${shown.length} из ${events.length} событий выбранного запуска.`;
+$('event-count').textContent=`Showing ${shown.length} of ${events.length} events in the selected run.`;
 const makeButton=(e,timeline=false,index=0)=>{const b=document.createElement('button'),status=eventStatus(e);b.className=`${timeline?'':'event-row '}${status}${stress?' stress':''}${selectedEvent?.id===e.id?' selected':''}`;b.dataset.eventId=e.id;b.dataset.status=status;b.title=`${typeLabels[e.type]||e.type} · ${e.participants.join(' / ')} · ${intervalLabel(e)}`;b.onclick=()=>jumpToEvent(e);if(timeline){b.style.left=`${e.start_s/DURATION*100}%`;b.style.width=`${Math.max(.4,(e.end_s-e.start_s)/DURATION*100)}%`;b.style.top=`${4+(index%4)*13}px`;b.setAttribute('aria-label',b.title);}else{b.textContent=`${statusLabel[status]} · ${typeLabels[e.type]||e.type} · ${e.participants.join(' / ')}`;const small=document.createElement('small');small.textContent=intervalLabel(e);b.append(small);}return b;};
-$('event-list').replaceChildren(...shown.map(e=>makeButton(e)));if(!shown.length){const p=document.createElement('p');p.textContent='Событий по этим фильтрам нет.';$('event-list').append(p);}
+$('event-list').replaceChildren(...shown.map(e=>makeButton(e)));if(!shown.length){const p=document.createElement('p');p.textContent='No events match these filters.';$('event-list').append(p);}
 $('event-marks').replaceChildren(...shown.map((e,i)=>makeButton(e,true,i)));}
 for(const id of ['profile-select','mode-select','variant-select'])$(id).onchange=chooseRun;
 for(const id of ['event-type','event-flight','event-status'])$(id).onchange=()=>{analysisCache='';render();};

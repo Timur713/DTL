@@ -4,16 +4,16 @@
   "units": "SI: m, s, m/s, m/s^2; angles explicitly labelled",
   "defaults": {"profile_id": "metric", "mode_id": "nominal", "variant_id": "base"},
   "profiles": [
-    {"id": "metric", "label": "Метрический: 9260 м / 300 м", "horizontal_m": 9260, "vertical_m": 300},
-    {"id": "feet_reference", "label": "Футовый ориентир: 9260 м / 304,8 м", "horizontal_m": 9260, "vertical_m": 304.8}
+    {"id": "metric", "label": "Metric: 9260 m / 300 m", "horizontal_m": 9260, "vertical_m": 300},
+    {"id": "feet_reference", "label": "Feet reference: 9260 m / 304.8 m", "horizontal_m": 9260, "vertical_m": 304.8}
   ],
   "modes": [
     {
-      "id": "nominal", "label": "Точные исходные состояния", "severity": "nominal_violation",
+      "id": "nominal", "label": "Exact initial states", "severity": "nominal_violation",
       "error_bounds": {"position_horizontal_m": 0, "position_vertical_m": 0, "velocity_horizontal_mps": 0, "velocity_vertical_mps": 0}
     },
     {
-      "id": "bounded_stress", "label": "Ограниченные ошибки: потеря гарантии", "severity": "possible_violation",
+      "id": "bounded_stress", "label": "Bounded errors: loss of guarantee", "severity": "possible_violation",
       "error_bounds": {"position_horizontal_m": 100, "position_vertical_m": 20, "velocity_horizontal_mps": 1, "velocity_vertical_mps": 0.1}
     }
   ],
@@ -75,11 +75,11 @@
     "method": "one_parameter_at_a_time",
     "vertical_m": [300, 304.8], "threat_radius_m": [3000, 5000, 10000], "target_radius_m": [3000, 5000, 10000],
     "variants": [
-      {"id": "base", "label": "Базовые радиусы", "overrides": {}},
-      {"id": "threat_3000", "label": "Дрон: 3000 м", "overrides": {"threat_radius_m": 3000}},
-      {"id": "threat_10000", "label": "Дрон: 10000 м", "overrides": {"threat_radius_m": 10000}},
-      {"id": "target_3000", "label": "Цель: 3000 м", "overrides": {"target_radius_m": 3000}},
-      {"id": "target_10000", "label": "Цель: 10000 м", "overrides": {"target_radius_m": 10000}}
+      {"id": "base", "label": "Base radii", "overrides": {}},
+      {"id": "threat_3000", "label": "Drone: 3000 m", "overrides": {"threat_radius_m": 3000}},
+      {"id": "threat_10000", "label": "Drone: 10000 m", "overrides": {"threat_radius_m": 10000}},
+      {"id": "target_3000", "label": "Target: 3000 m", "overrides": {"target_radius_m": 3000}},
+      {"id": "target_10000", "label": "Target: 10000 m", "overrides": {"target_radius_m": 10000}}
     ],
     "run_product": ["profiles", "modes", "variants"], "expected_run_count": 20
   },

@@ -1,26 +1,26 @@
-# Контракт анализа и визуализации, версия 1.1
+# Analysis and visualization contract, version 1.1
 
-Этот файл фиксирует интерфейс между `rules.json`, независимым Python-анализатором и автономным HTML. Изменения контракта согласует интегратор. Физические допущения и источники — в [model.md](model.md).
+This file defines the interface between `rules.json`, the independent Python analyzer and standalone HTML. The integrator coordinates contract changes. Physical assumptions and sources are in [model.md](model.md).
 
-## Конфигурация и математика
+## Configuration and mathematics
 
-Используются точные ключи `rules.json`; идентификаторы профилей `metric`, `feet_reference`, режимов `nominal`, `bounded_stress`. Варианты `base`, `threat_3000`, `threat_10000`, `target_3000`, `target_10000`. Полное произведение — 20 запусков. Порядок следует массивам конфигурации.
+Use the exact keys from `rules.json`; profile IDs `metric`, `feet_reference`, mode IDs `nominal`, `bounded_stress`. Variants: `base`, `threat_3000`, `threat_10000`, `target_3000`, `target_10000`. The full product is 20 runs. Order follows the configuration arrays.
 
-Версия 1.1 заменяет цилиндр цели сферой: `zones.target.shape="sphere"`, `center_alt_m=0`, `target_motion="static_xyz"`. Высота центра — конечное число в метрах; значение 0 является согласованным допущением сценария. XY остаются в `scenario.target`. Конфигурация версии 1.0 и прежняя цилиндрическая семантика отклоняются; старые отчёты и HTML нужно пересоздать.
+Version 1.1 replaces the target cylinder with a sphere: `zones.target.shape="sphere"`, `center_alt_m=0`, `target_motion="static_xyz"`. Center altitude is a finite number in meters; 0 is the agreed scenario assumption. XY remain in `scenario.target`. Configuration version 1.0 and the earlier cylindrical semantics are rejected; old reports and HTML must be regenerated.
 
-Состояния заданы в SI относительно t=0; `p(t)=p0+v*t`, интервал `[0,duration_s]`. Для каждого самолёта и дрона ошибки `eh(t)=ph+vh*t`, `ez(t)=pz+vz*t` берутся из выбранного `mode.error_bounds`. Цель точна. Новых измерений нет.
+States use SI relative to t=0; `p(t)=p0+v*t`, interval `[0,duration_s]`. For each aircraft and the drone, errors `eh(t)=ph+vh*t`, `ez(t)=pz+vz*t` come from the selected `mode.error_bounds`. The target is exact. There are no new measurements.
 
-* Пара: `dh < H+eh_i+eh_j AND abs(dz) < V+ez_i+ez_j` одновременно.
-* Цель: `d3 < target_radius+eh_i+ez_i`, где расстояние считается до `(x_target,y_target,center_alt_m)`. Цель точная; её ошибки не добавляются. Радиус в base/stress равен `5120+1.1*t` м, в base/nominal — 5000 м.
-* Дрон: `d3 < threat_radius+eh_i+ez_i+eh_drone+ez_drone`. Для обеих сфер сумма горизонтальной и вертикальной границ — консервативная верхняя граница нормы 3D ошибки. Stress-событие не доказывает реализовавшееся нарушение.
-* Высота: `z-ez < alt_min OR z+ez > alt_max`; исходные границы из `scenario.airspace`. Равенство допустимо.
-* Ограничения скорости в stress проверяются на всём допустимом диапазоне постоянной скорости: горизонтальный модуль `[max(0,speed-evh),speed+evh]`, вертикальная компонента `[vz-evz,vz+evz]`. Тангенциальное ускорение, вертикальное ускорение и скорость поворота каждого допустимого baseline равны нулю. Предел поворота определяется креном и скоростью; предел тангенциального ускорения не является ограничением бокового ускорения.
+* Pair: `dh < H+eh_i+eh_j AND abs(dz) < V+ez_i+ez_j` simultaneously.
+* Target: `d3 < target_radius+eh_i+ez_i`, with distance to `(x_target,y_target,center_alt_m)`. The target is exact; no target errors are added. The radius in base/stress is `5120+1.1*t` m; in base/nominal it is 5000 m.
+* Drone: `d3 < threat_radius+eh_i+ez_i+eh_drone+ez_drone`. For both spheres, the sum of horizontal and vertical bounds is a conservative upper bound on 3D error magnitude. A stress event does not prove a realized violation.
+* Altitude: `z-ez < alt_min OR z+ez > alt_max`; source bounds come from `scenario.airspace`. Equality is allowed.
+* Stress speed limits are checked over the entire admissible constant-velocity range: horizontal magnitude `[max(0,speed-evh),speed+evh]`, vertical component `[vz-evz,vz+evz]`. Tangential acceleration, vertical acceleration and turn rate of every admissible baseline are zero. The turn limit depends on bank angle and speed; the tangential acceleration limit does not constrain lateral acceleration.
 
-Физические неравенства строгие, их границы не расширяются numerical epsilon. Численная точность используется для вычисления корней/невязок; ровно касательное сближение не создаёт событие. Связные интервалы нарушения объединяются только если их объединение действительно связно с учётом открытых концов. Отдельный безопасный момент не удаляется объединением.
+Physical inequalities are strict; numerical epsilon does not expand their boundaries. Numerical tolerances are used for root/residual calculations; exact tangency does not create an event. Connected violation intervals are merged only when their union is actually connected, accounting for open endpoints. Merging must not remove an isolated safe instant.
 
 ## Python API
 
-Пакет `airspace`, модуль `airspace.analysis`:
+Package `airspace`, module `airspace.analysis`:
 
 ```python
 load_inputs(scenario_path) -> (scenario: dict, flights: list[dict])
@@ -29,24 +29,24 @@ analyze_all(scenario: dict, flights: list[dict], rules: dict) -> dict
 write_reports(analysis: dict, output_dir) -> None
 ```
 
-CLI: `python3 tools/analyze_baseline.py --scenario scenario.json --rules rules.json --output-dir reports` (эти значения — defaults относительно корня проекта). Stdlib, Python >=3.9. Не импортировать генератор HTML. Проверять конечность чисел, уникальность ID и допустимость/поддерживаемость конфигурации; положительные задержки и иная модель неопределённости не должны молча игнорироваться.
+CLI: `python3 tools/analyze_baseline.py --scenario scenario.json --rules rules.json --output-dir reports` (these are defaults relative to the project root). Standard library, Python >=3.9. Do not import the HTML generator. Validate finite numbers, unique IDs and configuration validity/support; do not silently ignore positive delays or a different uncertainty model.
 
-`write_reports` создаёт `analysis.json`, `events.csv`, `summary.csv`, `sensitivity.csv` и краткую `summary.md`. Числа в JSON сохраняются без преждевременного округления, NaN/Infinity запрещены. Выход детерминированный, без изменяющегося timestamp. CSV содержит profile/mode/variant/run ID. Сумма длительностей событий может включать пересечения и не называется длительностью небезопасного полёта.
+`write_reports` creates `analysis.json`, `events.csv`, `summary.csv`, `sensitivity.csv` and a brief `summary.md`. JSON numbers are stored without premature rounding; NaN/Infinity are forbidden. Output is deterministic, without a changing timestamp. CSV includes profile/mode/variant/run IDs. The sum of event durations may include overlaps and is not called the duration of unsafe flight.
 
-## Корневой JSON и HTML payload
+## Root JSON and HTML payload
 
 ```javascript
 DATA = {duration_s, scenario, flights, rules, analysis};
 analysis = {
   schema_version: "1.1", duration_s: 1200,
   runs: [/* Run */],
-  // Дополнительная provenance/sensitivity/limitations metadata разрешена.
+  // Additional provenance/sensitivity/limitations metadata is allowed.
 };
 ```
 
-HTML читает готовые интервалы из `analysis.runs`. Он не вычисляет конфликты заново. Формулы положения, отображаемых расстояний и размеров зон допустимы для визуализации. Готовый HTML содержит всю конфигурацию и все отчёты и работает через file:// без сети. Пример payload — `tests/fixtures/analysis_example.json`, явно синтетический и заменяемый реальными результатами при интеграции.
+HTML reads precomputed intervals from `analysis.runs`. It does not recalculate conflicts. Position, displayed-distance and zone-size formulas are allowed for visualization. The generated HTML includes all configuration and reports and works through file:// without a network. An example payload is in `tests/fixtures/analysis_example.json`, explicitly synthetic and replaced with real results during integration.
 
-На карте обе зоны показаны сечениями на высоте выбранного самолёта: `sqrt(R_eff²−(z−z_center)²)` при `abs(z−z_center)<R_eff`; иначе сечение отсутствует. Карточка самолёта показывает 3D-расстояние до цели и отдельно горизонтальное расстояние.
+The map displays both zones as sections at the selected aircraft's altitude: `sqrt(R_eff²−(z−z_center)²)` when `abs(z−z_center)<R_eff`; otherwise there is no section. The aircraft card shows 3D target distance and horizontal distance separately.
 
 ## Run
 
@@ -76,7 +76,7 @@ HTML читает готовые интервалы из `analysis.runs`. Он �
 }
 ```
 
-`aircraft_pair_count` — число уникальных неупорядоченных пар только типа aircraft_aircraft, а не количество всех событий. `affected_flight_ids` учитывает все типы событий, не включает THREAT/TARGET. Каждое motion-нарушение также создаёт Event, чтобы его можно было показать в UI; отсутствующая нижняя/верхняя граница в motion-check обозначается null.
+`aircraft_pair_count` is the number of unique unordered pairs of type aircraft_aircraft only, not the total event count. `affected_flight_ids` covers all event types, excluding THREAT/TARGET. Every motion violation also creates an Event so it can be displayed in the UI; a missing lower/upper bound in a motion check is null.
 
 ## Event
 
@@ -104,20 +104,20 @@ HTML читает готовые интервалы из `analysis.runs`. Он �
 }
 ```
 
-Выше числа — иллюстрация синтетического случая, не реальный F018/F034. Типы: aircraft_aircraft, aircraft_threat, aircraft_target, altitude, motion. `participants` специальных объектов использует `THREAT`, `TARGET`; для altitude/motion — только самолёт. `rule_id` различает нижнюю/верхнюю высотную границу и отдельные ограничения движения.
+These numbers illustrate a synthetic case, not the actual F018/F034 event. Types: aircraft_aircraft, aircraft_threat, aircraft_target, altitude, motion. `participants` uses `THREAT`, `TARGET` for special objects; for altitude/motion it contains only the aircraft. `rule_id` distinguishes lower/upper altitude bounds and individual motion limits.
 
-В событии используются только релевантные thresholds/metrics: пары — horizontal и vertical, обе сферы — radius, высота — alt_min_m/alt_max_m и error_vertical (аффинная), motion — имена лимитов и наблюдаемый диапазон. У цели `rule_id="target_sphere"`, метрики horizontal_min, vertical_min и distance_3d_min считаются относительно её центра. Высота центра записана в `run.thresholds.target_alt_m` и сводных CSV. Для altitude метрика altitude_min/altitude_max того же вида; для motion допустимо пустое metrics, т.к. результаты находятся в motion_checks и thresholds. Дополнительные диагностические поля разрешены. UI не должен предполагать наличие всех метрик.
+An event uses only relevant thresholds/metrics: horizontal and vertical for pairs, radius for both spheres, alt_min_m/alt_max_m and affine error_vertical for altitude, limit names and observed ranges for motion. The target uses `rule_id="target_sphere"`; horizontal_min, vertical_min and distance_3d_min are measured relative to its center. Center altitude is recorded in `run.thresholds.target_alt_m` and summary CSVs. Altitude uses altitude_min/altitude_max metrics of the same form; motion may have empty metrics because results are in motion_checks and thresholds. Additional diagnostic fields are allowed. The UI must not assume all metrics exist.
 
-Все расстояния в metrics — расстояния **номинальных центров**, минимизированные отдельно на замыкании интервала события. `attained` указывает, достигается ли минимум внутри самого интервала; если нет, значение является инфимумом. Минимумы разных компонент могут достигаться в разные моменты и не служат совместным доказательством конфликта. `representative_s` — точка внутри интервала (для UI перехода), обычно середина, а не обязательно время CPA.
+All distances in metrics are **nominal center distances**, minimized separately over the closure of the event interval. `attained` indicates whether the minimum is attained within the interval itself; otherwise the value is an infimum. Minima of different components may occur at different times and do not jointly prove a conflict. `representative_s` is an interior point for UI navigation, usually the midpoint, not necessarily the CPA time.
 
-Stress-события имеют severity=possible_violation, даже если часть интервала также содержит номинальное нарушение. Для отображения подтверждённого номинального нарушения UI может сопоставить **готовые интервалы** соответствующего nominal run. Это не повторная геометрическая детекция. Номинальные и stress события не складываются как независимые события одного режима.
+Stress events have severity=possible_violation even if part of the interval also contains a nominal violation. To display a confirmed nominal violation, the UI may compare **precomputed intervals** from the corresponding nominal run. This is not repeated geometric detection. Nominal and stress events are not added as independent events of one mode.
 
-Интервал всегда обрезан `[0,duration_s]`; inclusivity вычисляется по истинному условию нарушения в концах. Если нарушение продолжается на t=1200, end_inclusive=true и continues_at_horizon=true. Equality-safe корень не включается. Начальное нарушение имеет start=0, start_inclusive=true, initial_violation=true. UI сравнивает время с сохранёнными концами/флагами без физических допусков.
+The interval is always clipped to `[0,duration_s]`; inclusivity is calculated from the actual violation condition at endpoints. If a violation continues at t=1200, end_inclusive=true and continues_at_horizon=true. A safe equality root is excluded. An initial violation has start=0, start_inclusive=true, initial_violation=true. The UI compares time to stored endpoints/flags without physical tolerances.
 
-## Проверяемые примеры
+## Verifiable examples
 
-`tests/fixtures/detection_examples.json` содержит отдельные математические примеры входа и ожидаемых интервалов: вход/выход, касание, равенство по высоте, постоянный конфликт, обрезка горизонтом, несовпадение горизонтального и вертикального интервалов. Это независимые простые ожидания, не снимок вывода основного детектора.
+`tests/fixtures/detection_examples.json` contains separate mathematical inputs and expected intervals: entry/exit, tangency, altitude equality, constant conflict, horizon clipping and nonoverlapping horizontal/vertical intervals. These are independent simple expectations, not a snapshot of the main detector's output.
 
-Ожидание для реальных данных при base/nominal: 3 aircraft-пары в metric и 24 в feet_reference; у этих пар нет исходного нарушения. Это контроль вычислений, не критерий подгонки правил. Полный отчёт также учитывает угрозу, цель, высоту и динамику.
+For real data at base/nominal, the expected counts are 3 aircraft pairs in metric and 24 in feet_reference; these pairs have no initial violations. This checks calculations, rather than providing a target for fitting rules. The full report also accounts for threat, target, altitude and dynamics.
 
-Пример сферы: цель `(0,0,0)`, R=5000, самолёт `(-6000,0,3000)` со скоростью `(200,0,0)`, T=60. Ожидаемый интервал цели — `(10,50)` с, минимум 3D=3000 м при t=30. При высоте 5000 м та же траектория лишь касается сферы и не создаёт события; при 8100 м проходит выше неё. Для неподвижного самолёта `(0,0,5100)` и только вертикальной ошибки `20+0.1*t` stress-интервал на T=1200 — `(800,1200]`.
+Sphere example: target `(0,0,0)`, R=5000, aircraft `(-6000,0,3000)` with velocity `(200,0,0)`, T=60. The expected target interval is `(10,50)` s, with a 3D minimum of 3000 m at t=30. At altitude 5000 m the same trajectory only touches the sphere and creates no event; at 8100 m it passes above it. For a stationary aircraft `(0,0,5100)` with only vertical error `20+0.1*t`, the stress interval at T=1200 is `(800,1200]`.

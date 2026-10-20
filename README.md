@@ -1,46 +1,46 @@
-# Исходные траектории: правила и конфликты
+# Baseline trajectories: rules and conflicts
 
-40 самолётов и дрон движутся по исходным постоянным скоростям 1200 с. Самолёт — точка с защищённым объёмом. Выбран ориентир разделения **9260 м по горизонтали или 300 м по вертикали**, с альтернативой 304,8 м для проверки чувствительности. Дрон и цель окружены сферами радиусом 5 км; центр сферы цели принят на высоте 0 м. Зоны действуют на всём горизонте, радиусы являются допущениями сценария. Высоты самолётов ограничены 3000–12000 м; выход за XY-рамку разрешён. Дрон после прохождения XY цели продолжает полёт. Источники и обоснование — в [модели](docs/model.md), [решение о сфере цели](docs/target-zone-decision.md), параметры — в [rules.json](rules.json).
+40 aircraft and a drone follow their original constant velocities for 1200 s. An aircraft is a point with a protected volume. The selected separation reference is **9260 m horizontally or 300 m vertically**, with a 304.8 m alternative for sensitivity analysis. The drone and target are surrounded by spheres with a radius of 5 km; the target sphere's center is assumed to be at altitude 0 m. The zones apply throughout the horizon, and their radii are scenario assumptions. Aircraft altitudes are restricted to 3000–12000 m; leaving the XY frame is allowed. The drone continues flying after passing the target XY. Sources and rationale are in the [model](docs/model.md) and [target sphere decision](docs/target-zone-decision.md); parameters are in [rules.json](rules.json).
 
-**Откройте [baseline.html](baseline.html)** двойным щелчком — без сервера, интернета и установки библиотек. Выбирайте профиль, режим ошибок и радиусы. Событие в списке или на шкале останавливает время внутри интервала и приближает участников. Сохранены перемотка, скорости, следы, выбор самолёта и масштаб. Текущие участники подсвечиваются автоматически; обе зоны показаны сечениями сфер на высоте выбранного самолёта. Карточка показывает расстояние до цели в 3D и по горизонтали.
+**Open [baseline.html](baseline.html)** by double-clicking: no server, internet connection or library installation is needed. Select a profile, error mode and radii. Selecting an event in the list or timeline pauses time inside its interval and zooms to its participants. Seeking, playback speeds, trails, aircraft selection and zoom are retained. Current participants are highlighted automatically; both zones are displayed as sphere sections at the selected aircraft's altitude. The card shows the target distance in 3D and horizontally.
 
-## Воспроизведение
+## Reproduction
 
-Python 3.9+, стандартная библиотека:
+Python 3.9+, standard library:
 
 ```sh
 python3 tools/generate_baseline.py
 ```
 
-Команда пересчитывает отчёты и встраивает их в HTML. Только анализ: `python3 tools/analyze_baseline.py`. Оба скрипта работают из любого cwd при вызове по абсолютному пути. Аргументы: `--scenario`, `--rules`; генератор также принимает `--output`, `--reports-dir`, анализатор — `--output-dir`.
+The command recalculates reports and embeds them in HTML. Analysis only: `python3 tools/analyze_baseline.py`. Both scripts work from any cwd when invoked by absolute path. Arguments: `--scenario`, `--rules`; the generator also accepts `--output`, `--reports-dir`, and the analyzer accepts `--output-dir`.
 
-## Результаты при радиусах 5 км
+## Results with 5 km radii
 
-| Профиль / режим | События | Пары | Дрон | Цель | Высота |
+| Profile / mode | Events | Pairs | Drone | Target | Altitude |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| 300 м / nominal | 12 | 3 | 5 | 4 | 0 |
-| 304,8 м / nominal | 33 | 24 | 5 | 4 | 0 |
-| 300 м / bounded_stress | 38 | 24 | 7 | 5 | 2 |
-| 304,8 м / bounded_stress | 38 | 24 | 7 | 5 | 2 |
+| 300 m / nominal | 12 | 3 | 5 | 4 | 0 |
+| 304.8 m / nominal | 33 | 24 | 5 | 4 | 0 |
+| 300 m / bounded_stress | 38 | 24 | 7 | 5 | 2 |
+| 304.8 m / bounded_stress | 38 | 24 | 7 | 5 | 2 |
 
-В nominal сферу цели пересекают F012, F013, F023 и F026. F020 на высоте 8100 м в сферу 5 км не входит; его парное событие с F038 сохраняется и начинается примерно на 280,313 с — это первое событие основного профиля. При радиусах цели 3/5/10 км nominal даёт соответственно 0/4/14 событий у цели, без начальных нарушений.
+In nominal mode, F012, F013, F023 and F026 enter the target sphere. F020 at altitude 8100 m does not enter the 5 km sphere; its pair event with F038 remains and starts at approximately 280.313 s, the first event of the primary profile. Target radii of 3/5/10 km produce respectively 0/4/14 nominal target events, without initial violations.
 
-В stress ошибки каждого самолёта и дрона: `e_h=100+t` м, `e_z=20+0.1t` м от снимка t=0. Сфера точной цели расширяется только на `e_h+e_z` самолёта: `R_eff=5120+1.1*t` м; появляется возможное событие F037. Сфера дрона учитывает ошибки обоих объектов. Это возможная потеря гарантии, не вероятность. F031/F040 на номинально допустимых 3000 м имеют исходный риск выхода ниже границы при этих ошибках. Проверки движения baseline проходят.
+In stress mode, each aircraft and the drone have errors `e_h=100+t` m, `e_z=20+0.1t` m from the t=0 snapshot. The exact target's sphere is expanded only by the aircraft's `e_h+e_z`: `R_eff=5120+1.1*t` m; a possible event involving F037 appears. The drone sphere accounts for errors of both objects. This indicates possible loss of guarantee, not probability. F031/F040 at the nominally allowed 3000 m have an initial risk of falling below the boundary under these errors. Baseline motion checks pass.
 
-Все **20 вариантов**: [сводка](reports/summary.md), [JSON](reports/analysis.json), [события CSV](reports/events.csv), [чувствительность](reports/sensitivity.csv), [сводка CSV](reports/summary.csv). События, уникальные пары и затронутые самолёты считаются отдельно.
+All **20 variants**: [summary](reports/summary.md), [JSON](reports/analysis.json), [event CSV](reports/events.csv), [sensitivity](reports/sensitivity.csv), [summary CSV](reports/summary.csv). Events, unique pairs and affected aircraft are counted separately.
 
-## Метод и проверка
+## Method and validation
 
-[Анализатор](airspace/analysis.py) решает строгие квадратичные/линейные неравенства непрерывно; равенство безопасно. HTML читает готовые интервалы по [контракту](docs/contracts.md).
+The [analyzer](airspace/analysis.py) solves strict quadratic/linear inequalities continuously; equality is safe. HTML reads precomputed intervals according to the [contract](docs/contracts.md).
 
 ```sh
 python3 -m unittest discover -s tests -p 'test_*.py' -v
 ```
 
-**43 теста и два браузерных набора прошли.** Команды браузерной проверки, проверка сферической цели и контроль исходных файлов — в [протоколе проверки](docs/validation.md).
+**43 tests and two browser suites passed.** Browser validation commands, spherical target checks and source-file checksums are in the [validation record](docs/validation.md).
 
-Манёвры не реализованы. Ограничения generic jet — допущения; реальные типы, ветер, задержки и вихревые следы не моделируются. Stress-сфера консервативна. Минимумы разных расстояний могут приходиться на разные времена; сумма длительностей пересекающихся событий не равна длительности небезопасного полёта.
+Maneuvers are not implemented. Generic jet limits are assumptions; actual aircraft types, wind, delays and wake turbulence are not modeled. The stress sphere is conservative. Minima of different distances may occur at different times; the sum of overlapping event durations is not the duration of unsafe flight.
 
-## Работа над проектом
+## Working on the project
 
-Общие правила разработки, изменения модели, проверок и совместной работы — в [AGENTS.md](AGENTS.md). Исходные данные и воспроизводимые HTML/отчёты хранятся в Git; кэши и локальные зависимости исключены.
+General rules for development, model changes, validation and collaboration are in [AGENTS.md](AGENTS.md). Source inputs and reproducible HTML/reports are tracked in Git; caches and local dependencies are excluded.

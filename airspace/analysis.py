@@ -592,24 +592,24 @@ def write_reports(analysis, output_dir):
                "delta_events_vs_metric": run["summary"]["event_count"] - metric["summary"]["event_count"]}
         sensitivity_rows.append(row)
     _csv_write(output_dir / "sensitivity.csv", list(sensitivity_rows[0]), sensitivity_rows)
-    lines = ["# Анализ исходного движения", "", "Непрерывный горизонт [0, %s] с; %s самолётов; %s запусков. Манёвры не реализованы." %
+    lines = ["# Baseline motion analysis", "", "Continuous horizon [0, %s] s; %s aircraft; %s runs. Maneuvers are not implemented." %
              (analysis["duration_s"], analysis.get("provenance", {}).get("flight_count", "?"), len(analysis["runs"])), "",
-             "Нарушение расстояния строгое: равенство порогу безопасно. В bounded_stress события означают возможную потерю гарантии в пределах выбранных ошибок, а не вероятность или состоявшееся нарушение.", "",
-             "| Run | События | Уникальные пары | Самолёты | Начальные | Пары / дрон / цель / высота / движение |", "| --- | ---: | ---: | ---: | ---: | --- |"]
+             "Distance violations use strict inequalities: equality at the threshold is safe. In bounded_stress, events indicate a possible loss of guarantee within the selected error bounds, not a probability or an actual violation.", "",
+             "| Run | Events | Unique pairs | Aircraft | Initial | Pairs / drone / target / altitude / motion |", "| --- | ---: | ---: | ---: | ---: | --- |"]
     for run in analysis["runs"]:
         s = run["summary"]
         lines.append("| %s | %s | %s | %s | %s | %s |" % (run["id"], s["event_count"], s["aircraft_pair_count"],
             s["affected_flight_count"], s["initial_event_count"], " / ".join(str(s["counts_by_type"][kind]) for kind in EVENT_TYPES)))
-    lines.extend(["", "## Исходные нарушения в базовых радиусах", ""])
+    lines.extend(["", "## Initial violations with base radii", ""])
     for run in analysis["runs"]:
         if run["variant_id"] == "base":
             initial = ["%s (%s)" % ("/".join(event["participants"]), event["rule_id"]) for event in run["events"] if event["initial_violation"]]
-            lines.append("- `%s`: %s." % (run["id"], "; ".join(initial) if initial else "нет"))
-    lines.extend(["", "## Интерпретация и формат", "",
-        "Переход V=300→304.8 м включает высотные разности ровно 300 м. Радиусы угрозы и цели изменяются по одному; полная чувствительность с разностями к base/nominal/metric — в sensitivity.csv.", "",
-        "Все проверки движения выполнены для каждого самолёта: горизонтальная скорость, её тангенциальная производная, вертикальная скорость/ускорение, нулевой крен прямолинейного baseline и нулевой поворот с согласованным ограничением g·tan(bank)/v. В stress проверяется весь допустимый диапазон постоянных скоростей. Это не проверка будущих манёвров.", "",
-        "analysis.json содержит все события, эффективные аффинные пороги и полные motion_checks. events.csv хранит пороги и метрики как JSON-поля; флаги имеют значения true/false, пустое scalar поле означает null. summary.csv и sensitivity.csv содержат по строке на run. ID сохраняются во всех CSV.", "",
-        "Время и расстояния в машинных отчётах не округлены. Минимумы метрик относятся к номинальным центрам на замыкании интервала; attained различает достигнутый минимум и инфимум. Разные компоненты могут минимизироваться в разное время. Сумма длительностей событий включает пересечения и не является длительностью небезопасного полёта.", "",
-        "Границы XY не исключают объекты; цель и угроза окружены сферами, активными на всём горизонте. XY цели взяты из scenario, высота центра — из rules.zones.target.center_alt_m (target_alt_m в каждом run). Дрон продолжает прежний полёт после XY цели. Высотные границы взяты из scenario. Все stress-события имеют severity=possible_violation; обе сферы используют консервативную аффинную оценку 3D ошибки. Для точной цели учитываются только e_h+e_z самолёта, для дрона — ошибки обоих объектов. Ошибки отсчитываются от t=0 и не сбрасываются.", "",
-        "Правила — исследовательские допущения. Нормативное соответствие, типовая лётная область, задержки, реальная точность и безопасность будущего плана не установлены.", ""])
+            lines.append("- `%s`: %s." % (run["id"], "; ".join(initial) if initial else "none"))
+    lines.extend(["", "## Interpretation and format", "",
+        "Changing V from 300 to 304.8 m includes altitude differences of exactly 300 m. Threat and target radii vary one at a time; sensitivity.csv contains the full sensitivity analysis with differences relative to base/nominal/metric.", "",
+        "Motion checks cover every aircraft: horizontal speed, its tangential derivative, vertical speed/acceleration, zero bank for the straight baseline, and zero turn rate with the coordinated-turn bound g·tan(bank)/v. Stress checks cover the full admissible range of constant velocities. These checks do not validate future maneuvers.", "",
+        "analysis.json contains all events, effective affine thresholds, and complete motion_checks. events.csv stores thresholds and metrics as JSON fields; flags are true/false, and an empty scalar field means null. summary.csv and sensitivity.csv contain one row per run. IDs are preserved across all CSV files.", "",
+        "Times and distances in machine-readable reports are not rounded. Metric minima refer to nominal centers over the closure of the event interval; attained distinguishes an attained minimum from an infimum. Different components may reach their minima at different times. The sum of event durations includes overlaps and is not the duration of unsafe flight.", "",
+        "XY bounds do not exclude objects. The target and threat have spherical zones active throughout the horizon. Target XY coordinates come from scenario; the center altitude comes from rules.zones.target.center_alt_m (target_alt_m in each run). The drone continues unchanged after passing target XY. Altitude bounds come from scenario. All stress events have severity=possible_violation; both spheres use a conservative affine bound on 3D error. Only the aircraft e_h+e_z is included for the exact target; both objects contribute errors for the drone. Errors are measured from t=0 and do not reset.", "",
+        "The rules are research assumptions. Regulatory compliance, aircraft-specific flight envelopes, delays, actual accuracy, and the safety of a future plan have not been established.", ""])
     (output_dir / "summary.md").write_text("\n".join(lines), encoding="utf-8")

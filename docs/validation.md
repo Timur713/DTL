@@ -1,10 +1,10 @@
-# Проверка интегрированного результата
+# Validation of the integrated result
 
-Проверено 21 октября 2026 года. Среда: Python 3.9.6, Node.js 25.2.1, Playwright и локальный Google Chrome на macOS. Результат — автономный `baseline.html` с исходными данными, общей конфигурацией и настоящими отчётами анализатора; синтетический пример в production не используется.
+Checked on October 21, 2026. Environment: Python 3.9.6, Node.js 25.2.1, Playwright and local Google Chrome on macOS. The result is standalone `baseline.html` with source data, shared configuration and actual analyzer reports; the synthetic example is not used in production.
 
-## Воспроизводимые проверки
+## Reproducible checks
 
-Из корня проекта:
+From the project root:
 
 ```sh
 python3 tools/generate_baseline.py
@@ -14,37 +14,45 @@ PLAYWRIGHT_MODULE=/tmp/dtl-baseline-check/node_modules/playwright node tests/che
 PLAYWRIGHT_MODULE=/tmp/dtl-baseline-check/node_modules/playwright node tests/check_analysis_ui.cjs
 ```
 
-Генерация и анализ используют только стандартную библиотеку Python. Node/Playwright нужны исключительно для браузерных тестов. `CHROME_PATH` переопределяет путь браузера, `SCREENSHOT_PATH` сохраняет снимок; `HTML_PATH` позволяет тестировать другой HTML.
+Generation and analysis use only the Python standard library. Node/Playwright are needed solely for browser tests. `CHROME_PATH` overrides the browser path, `SCREENSHOT_PATH` saves a screenshot; `HTML_PATH` allows testing another HTML file.
 
-- **37 математических/аналитических тестов — PASS.** Проверены конфликты между целыми секундами, касания и близкие к касанию случаи, нулевая относительная скорость, строгие границы, конфликт при t=0 и на конце горизонта, несовпадение горизонтального и вертикального интервалов, оба вертикальных профиля, растущие ошибки, монотонность, постоянные минимумы, ограничения движения, валидация входов, CLI и детерминированность. Шесть новых проверок охватывают сферу цели: аналитический вход/выход и 3D-минимум, касание и пролёт выше сферы, вертикальный вход с границы, высоту центра из конфигурации, рост только вертикальной ошибки и независимое пересечение прямых со сферой для всех nominal-запусков.
-- **6 интеграционных тестов — PASS.** Проверены контрольные 3/24 пары, включение всех nominal-интервалов в stress, расширение множеств нарушений при увеличении радиусов, CSV/JSON и воспроизводимость отчётов, точное совпадение HTML с текущими данными/правилами/расчётом. Генератор из постороннего cwd воспроизводит побайтно тот же HTML и JSON.
-- **Браузерный baseline — PASS.** Все 40 самолётов, начальные/конечные координаты, перемотка и следы, пауза, скорости 1×/10×/30×/60×, независимость от кадров, сохранение объектов за границей, прохождение дроном XY цели, выбор, расстояния, масштаб и сдвиг.
-- **Браузерный анализ — PASS.** Все 20 запусков, совпадение счётчиков с JSON, открытые границы интервалов, автоматическая подсветка текущих участников без выбора события, список/фильтры/шкала, переход с паузой и показом участников, геометрия зон и stress при перемотке, необязательные метрики, безопасное отображение строк, ширина 390 px, отсутствие сетевых запросов и ошибок JS. Дополнительно проверены отсутствие сечения цели на высоте F020, реальная команда canvas с радиусом 4000 м на высоте 3000 м, нулевое сечение на границе/выше сферы, 3D-расстояние в карточке, метрики события цели и расширение её радиуса до 6440 м к концу stress-горизонта.
+- **37 mathematical/analytical tests — PASS.** Checks cover conflicts between integer seconds, tangencies and near-tangent cases, zero relative velocity, strict boundaries, conflicts at t=0 and the horizon endpoint, nonoverlapping horizontal/vertical intervals, both vertical profiles, growing errors, monotonicity, constant minima, motion limits, input validation, CLI and determinism. Six new checks cover the target sphere: analytical entry/exit and 3D minimum, tangency and passing above the sphere, vertical entry from the boundary, configured center altitude, growth of vertical error alone and independent line/sphere intersection for all nominal runs.
+- **6 integration tests — PASS.** Checks cover the reference 3/24 pairs, inclusion of all nominal intervals in stress, expansion of violation sets as radii increase, CSV/JSON and report reproducibility, and exact agreement of HTML with current data/rules/calculations. Running the generator from a different cwd reproduces byte-identical HTML and JSON.
+- **Baseline browser suite — PASS.** All 40 aircraft, initial/final coordinates, seeking and trails, pause, 1×/10×/30×/60× speeds, frame independence, retention of objects outside boundaries, drone passage through target XY, selection, distances, zoom and pan.
+- **Analysis browser suite — PASS.** All 20 runs, counter agreement with JSON, open interval boundaries, automatic highlighting of current participants without event selection, list/filters/timeline, navigation with pause and participant display, zone geometry and stress during seeking, optional metrics, safe string display, 390 px width, no network requests or JS errors. Additional checks cover absence of a target section at F020's altitude, an actual canvas command with a 4000 m radius at altitude 3000 m, zero section at/above the sphere boundary, 3D distance in the card, target event metrics and expansion of its radius to 6440 m at the end of the stress horizon.
 
-Последний общий запуск после перехода на сферу цели: **43 теста, OK**. Оба браузерных набора выполнены на итоговом HTML, а не только на синтетическом примере.
+The latest complete run after switching to the target sphere: **43 tests, OK**. Both browser suites were run against the final HTML, rather than only the synthetic example.
 
-Просмотрены снимки итоговой страницы на desktop (1440 px) и mobile (390 px) с выбранным событием F012/цель: сечение сферы, карточка 3D-расстояния и список событий согласованы; горизонтального переполнения нет.
+Screenshots of the final page on desktop (1440 px) and mobile (390 px), with the F012/target event selected, were reviewed: the sphere section, 3D distance card and event list agree; there is no horizontal overflow.
 
-## Переход на сферу цели, версия 1.1
+## English translation verification
 
-В 20 пересчитанных запусках — **643 события**. Base/metric/nominal: 12 событий (3 пары, 5 дрон, 4 цель); base/metric/stress: 38 (24 пары, 7 дрон, 5 цель, 2 высота). Независимый метод проекции прямой и длины хорды подтверждает времена nominal-событий цели для всех радиусов. При сравнении старых и новых отчётов все события вне типа `aircraft_target` совпали полностью во всех 20 запусках.
+Documentation, project instructions, UI text and accessibility labels, configuration labels, fixture labels and generated report prose now use English. The HTML declares `lang="en"` and formats numbers with `en-US`. The original task PDF and source inputs were already in English and were retained unchanged.
 
-F020 не нарушает сферу 5 км, но сохраняет парное событие с F038 с t≈280,313 с. В nominal цель пересекают F012/F013/F023/F026; stress дополнительно отмечает F037. Исходные данные и траектории сохранены. Решение и его допущения — в [target-zone-decision.md](target-zone-decision.md).
+After regeneration, **all 43 Python tests and both browser suites passed**. Browser checks also verify the English page language, number formatting, playback label and absence of Cyrillic UI text across all 20 runs. Desktop and mobile screenshots of the English viewer were reviewed; the layout has no horizontal overflow.
 
-## Предыдущий независимый аудит версии 1.0
+Compared with the pre-translation Git revision `260315e`, all **20 runs / 643 events**, metrics, thresholds, summaries, endpoint flags and motion checks match exactly. The only change in `reports/analysis.json` is the input fingerprint, because translated display labels are part of `rules.json`. The three CSV reports and all three source files remain byte-identical. The configuration and synthetic fixture differ only in display labels; the analyzer's Python syntax tree differs only in string literals. A project-wide text scan found no remaining Cyrillic text or Russian locale settings, and local documentation links were checked.
 
-До перехода на сферу цели агент модели отдельно от автора анализатора прочитал формулы и отчёты версии 1.0 с цилиндрической целью. Его независимый расчёт по границам интервалов подтвердил все **20 запусков / 827 событий**, участников, типы, флаги границ и **1825 метрик минимумов**. Максимальное расхождение времени с основным решателем составило около `1.03e-11` с. Дополнительно выполнены 5000 случайных квадратичных случаев × 81 рациональная точка. Эти исторические числа не относятся к текущим отчётам версии 1.1. Это независимая диагностическая проверка, не формальная верификация; повторяемый набор тестов находится в `tests/`.
+## Switch to the target sphere, version 1.1
 
-Аудит выявил два замечания к валидации: списки sensitivity могли расходиться с фактическими профилями/вариантами, а bool мог приниматься за численный ноль. Исправления добавлены вместе с отрицательными тестами. Они не изменили результаты: все пять файлов отчётов остались побайтно прежними.
+The 20 recalculated runs contain **643 events**. Base/metric/nominal: 12 events (3 pairs, 5 drone, 4 target); base/metric/stress: 38 (24 pairs, 7 drone, 5 target, 2 altitude). An independent line-projection and chord-length method confirms nominal target event times for all radii. Comparing old and new reports, every event outside the `aircraft_target` type matched exactly across all 20 runs.
 
-## Сохранность входных файлов
+F020 does not violate the 5 km sphere, but retains its pair event with F038 from t≈280.313 s. In nominal mode, F012/F013/F023/F026 enter the target sphere; stress additionally flags F037. Source data and trajectories are preserved. The decision and its assumptions are in [target-zone-decision.md](target-zone-decision.md).
 
-SHA-256 совпадает до и после работы:
+## Previous independent audit of version 1.0
 
-| Файл | SHA-256 |
+Before switching to the target sphere, the model agent independently of the analyzer author read the version 1.0 formulas and reports with a cylindrical target. Its independent calculation from interval boundaries confirmed all **20 runs / 827 events**, participants, types, endpoint flags and **1825 minimum metrics**. The maximum time discrepancy from the main solver was about `1.03e-11` s. An additional 5000 random quadratic cases × 81 rational points were checked. These historical numbers do not apply to the current version 1.1 reports. This is an independent diagnostic check, not formal verification; the repeatable test suite is in `tests/`.
+
+The audit identified two validation issues: sensitivity lists could disagree with actual profiles/variants, and bool could be accepted as numerical zero. Fixes were added with negative tests. They did not change results: all five report files remained byte-identical.
+
+## Input file integrity
+
+SHA-256 matches before and after the work:
+
+| File | SHA-256 |
 | --- | --- |
 | flights.csv | `ee45cda176b4018d3fa5da42033c2db80bdeaf44f90c2f4efc15865781cc03d6` |
 | scenario.json | `f507f609cd2e12e2c4a6d1137e7dbf6094ec9579b2163fc0b7bda29c02104241` |
 | Task1_details.pdf | `f558659c10eb897636201bc82da087b7baf7e96ea61d8aa9e7d18d6c6b4c914a` |
 
-HTML также содержит SHA-256 текущих scenario/flights/rules. Полный отчёт хранит fingerprint канонических входных данных и правил. Проверки устанавливают согласованность объявленной модели и реализации; исходные маршруты не исправлены, их безопасность не утверждается. Подробные пределы применимости — в `model.md`.
+HTML also contains SHA-256 hashes of the current scenario/flights/rules. The full report stores a fingerprint of canonical inputs and rules. Checks establish consistency between the declared model and implementation; source routes have not been corrected and their safety is not claimed. Detailed applicability limits are in `model.md`.

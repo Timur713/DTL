@@ -18,13 +18,14 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
   assert.deepEqual(await page.locator('#analysis-summary strong').allTextContents(),[run.summary.event_count,run.summary.aircraft_pair_count,run.summary.affected_flight_count,run.summary.initial_event_count].map(String));
   assert.equal(await page.locator('.event-row').count(),run.summary.event_count);
   assert.equal(await page.locator('#event-marks button').count(),run.summary.event_count);
+  assert.doesNotMatch(await page.locator('body').innerText(), /\p{Script=Cyrillic}/u);
  }
  await page.selectOption('#profile-select','metric');await page.selectOption('#mode-select','nominal');await page.selectOption('#variant-select','base');
  // Target sphere: altitude controls the section, while event states come from Python.
  await page.selectOption('#flight-select','F020');await page.evaluate(()=>setTime(9.603));
  assert.equal(await page.evaluate(()=>zoneGeometry().targetSection),0);
- assert.ok((await page.textContent('#zone-note')).includes('Цель: на этой высоте зоны нет'));
- assert.ok((await page.textContent('#thresholds')).includes('Цель: 3D <'));
+ assert.ok((await page.textContent('#zone-note')).includes('Target: no zone at this altitude'));
+ assert.ok((await page.textContent('#thresholds')).includes('Target: 3D <'));
  assert.deepEqual(await page.evaluate(()=>activeRun.events.filter(e=>e.type==='aircraft_target').flatMap(e=>e.flight_ids).sort()),['F012','F013','F023','F026']);
  assert.ok(await page.evaluate(()=>activeRun.events.some(e=>e.type==='aircraft_aircraft'&&e.flight_ids.includes('F020'))));
  assert.deepEqual(await page.evaluate(()=>[3000,5000,8100].map(z=>zoneGeometry(0,z).targetSection)),[4000,0,0]);
@@ -35,7 +36,7 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
  await page.selectOption('#event-type','aircraft_target');await page.locator('.event-row').first().click();
  assert.equal(await page.evaluate(()=>selectedEvent.rule_id),'target_sphere');
  assert.equal(await page.evaluate(()=>playing),false);
- assert.ok((await page.textContent('#event-details')).includes('Расстояние 3D'));
+ assert.ok((await page.textContent('#event-details')).includes('3D distance'));
  assert.ok(await page.evaluate(()=>zoneGeometry().targetSection>0));
  await page.selectOption('#event-type','all');
  // Reset selection before testing automatic halos without a selected event.
@@ -63,7 +64,7 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
  assert.equal(await page.evaluate(()=>eventStatus(selectedEvent)),'current');
  assert.ok(await page.evaluate(()=>participantPoints(selectedEvent).every(p=>{const s=screen(p);return s.x>20&&s.x<width-20&&s.y>20&&s.y<height-20;})));
  assert.ok((await page.textContent('#event-details')).includes(e.rule_id));
- assert.ok((await page.textContent('#event-details')).includes('Номинальные центры'));
+ assert.ok((await page.textContent('#event-details')).includes('Nominal centers'));
  assert.ok(await page.evaluate(()=>eventParticipants.size===selectedEvent.participants.length));
  await page.locator('.event-row').first().click();
  assert.equal(await page.evaluate(()=>playing),false);
@@ -88,8 +89,8 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
  const targetSections=await page.evaluate(()=>{const radius=zoneGeometry(1200).targetRadius,alt=activeRun.thresholds.target_alt_m;return {high:zoneGeometry(1200,alt+radius).targetSection,low:zoneGeometry(1200,alt+3000).targetSection};});
  assert.equal(targetSections.high,0);
  assert.ok(Math.abs(targetSections.low-Math.sqrt(6440**2-3000**2))<1e-7);
- assert.ok((await page.textContent('#nominal-comparison')).includes('не складываются'));
- for(const t of [0,1200,0]){await page.evaluate(t=>setTime(t),t);assert.ok((await page.textContent('#uncertainty')).includes(t===1200?'1 300':'100'));}
+ assert.ok((await page.textContent('#nominal-comparison')).includes('not added'));
+ for(const t of [0,1200,0]){await page.evaluate(t=>setTime(t),t);assert.ok((await page.textContent('#uncertainty')).includes(t===1200?'1,300':'100'));}
  // Missing optional metric fields and arbitrary IDs remain safe text.
  await page.evaluate(()=>{const base=activeRun.events[0];jumpToEvent({...base,id:'<img src=x onerror=alert(1)>',metrics:{},thresholds:{}});});
  assert.equal(await page.locator('#event-details img').count(),0);
