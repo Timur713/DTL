@@ -37,9 +37,19 @@ The [analyzer](airspace/analysis.py) solves strict quadratic/linear inequalities
 python3 -m unittest discover -s tests -p 'test_*.py' -v
 ```
 
-**43 tests and two browser suites passed.** Browser validation commands, spherical target checks and source-file checksums are in the [validation record](docs/validation.md).
+**63 tests (43 baseline/integration and 20 vertical-model tests) and two browser suites passed.** Browser validation commands, spherical target checks and source-file checksums are in the [validation record](docs/validation.md).
 
-Maneuvers are not implemented. Generic jet limits are assumptions; actual aircraft types, wind, delays and wake turbulence are not modeled. The stress sphere is conservative. Minima of different distances may occur at different times; the sum of overlapping event durations is not the duration of unsafe flight.
+The baseline does not implement maneuvers. Generic jet limits are assumptions; actual aircraft types, wind, delays and wake turbulence are not modeled. The stress sphere is conservative. Minima of different distances may occur at different times; the sum of overlapping event durations is not the duration of unsafe flight.
+
+## Separate vertical trajectory model
+
+[`airspace/vertical.py`](airspace/vertical.py) provides piecewise constant vertical acceleration with unchanged source horizontal velocity, continuous position/velocity, full-segment motion/altitude validation, arbitrary-time evaluation and serialization. Its [model and API contract](docs/vertical-model.md) is separate from the baseline; only nominal kinematics are supported. It does not check conflict safety or change baseline reports/HTML.
+
+```sh
+python3 tools/example_vertical.py
+```
+
+This regenerates [`examples/F020_vertical.json`](examples/F020_vertical.json): a climb from 8100 to 8300 m, a level hold and return to 8100 m with zero vertical speed by 280 s, then original level flight to 1200 s. The example is an API demonstration; conflict safety remains unchecked. The Python test command above includes the vertical model tests.
 
 ## Working on the project
 

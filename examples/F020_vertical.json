@@ -1,0 +1,47 @@
+{
+  "duration_s": 1200.0,
+  "flight_id": "F020",
+  "initial_state": {
+    "alt_m": 8100.0,
+    "vx_mps": -229.98,
+    "vy_mps": 38.67,
+    "vz_mps": 0.0,
+    "x_m": 26286.1,
+    "y_m": -7477.7
+  },
+  "mode_id": "nominal",
+  "model": "piecewise_constant_vertical_acceleration",
+  "schema_version": "1.0",
+  "segments": [
+    {
+      "az_mps2": 0,
+      "duration_s": 100
+    },
+    {
+      "az_mps2": 0.5,
+      "duration_s": 20
+    },
+    {
+      "az_mps2": -0.5,
+      "duration_s": 20
+    },
+    {
+      "az_mps2": 0,
+      "duration_s": 100
+    },
+    {
+      "az_mps2": -0.5,
+      "duration_s": 20
+    },
+    {
+      "az_mps2": 0.5,
+      "duration_s": 20
+    },
+    {
+      "az_mps2": 0,
+      "duration_s": 920
+    }
+  ],
+  "source_sha256": "3f257dead4b70472b1f1ac3e0467b6ac195d19cff6297b04709b369cf7611e36",
+  "units": "SI: m, s, m/s, m/s^2"
+}

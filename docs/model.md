@@ -1,6 +1,6 @@
 # Model and rules for analyzing baseline motion
 
-This is a research model of source trajectories over 1200 s. `rules.json` contains the thresholds and limits selected for the analyzer and interface. There are no maneuvers, optimization, conflict resolution or claims that source motion is safe. The analysis detects violations of the selected rules and shows how conclusions depend on those rules and bounded errors.
+This is a research model of source trajectories over 1200 s. `rules.json` contains the thresholds and limits selected for the baseline analyzer and interface. The baseline has no maneuvers, optimization, conflict resolution or claims that source motion is safe. The analysis detects violations of the selected rules and shows how conclusions depend on those rules and bounded errors. A separate nominal [vertical trajectory model](vertical-model.md) now supports supplied maneuver schedules and motion/altitude validation; it does not change this baseline or check maneuver conflict safety.
 
 ## Inputs and model scope
 

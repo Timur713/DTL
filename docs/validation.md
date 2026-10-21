@@ -45,6 +45,38 @@ Before switching to the target sphere, the model agent independently of the anal
 
 The audit identified two validation issues: sensitivity lists could disagree with actual profiles/variants, and bool could be accepted as numerical zero. Fixes were added with negative tests. They did not change results: all five report files remained byte-identical.
 
+## Separate vertical model
+
+On October 21, 2026, all **63 Python tests passed**: the existing 43 checks
+and 20 new tests in `tests/test_vertical.py`. The new tests use independently
+known positions/velocities, check continuous segment joins and exact limit
+boundaries, and detect a short altitude excursion at t=0.25 s between integer
+samples. They also check all 40 source level flights, unchanged horizontal
+motion outside the XY frame, unsupported inputs/modes, serialization with
+provenance, and deterministic F020 example generation from another cwd.
+
+`python3 tools/example_vertical.py` regenerated
+`examples/F020_vertical.json`. F020 reaches 8300 m, holds, and returns to
+8100 m with vz=0 by 280 s; its original horizontal motion and 1200 s destination
+are retained. This checks nominal kinematics/altitude only. Conflict safety
+and bounded-stress applicability are not established.
+
+`python3 tools/generate_baseline.py` reproduced byte-identical baseline HTML
+and all five reports; both browser suites passed against the regenerated HTML.
+The source SHA-256 checksums below still match. Configuration and baseline
+calculations were not changed. The separate model's contract and API are in
+[vertical-model.md](vertical-model.md).
+
+Coordinator review reran all 63 Python tests and both browser suites successfully.
+An additional deterministic diagnostic (seed 20261021) compared 4300 states
+across 100 valid schedules with an independent acceleration-step formula,
+`z(t)=z0+vz0*t+sum(delta_az*max(0,t-t_join)^2/2)`, and checked 100 JSON
+round trips. All comparisons passed. Source inputs, rules and baseline artifacts
+remain byte-identical to the preceding Git revision. This diagnostic supplements
+the continuous extrema checks; it is not a sampled proof of conflict safety.
+The API example still violates F020/F038 separation: at t=300 s their horizontal
+distance is approximately 6059.272 m and their vertical distance is 0 m.
+
 ## Input file integrity
 
 SHA-256 matches before and after the work:
