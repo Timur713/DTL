@@ -180,7 +180,8 @@ schema is `email-delivery-1.0`; it is not the original checker's root schema.
 
 The dedicated template/script embed only the submitted solution and nominal
 original routes. The builder independently rechecks both fleets. The viewer opens
-on the submitted plan at the F031 sphere witness time. It provides mode switching,
+on “The endpoint result”: the submitted plan at 1200 s, paused, with the first
+endpoint-bound pair selected. It provides mode switching,
 all 40 aircraft, playback/seeking, camera controls, an altitude profile and three
 guided moments. JS propagates saved controls for display and compares time with
 Python-certified intervals. It does not calculate authoritative quality or detect

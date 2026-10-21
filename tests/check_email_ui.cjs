@@ -18,6 +18,11 @@ const near=(a,b,e=1e-7)=>assert.ok(Math.abs(a-b)<e,`${a} != ${b}`);
   await page.goto(pathToFileURL(path.join(directory,'START_HERE.html')).href);
   await page.waitForFunction(()=>document.querySelector('#map').width>1&&!!profilePlot);
   assert.equal(await page.evaluate(()=>mode),'plan');
+  assert.equal(await page.evaluate(()=>story),'endpoints');
+  assert.equal(await page.evaluate(()=>time),1200);
+  assert.equal(await page.evaluate(()=>playing),false);
+  assert.equal(await page.locator('#story-endpoints').getAttribute('aria-pressed'),'true');
+  assert.deepEqual(await page.evaluate(()=>[selected,...secondary]),report.endpoint_bounds.disjoint_pairs[0].aircraft);
   assert.equal(await page.locator('#flight-select option').count(),40);
   assert.equal(await page.evaluate(()=>DATA.verification.verified_safe),true);
   assert.deepEqual(await page.evaluate(()=>DATA.verification),report.certificate);
@@ -31,6 +36,7 @@ const near=(a,b,e=1e-7)=>assert.ok(Math.abs(a-b)<e,`${a} != ${b}`);
   // A first-time reviewer finds the tour before the map and can compare without
   // losing the moment. Both live altitude readings remain visible in either mode.
   assert.ok(await page.evaluate(()=>document.querySelector('.tour').getBoundingClientRect().top<document.querySelector('.workspace').getBoundingClientRect().top));
+  await page.click('#story-avoidance');
   const initial=await page.evaluate(()=>({time,selected,original:originalAt(byId.get(selected),time).z,planned:plannedAt(byId.get(selected),time).z}));
   const heightPlan=await page.evaluate(()=>({point:screen(positionAt(byId.get(selected))),camera:{...camera}}));
   const readAltitude=async id=>Number((await page.textContent(id)).replace(/[^\d.-]/g,''));
@@ -110,7 +116,7 @@ const near=(a,b,e=1e-7)=>assert.ok(Math.abs(a-b)<e,`${a} != ${b}`);
   await page.locator('#time-slider').fill('250');assert.equal(await page.evaluate(()=>playing),false);near(await page.evaluate(()=>time),250);
   const urls=await page.locator('a').evaluateAll(links=>links.map(a=>a.getAttribute('href')));
   for(const url of urls)if(!url.startsWith('https:'))assert.ok(fs.existsSync(path.join(directory,url)),url);
-  await page.click('#story-avoidance');await page.evaluate(()=>window.scrollTo(0,0));
+  await page.click('#story-endpoints');await page.evaluate(()=>window.scrollTo(0,0));
   await page.screenshot({path:'/tmp/dtl-email-desktop.png',fullPage:true});
   await page.setViewportSize({width:390,height:844});await page.evaluate(()=>window.scrollTo(0,0));
   assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));

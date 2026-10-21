@@ -1,12 +1,11 @@
 # Safe rerouting under a moving threat
 
 **Email review:** [six-file compact package](DTL_email.zip), or open
-[START_HERE.html](email_delivery/START_HERE.html). It starts on the safe plan,
+[START_HERE.html](email_delivery/START_HERE.html). It opens on “The endpoint result”,
 with three guided comparisons. Full project: [GitHub](https://github.com/Timur713/DTL).
 
-**Review route:** this page → [approach and task requirements](docs/submission.md)
-→ [selected evidence](submission/README.md). For code review or an automated agent,
-start with the [repository map](docs/README.md) and [AGENTS.md](AGENTS.md).
+**For reviewers:** [approach and evidence](docs/submission.md). **For coding agents:**
+[repository map](docs/README.md) and [AGENTS.md](AGENTS.md).
 
 Forty aircraft share a local Cartesian airspace with a drone flying toward a ground
 target. We simulate **1200 s (20 minutes)**. Aircraft remain present and keep their
@@ -60,3 +59,9 @@ errors can reduce separation from 300 to 298 m; a separate 304.8 m threshold che
 finds 16 events. Baseline uncertainty comparisons remain available, but do not
 certify uncertain maneuver execution. Historical experiments are preserved in the
 [historical project guide](docs/project-guide.md).
+
+
+**Next steps.** Allow turns and horizontal speed changes to reduce large climbs.
+Improve the scoring formula with clear priorities for extra time, altitude change
+and maneuver smoothness. Add margins for measurement errors and execution delays,
+then check the whole flight again.

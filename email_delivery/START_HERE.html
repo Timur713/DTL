@@ -27,7 +27,7 @@ body{background:#f4f7f6}.shell{max-width:1380px;padding:0 28px}header{padding:17
 <div class="proof-strip"><span><i class="proof-dot"></i><strong>40 / 40</strong> aircraft retained</span><span><strong>780</strong> pairs checked continuously</span><span><strong>0</strong> unresolved checks</span><span>Exact-state / nominal model</span></div>
 <noscript>The saved solution has zero nominal violations and zero unresolved checks. Enable JavaScript for the offline animation. Read README.md or verification.json for the result and assumptions.</noscript>
 <main>
-<nav class="tour" aria-label="Explore in three clicks"><button id="story-conflict" aria-pressed="false"><span class="number">↗</span><span><strong>1. The problem</strong><small>Where the original routes fail.</small></span></button><button id="story-avoidance" aria-pressed="true"><span class="number">↗</span><span><strong>2. The maneuver</strong><small>Same horizontal route. A safer altitude.</small></span></button><button id="story-endpoints" aria-pressed="false"><span class="number">↗</span><span><strong>3. The endpoint result</strong><small>Why 150 m is the best possible here.</small></span></button></nav>
+<nav class="tour" aria-label="Explore in three clicks"><button id="story-conflict" aria-pressed="false"><span class="number">↗</span><span><strong>1. The problem</strong><small>Where the original routes fail.</small></span></button><button id="story-avoidance" aria-pressed="false"><span class="number">↗</span><span><strong>2. The maneuver</strong><small>Same horizontal route. A safer altitude.</small></span></button><button id="story-endpoints" aria-pressed="true"><span class="number">↗</span><span><strong>3. The endpoint result</strong><small>Why 150 m is the best possible here.</small></span></button></nav>
 <div class="insight" aria-label="Selected guided explanation"><span class="label" id="insight-label"></span><div><h2 id="insight-title"></h2><p id="insight-copy"></p></div><button id="compare-story" class="compare-story">Compare original ↔ plan</button></div>
 
 <section class="workspace" aria-label="Compare original routes with the safe plan">
@@ -51,8 +51,9 @@ const qualities=new Map(DATA.quality.per_aircraft.map(q=>[q.flight_id,q]));
 const threat=DATA.scenario.hostile_object,target={...DATA.scenario.target,alt_m:DATA.rules.zones.target.center_alt_m,vx_mps:0,vy_mps:0,vz_mps:0};
 const limits=DATA.scenario.airspace,thresholds=DATA.verification.thresholds;
 const witness=DATA.excursion_bounds.strongest;
-let mode='plan',selected=witness.flight_id,time=witness.time_s,playing=false,speed=30,anchorTime=time,anchorWall=0;
-let story='avoidance',secondary=[],cameraMode='focus',camera={x:0,y:0,scale:1};
+const openingPair=DATA.endpoint_bounds.disjoint_pairs[0].aircraft;
+let mode='plan',selected=openingPair[0],time=T,playing=false,speed=30,anchorTime=time,anchorWall=0;
+let story='endpoints',secondary=openingPair.slice(1),cameraMode='focus',camera={x:0,y:0,scale:1};
 let heightView=true;
 const heightFactor=()=>heightView?3:0;
 const displayNorth=p=>p.y+heightFactor()*(p.z||0);

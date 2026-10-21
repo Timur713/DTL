@@ -1,5 +1,15 @@
 # Validation of the integrated result
 
+## Endpoint opening and plain-language README — October 21, 2026
+
+The compact viewer opens paused at 1200 s on “The endpoint result”, with the
+first bound pair selected. Browser checks assert the opening time, selected pair,
+active step and safe-plan mode before testing the other guided moments. The five
+compact Python tests and compact/baseline/analysis browser suites passed. The
+478-word email README explains the approach in plain language and adds short
+next steps: horizontal rerouting, clearer scoring priorities and error margins.
+The ZIP was rebuilt; inputs, rules, controls and numerical results are unchanged.
+
 ## Visible vertical maneuvers — October 21, 2026
 
 The compact canvas now defaults to a labeled ×3 height projection, with ground

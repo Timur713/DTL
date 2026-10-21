@@ -85,57 +85,58 @@ def plotting_profile(definition, flight, scenario, rules):
 def write_readme(path, evidence, github):
     source = ('Full source, independent checker, tests and search experiments: '+github
               if github else 'Full source, independent checker, tests and search experiments will be shared separately on GitHub; the repository link accompanies the email.')
-    text = f'''# Safe passage — engineering approach and results
+    text = f'''# Safe passage — approach, results and next steps
 
-**Scenario and safety design.** Forty aircraft must avoid each other, a moving
-drone and a ground target for 1200 s. I first reviewed
-[FAA](https://www.faa.gov/air_traffic/publications/atpubs/atc_html/chap5_section_5.html)/[ICAO](https://store.icao.int/en/manual-on-implementation-vertical-separation-doc-9574) separation
-references and EUROCONTROL/NASA approaches to conflict detection and uncertainty.
-I adopted 9260 m horizontal OR 300 m vertical separation, keeping 304.8 m as a
-sensitivity comparison. The 5 km exclusion spheres, target altitude zero and
-generic aircraft limits are explicit research assumptions, not universal aviation
-rules. Limits: altitude 3000–12000 m, horizontal speed 200–260 m/s, vertical speed
-≤15 m/s and vertical acceleration ≤0.5 m/s². Equality is allowed. Planner and
-checker share rules.json.
+**The problem and chosen rules.** Forty aircraft must keep flying for 20 minutes
+while avoiding each other, a moving drone and a ground target. I reviewed
+[FAA](https://www.faa.gov/air_traffic/publications/atpubs/atc_html/chap5_section_5.html)/[ICAO](https://store.icao.int/en/manual-on-implementation-vertical-separation-doc-9574)
+separation references and EUROCONTROL/NASA work on conflict detection. I chose
+9260 m horizontal OR 300 m vertical separation. The 300 m value is our metric
+convention; 304.8 m is checked separately. The drone and target each have a 5 km
+protected sphere; target altitude is assumed zero. These choices define a research
+model, not a certified aviation system.
 
-**Establish a baseline before optimizing.** I visualized the original routes and
-identified 12 violation events. I then restricted the first solver to continuous
-vertical maneuvers while preserving horizontal motion. This kept forward progress
-explicit and made the dynamics tractable to verify. Position and velocity remain
-continuous; aircraft are never teleported or removed.
+Aircraft stay at 3000–12000 m. Limits are 200–260 m/s horizontal speed, 15 m/s
+vertical speed and 0.5 m/s² vertical acceleration. Equality is allowed. The planner
+and independent checker both use rules.json.
 
-**Make “good” measurable, then test the definition.** I treated feasibility,
-quality and optimality as separate questions. I proposed a normalized weighted
-formula, `J = Σₖ wₖ mₖ/sₖ`, for worst/total endpoint deviation, accumulated altitude deviation and
-vertical travel, with safety as a hard constraint. Its dependence on reference
-scales and the observed trade-offs motivated retaining it only as an experimental
-benchmark. I moved to seven-objective Pareto comparisons, also considering peak
-excursion, changed aircraft and reversals, so improvements remain inspectable.
+**Start simple and make the problem visible.** The original routes have 12 conflict
+events. I first allowed altitude changes only: X and Y follow the original routes,
+while Z changes smoothly. This preserves forward progress and makes safety easier
+to check. No aircraft is removed or teleported.
 
-**Use mathematical bounds to guide improvement.** Two disjoint terminal pairs
-need 300 m relative vertical displacement each. Triangle inequality proves lower
-bounds of 150 m worst and 600 m total endpoint deviation. Coordinated ±150 m
-offsets attain both in the submitted plan. This improves the first feasible
-solution's 6300/14100 m endpoints. I also investigated the surprising large climbs:
-sphere geometry and the altitude floor force at least 5679.45 m excursion for
-F031; the submitted fleet maximum is 6150 m.
+**Define what a better solution means.** I tested a weighted score,
+`J = Σₖ wₖ mₖ/sₖ`, combining several costs. Its result depended too much on the
+chosen weights and scales. I kept it as an experiment and compared seven measures
+separately, including final-position error, climb size and total vertical travel.
+This shows the trade-offs instead of hiding them in one number.
 
-**Verify independently and challenge the guarantee.** The checker reads saved
-controls and continuously checks all 780 pairs, spheres, motion limits and joins,
-including quartic distance inequalities. Result: **40 aircraft, zero nominal
-violations, zero unresolved checks**, zero final vertical speed. Samples alone
-are insufficient evidence. Opposing 1 m altitude errors can reduce binding
-separation to 298 m; the separate 304.8 m recheck finds 16 events. I report these
-limits explicitly.
+**Find a bound, then reach it.** Two separate pairs need 300 m vertical separation
+at 20:00. Splitting that into −150 m and +150 m gives the smallest possible largest
+end-position error: **150 m**, with **600 m total** across the fleet. The submitted
+plan reaches both bounds when horizontal routes are fixed. It is not optimal in
+every other measure: 15 aircraft maneuver, the largest altitude change is 6150 m,
+and total vertical travel is 60.6 km.
 
-**Assumptions:** exact states/execution, point aircraft, flat geometry, no wind or
-delays; the drone continues beyond the target and aircraft are retained when
-leaving the display frame. No aircraft-specific aerodynamics, landing, post-horizon guarantee
-or overall global optimum is claimed. The two endpoint optima assume fixed XY.
+**Check the whole flight.** A separate checker tests all 780 pairs, both spheres,
+motion limits and segment joins continuously, including between animation frames.
+Result: **40 aircraft, zero nominal violations, zero unresolved checks**. Every
+aircraft finishes with zero vertical speed.
 
-**Open START_HERE.html after extracting the ZIP.** It works offline.
-trajectories.csv contains {evidence['sampled_csv']['rows']:,} rows; segments.json holds
-authoritative controls; verification.json holds evidence and hashes.
+**What I would do next.** Allow turns and horizontal speed changes to see whether
+flying around the drone reduces large climbs. Improve the scoring formula using
+clear priorities for extra time, altitude change and maneuver smoothness. Add
+safety margins for measurement errors and execution delays, then recheck the
+whole flight.
+
+**Limits.** The result assumes exact states and execution, point aircraft, flat
+geometry, no wind or delays. Opposing 1 m altitude errors can reduce a binding
+300 m separation to 298 m. No landing, safety after 20 minutes or overall global
+optimum is claimed.
+
+**Open START_HERE.html after extracting the ZIP.** It opens on “The endpoint
+result” and works offline. trajectories.csv has {evidence['sampled_csv']['rows']:,} rows;
+segments.json holds the controls; verification.json holds evidence and hashes.
 
 {source}
 '''
