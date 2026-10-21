@@ -1,5 +1,24 @@
 # Validation of the integrated result
 
+## Reviewer presentation refinement — October 21, 2026
+
+The compact viewer now places its three guided questions above the workspace,
+compares original/planned altitude simultaneously, labels map objects with
+altitude, enlarges the altitude profile and exposes fleet maneuver costs. Live
+distance readings are diagnostics, not a new safety detector. Choosing an aircraft
+updates its explanation; whole-flight and current-time figures are distinguished.
+
+Five compact-package Python tests passed, including byte-identical rebuilding.
+The extended compact browser suite passed on desktop/mobile, checking both live
+altitudes against CSV, comparison without losing time/selection, all 40 aircraft,
+the contextual explanations, displayed distance geometry, playback and offline
+links. The baseline and analysis browser suites also passed again. Desktop/mobile
+screenshots were inspected. The compact suite additionally passed on the isolated
+six-file ZIP extraction; original inputs, rules and saved controls are unchanged.
+The full 140-test calculation run below was not repeated for this presentation-only
+change. Reproduction uses `tools/build_email.py` and the commands in the compact
+delivery section below.
+
 ## Repository publication check — October 21, 2026
 
 After adding the [repository map](README.md) and explicit reviewer/agent entry

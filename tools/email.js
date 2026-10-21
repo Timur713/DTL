@@ -25,7 +25,7 @@ function eventActive(e,t=time){return (t>e.start_s||t===e.start_s&&e.start_inclu
 function activeEvents(){return mode==='plan'?[]:DATA.baseline.events.filter(e=>eventActive(e));}
 const screen=p=>({x:width/2+(p.x-camera.x)*camera.scale,y:height/2-(p.y-camera.y)*camera.scale});
 const world=p=>({x:camera.x+(p.x-width/2)/camera.scale,y:camera.y-(p.y-height/2)/camera.scale});
-function fitPoints(points,minSpan=50000){
+function fitPoints(points,minSpan=25000){
  const xs=points.map(p=>p.x),ys=points.map(p=>p.y),xmin=Math.min(...xs),xmax=Math.max(...xs),ymin=Math.min(...ys),ymax=Math.max(...ys);
  camera={x:(xmin+xmax)/2,y:(ymin+ymax)/2,scale:Math.min(Math.max(1,width-90)/Math.max(minSpan,xmax-xmin+22000),Math.max(1,height-65)/Math.max(minSpan,ymax-ymin+18000))};
 }
@@ -50,7 +50,7 @@ function zone(obj,radius,color,label){
  ctx.save();ctx.translate(p.x,p.y);ctx.strokeStyle=color;ctx.fillStyle=color;ctx.lineWidth=2;
  if(label==='Threat'){ctx.rotate(Math.PI/4);ctx.fillRect(-5,-5,10,10);}
  else{ctx.beginPath();ctx.arc(0,0,6,0,2*Math.PI);ctx.moveTo(-10,0);ctx.lineTo(10,0);ctx.moveTo(0,-10);ctx.lineTo(0,10);ctx.stroke();}
- ctx.restore();ctx.font='600 11px system-ui';ctx.textAlign='left';ctx.fillStyle=color;ctx.fillText(label,p.x+12,p.y+17);
+ ctx.restore();ctx.font='600 11px system-ui';ctx.textAlign='left';ctx.fillStyle=color;ctx.fillText(label+' · '+fmt(positionAt(obj).z)+' m',p.x+12,p.y+17);
 }
 function aircraft(f,current){
  const p=screen(positionAt(f)),chosen=f.flight_id===selected,partner=secondary.includes(f.flight_id),danger=current.has(f.flight_id);
@@ -58,7 +58,7 @@ function aircraft(f,current){
  if(danger||chosen||partner){ctx.beginPath();ctx.arc(p.x,p.y,chosen?19:16,0,Math.PI*2);ctx.fillStyle=danger?'#d6536517':chosen?'#087f7810':'#646e9510';ctx.fill();ctx.strokeStyle=danger?'#d65365':chosen?'#087f78':'#6c78a1';ctx.lineWidth=chosen?1.6:1;ctx.stroke();}
  ctx.save();ctx.translate(p.x,p.y);ctx.rotate(Math.atan2(f.vx_mps,f.vy_mps));const scale=chosen?1.05:.75;ctx.scale(scale,scale);
  ctx.beginPath();ctx.moveTo(0,-11);for(const [x,y] of [[2,-3],[9,2],[9,4],[2,2],[2,8],[4,10],[-4,10],[-2,8],[-2,2],[-9,4],[-9,2],[-2,-3]])ctx.lineTo(x,y);ctx.closePath();ctx.fillStyle=danger?'#c04459':chosen?'#087f78':partner?'#68749b':'#879ba7';ctx.fill();ctx.strokeStyle='white';ctx.lineWidth=.8;ctx.stroke();ctx.restore();
- if($('labels').checked||chosen||partner||danger){ctx.font=chosen?'650 11px system-ui':'10px system-ui';ctx.textAlign='left';ctx.lineWidth=4;ctx.strokeStyle='#f6fafb';ctx.strokeText(f.flight_id,p.x+21,p.y-7);ctx.fillStyle=danger?'#b84154':chosen?'#086e67':'#5c7481';ctx.fillText(f.flight_id,p.x+21,p.y-7);}
+ if($('labels').checked||chosen||partner||danger){ctx.font=chosen?'650 11px system-ui':'10px system-ui';ctx.textAlign='left';ctx.lineWidth=4;ctx.strokeStyle='#f6fafb';const label=f.flight_id+((chosen||partner)?' · '+fmt(positionAt(f).z)+' m':'');ctx.strokeText(label,p.x+21,p.y-7);ctx.fillStyle=danger?'#b84154':chosen?'#086e67':'#5c7481';ctx.fillText(label,p.x+21,p.y-7);}
 }
 function relation(events){
  if(!secondary.length)return;
@@ -85,7 +85,7 @@ const NS='http://www.w3.org/2000/svg';
 function svg(tag,attrs={},text){const e=document.createElementNS(NS,tag);for(const [k,v] of Object.entries(attrs))e.setAttribute(k,String(v));if(text!==undefined)e.textContent=text;return e;}
 function plotPath(points,x,y){return points.map(([t,z],i)=>`${i?'L':'M'}${x(t).toFixed(3)},${y(z).toFixed(3)}`).join(' ');}
 function buildProfile(){
- const root=$('profile'),W=Math.max(240,root.getBoundingClientRect().width),H=180,L=27,R=8,top=12,bottom=24;
+ const root=$('profile'),W=Math.max(240,root.getBoundingClientRect().width),H=190,L=30,R=8,top=12,bottom=24;
  const x=t=>L+t/T*(W-L-R),y=z=>H-bottom-(z-limits.alt_min_m)/(limits.alt_max_m-limits.alt_min_m)*(H-top-bottom);
  root.replaceChildren();root.setAttribute('viewBox',`0 0 ${W} ${H}`);
  const defs=svg('defs'),clip=svg('clipPath',{id:'profile-clip'});clip.append(svg('rect',{x:L,y:top,width:W-L-R,height:H-top-bottom}));defs.append(clip);root.append(defs);
@@ -100,22 +100,28 @@ function buildProfile(){
  group.append(svg('path',{d:plotPath(ts.map((t,i)=>[t,profile.alt_m[i]]),x,y),fill:'none',stroke:'#087f78','stroke-width':2.3,class:'safe-profile'}));
  for(const t of [0,T/2,T])root.append(svg('text',{x:x(t),y:H-6,'text-anchor':t===0?'start':t===T?'end':'middle','font-size':9,fill:'#7a8e99'},clock(t)));
  const cursor=svg('line',{x1:x(time),x2:x(time),y1:top,y2:H-bottom,stroke:'#506a77','stroke-width':1,'stroke-dasharray':'3 3',class:'time-cursor'}),dot=svg('circle',{r:4,fill:'#087f78',stroke:'white','stroke-width':1.5,class:'current-altitude'});group.append(cursor,dot);
- root.dataset.flightId=selected;profilePlot={x,y,cursor,dot,L,R,W};
+ const originalDot=svg('circle',{r:3.5,fill:'#b66b24',stroke:'white','stroke-width':1.5,class:'original-altitude-dot'});group.append(originalDot);
+ root.dataset.flightId=selected;profilePlot={x,y,cursor,dot,originalDot,L,R,W};
 }
 function updateProfile(){
  const key=selected+'|'+$('profile').getBoundingClientRect().width;
  if(profileKey!==key){profileKey=key;buildProfile();}
- const p=positionAt(byId.get(selected)),plot=profilePlot;
+ const plot=profilePlot;
  plot.cursor.setAttribute('x1',plot.x(time));plot.cursor.setAttribute('x2',plot.x(time));plot.cursor.dataset.time=String(time);
- plot.dot.setAttribute('cx',plot.x(time));plot.dot.setAttribute('cy',plot.y(p.z));plot.dot.setAttribute('fill',mode==='plan'?'#087f78':'#b66b24');
+ plot.dot.setAttribute('cx',plot.x(time));plot.dot.setAttribute('cy',plot.y(plannedAt(byId.get(selected),time).z));plot.dot.setAttribute('fill','#087f78');
+ plot.dot.setAttribute('r',mode==='plan'?5:3.5);plot.originalDot.setAttribute('r',mode==='original'?5:3.5);
+ plot.originalDot.setAttribute('cx',plot.x(time));plot.originalDot.setAttribute('cy',plot.y(originalAt(byId.get(selected),time).z));
 }
 function updateInsight(){
+ const pairIds=[selected,...secondary].join(' / '),q=qualities.get(selected);
  const texts={
-  conflict:['01 / Conflict and correction','The original pair occupies overlapping protected space during this interval. Switch between Original routes and Safe plan: horizontal tracks stay the same, but a vertical maneuver restores separation. The red event status comes from precomputed continuous Python results.'],
-  avoidance:['02 / A reason for the climb',`F031 starts at 3,000 m. Along its fixed route, the drone's sphere and the altitude floor force it to reach at least ${fmt(witness.required_altitude_lower_m,2)} m at ${clock(witness.time_s)}. The altitude plot shows why the safe plan climbs; the original route crosses the forbidden band.`],
-  endpoints:['03 / A bound, then a matching solution','At 20:00, F018/F034 and F030/F039 remain horizontally too close. Each pair needs 300 m relative vertical separation. Splitting that into −150 m and +150 m attains the minimum possible worst deviation (150 m) and total deviation (600 m), under fixed horizontal motion.']
+  explore:['Explore / Aircraft detail',`${selected}: compare the two altitude histories.`,`${q.changed?'This aircraft changes altitude to avoid conflicts.':'This aircraft keeps its original altitude.'} The two readings show the same instant. Its planned end-position error is ${fmt(q.endpoint_deviation_m)} m; its largest altitude change is ${fmt(q.max_altitude_excursion_m)} m over the full 20 minutes.`],
+  conflict:['01 / The problem','The original routes contain conflicts.',secondary.length?`${pairIds}: too close horizontally and vertically. Compare the same moment in Safe plan: the aircraft keep their horizontal routes and separate in altitude.`:'This original route enters protected space. Compare the same moment in Safe plan and watch the altitude chart: the horizontal route stays unchanged.'],
+  avoidance:['02 / The maneuver','Go above the threat, then return.',`F031 starts at 3,000 m. Sphere geometry requires at least ${fmt(witness.required_altitude_lower_m,2)} m at ${clock(witness.time_s)}; the plan reaches ${fmt(plannedAt(byId.get(witness.flight_id),witness.time_s).z)} m. Pink shading marks forbidden altitudes. Compare both routes at the same instant.`],
+  endpoints:['03 / The result','150 m each. The smallest possible worst error.','At 20:00, two disjoint pairs still need 300 m vertical separation. Opposing −150 m / +150 m offsets attain both proven bounds: 150 m largest error and 600 m total. This proof assumes unchanged horizontal routes.']
  };
- const pair=texts[story];$('insight-label').textContent=pair[0];$('insight-copy').textContent=pair[1];
+ const text=texts[story];$('insight-label').textContent=text[0];$('insight-title').textContent=text[1];$('insight-copy').textContent=text[2];
+ $('compare-story').textContent=mode==='plan'?'Compare with original →':'See the safe plan →';
  for(const id of ['conflict','avoidance','endpoints'])$('story-'+id).setAttribute('aria-pressed',String(id===story));
 }
 function render(){
@@ -125,11 +131,24 @@ function render(){
  $('current-state').textContent=mode==='plan'?'Verified nominal plan · 0 violations over 20 minutes':`Original routes · ${events.length?events.length+' active violation event'+(events.length===1?'':'s'):'no active event at this instant'} · 12 over the horizon`;
  const f=byId.get(selected),p=positionAt(f),q=qualities.get(selected),planned=mode==='plan';
  $('flight-select').value=selected;$('phase').textContent=p.vz>1e-8?'Climbing':p.vz<-1e-8?'Descending':Math.abs(p.z-f.alt_m)>1e-6?'Level hold':'Level flight';
- $('altitude').innerHTML=`${fmt(p.z/1000,2)} <small>km</small>`;
+ $('altitude').textContent=fmt(p.z)+' m';
+ $('original-altitude').innerHTML=`${fmt(originalAt(f,time).z)} <small>m</small>`;
+ $('planned-altitude').innerHTML=`${fmt(plannedAt(f,time).z)} <small>m</small>`;
+ $('original-reading').classList.toggle('selected-reading',!planned);$('planned-reading').classList.toggle('selected-reading',planned);
+ $('reading-time').textContent=clock(time);
  $('vertical-speed').innerHTML=`${p.vz>0?'+':''}${fmt(p.vz,1)} <small>m/s</small>`;
  $('endpoint').innerHTML=`${fmt(planned?q.endpoint_deviation_m:0)} <small>m</small>`;
  $('excursion').innerHTML=`${fmt((planned?q.max_altitude_excursion_m:0)/1000,2)} <small>km</small>`;
- $('flight-detail').textContent=`Starts at ${fmt(f.alt_m/1000,2)} km · horizontal speed ${fmt(Math.hypot(f.vx_mps,f.vy_mps))} m/s. ${planned?'Plan ends '+(q.terminal_altitude_offset_m>=0?'+':'')+fmt(q.terminal_altitude_offset_m)+' m from the original altitude.':'Original altitude is unchanged; no avoidance maneuver.'}`;
+ // Distances below are display diagnostics; event status uses Python intervals only.
+ if(secondary.length){
+  const other=positionAt(byId.get(secondary[0]));
+  $('flight-detail').textContent=`Pair ${selected} / ${secondary[0]} now: ${fmt(Math.hypot(p.x-other.x,p.y-other.y)/1000,2)} km horizontal · ${fmt(Math.abs(p.z-other.z))} m vertical.`;
+ }else{
+  const zones=[{obj:threat,name:'Drone',radius:thresholds.threat_radius_m},{obj:target,name:'Target',radius:thresholds.target_radius_m}];
+  const nearest=zones.map(z=>({...z,distance:Math.hypot(p.x-positionAt(z.obj).x,p.y-positionAt(z.obj).y,p.z-positionAt(z.obj).z)})).sort((a,b)=>a.distance-b.distance)[0];
+  $('flight-detail').textContent=`${nearest.name} distance now: ${fmt(nearest.distance)} m · minimum ${fmt(nearest.radius)} m (3D).`;
+ }
+
  $('clock').textContent=clock(time);$('time-slider').value=String(time);$('time-slider').setAttribute('aria-valuetext',clock(time)+' of 20 minutes');
  $('play').textContent=playing?'Ⅱ Pause':'▶ Play';updateInsight();
 }
@@ -156,8 +175,9 @@ function resize(){
  width=Math.max(1,rect.width);height=Math.max(1,rect.height);canvas.width=Math.round(width*dpr);canvas.height=Math.round(height*dpr);ctx.setTransform(dpr,0,0,dpr,0,0);profileKey='';render();
 }
 $('flight-select').replaceChildren(...flights.map(f=>{const o=document.createElement('option');o.value=f.flight_id;o.textContent=f.flight_id;return o;}));
-$('flight-select').onchange=e=>{selected=e.target.value;secondary=[];cameraMode='focus';profileKey='';render();};
+$('flight-select').onchange=e=>{selected=e.target.value;story='explore';secondary=[];cameraMode='focus';profileKey='';render();};
 $('mode-plan').onclick=()=>setMode('plan');$('mode-original').onclick=()=>setMode('original');
+$('compare-story').onclick=()=>setMode(mode==='plan'?'original':'plan');
 $('play').onclick=()=>{const now=performance.now();updateClock(now);if(!playing&&time>=T)time=0;playing=!playing;anchorTime=time;anchorWall=now;render();};
 $('speed').onchange=e=>{const now=performance.now();updateClock(now);speed=Number(e.target.value);anchorTime=time;anchorWall=now;render();};
 $('time-slider').oninput=e=>seek(e.target.value);
@@ -169,6 +189,7 @@ $('event-track').replaceChildren(...DATA.baseline.events.map((e,i)=>{
  const b=document.createElement('button');b.style.left=e.start_s/T*100+'%';b.style.width=Math.max(.5,(e.end_s-e.start_s)/T*100)+'%';b.style.top=String(3+i%3*6)+'px';b.title=`Original ${e.participants.join(' / ')} · ${clock(e.start_s)}–${clock(e.end_s)}`;b.setAttribute('aria-label',b.title);b.onclick=()=>inspectEvent(e);return b;
 }));
 const q=DATA.quality;
+$('maneuver-cost').textContent=`${q.changed_aircraft_count} aircraft maneuver · ${fmt(q.max_altitude_excursion_m)} m largest altitude change · ${fmt(q.vertical_travel_m/1000,1)} km fleet vertical travel. Endpoint optimality does not make these costs optimal.`;
 $('quality-detail').textContent=`Selected plan: ${q.changed_aircraft_count} aircraft change altitude; ${q.reversal_count} climb/descent reversals; ${fmt(q.vertical_travel_m/1000,1)} km total vertical travel. Every aircraft finishes with zero vertical speed. The maximum temporary excursion is ${fmt(q.max_altitude_excursion_m/1000,2)} km. Full controls and numerical evidence are included below.`;
 if(DATA.github_url){$('github-link').hidden=false;$('github-link').href=DATA.github_url;$('source-note').hidden=true;}
 const local=e=>{const r=canvas.getBoundingClientRect();return {x:e.clientX-r.left,y:e.clientY-r.top};};
@@ -176,7 +197,7 @@ canvas.addEventListener('wheel',e=>{e.preventDefault();zoom(Math.exp(-e.deltaY*.
 canvas.addEventListener('pointerdown',e=>{canvas.setPointerCapture(e.pointerId);drag={...local(e),x0:camera.x,y0:camera.y,moved:false};});
 canvas.addEventListener('pointermove',e=>{if(!drag)return;const p=local(e),dx=p.x-drag.x,dy=p.y-drag.y;if(Math.hypot(dx,dy)>3)drag.moved=true;if(drag.moved){cameraMode='custom';camera.x=drag.x0-dx/camera.scale;camera.y=drag.y0+dy/camera.scale;render();}});
 canvas.addEventListener('pointerup',e=>{
- if(drag&&!drag.moved){const p=local(e);let nearest=null,distance=21;for(const f of flights){const s=screen(positionAt(f)),d=Math.hypot(s.x-p.x,s.y-p.y);if(d<distance){nearest=f;distance=d;}}if(nearest){selected=nearest.flight_id;secondary=[];profileKey='';render();}}
+ if(drag&&!drag.moved){const p=local(e);let nearest=null,distance=21;for(const f of flights){const s=screen(positionAt(f)),d=Math.hypot(s.x-p.x,s.y-p.y);if(d<distance){nearest=f;distance=d;}}if(nearest){selected=nearest.flight_id;story='explore';secondary=[];profileKey='';render();}}
  drag=null;
 });canvas.addEventListener('pointercancel',()=>drag=null);
 canvas.onkeydown=e=>{if(['+','=','-','ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(e.key)){e.preventDefault();if(e.key==='+'||e.key==='=')zoom(1.3);else if(e.key==='-')zoom(1/1.3);else{cameraMode='custom';camera.x+=(e.key==='ArrowRight'?35:e.key==='ArrowLeft'?-35:0)/camera.scale;camera.y+=(e.key==='ArrowUp'?35:e.key==='ArrowDown'?-35:0)/camera.scale;render();}}};

@@ -28,12 +28,28 @@ const near=(a,b,e=1e-7)=>assert.ok(Math.abs(a-b)<e,`${a} != ${b}`);
   assert.equal(await page.locator('#event-track button').count(),12);
   assert.equal(await page.locator('#profile .safe-profile').count(),1);
   assert.equal(await page.locator('#profile .original-profile').count(),1);
+  // A first-time reviewer finds the tour before the map and can compare without
+  // losing the moment. Both live altitude readings remain visible in either mode.
+  assert.ok(await page.evaluate(()=>document.querySelector('.tour').getBoundingClientRect().top<document.querySelector('.workspace').getBoundingClientRect().top));
+  const initial=await page.evaluate(()=>({time,selected,original:originalAt(byId.get(selected),time).z,planned:plannedAt(byId.get(selected),time).z}));
+  const readAltitude=async id=>Number((await page.textContent(id)).replace(/[^\d.-]/g,''));
+  near(await readAltitude('#original-altitude'),initial.original,.5);
+  near(await readAltitude('#planned-altitude'),initial.planned,.5);
+  await page.click('#compare-story');
+  assert.equal(await page.evaluate(()=>mode),'original');
+  assert.deepEqual(await page.evaluate(()=>({time,selected})),{time:initial.time,selected:initial.selected});
+  assert.ok(await page.locator('#original-reading').evaluate(e=>e.classList.contains('selected-reading')));
+  near(await readAltitude('#planned-altitude'),initial.planned,.5);
+  await page.click('#compare-story');assert.equal(await page.evaluate(()=>mode),'plan');
+  assert.ok((await page.textContent('#maneuver-cost')).includes('6,150 m'));
   // Every plane, six times, matches the independent Python trajectory output.
   for(const t of [0,100,230,440,600,1200]){
    await page.evaluate(t=>seek(t),t);
    const actual=await page.evaluate(()=>flights.map(f=>({id:f.flight_id,...positionAt(f)})));
    assert.equal(actual.length,40);
    for(const a of actual){const expected=references.find(r=>r.flight_id===a.id&&r.time_s===t);near(a.x,expected.x_m);near(a.y,expected.y_m);near(a.z,expected.alt_m);near(a.vz,expected.vz_mps);}
+   const focus=references.find(r=>r.flight_id===initial.selected&&r.time_s===t);
+   near(await readAltitude('#planned-altitude'),focus.alt_m,.5);
   }
   await page.click('#story-conflict');
   assert.equal(await page.evaluate(()=>mode),'original');
@@ -50,6 +66,8 @@ const near=(a,b,e=1e-7)=>assert.ok(Math.abs(a-b)<e,`${a} != ${b}`);
   assert.equal(await page.evaluate(()=>playing),false);
   assert.ok(await page.evaluate(()=>positionAt(byId.get(selected)).z>=witness.required_altitude_lower_m));
   assert.ok((await page.textContent('#insight-copy')).includes('8,679.45'));
+  const referenceDistance=await page.evaluate(()=>{const p=plannedAt(byId.get(selected),time),d=positionAt(threat);return Math.hypot(p.x-d.x,p.y-d.y,p.z-d.z);});
+  assert.ok((await page.textContent('#flight-detail')).includes(Math.round(referenceDistance).toLocaleString('en-US')));
   await page.click('#story-endpoints');
   assert.equal(await page.evaluate(()=>time),1200);
   const endpoint=await page.evaluate(()=>DATA.endpoint_bounds.disjoint_pairs.map(p=>p.aircraft.map(id=>({original:byId.get(id).alt_m,...positionAt(byId.get(id))}))));
@@ -64,7 +82,7 @@ const near=(a,b,e=1e-7)=>assert.ok(Math.abs(a-b)<e,`${a} != ${b}`);
   await page.evaluate(()=>{seek(430);relation(activeEvents())});assert.equal(await page.evaluate(()=>ctx.fillStyle),'#c64d60');
   await page.click('#mode-plan');
   // The user can choose every aircraft, including ones the camera previously hid.
-  for(const f of document.trajectories){await page.selectOption('#flight-select',f.flight_id);assert.equal(await page.locator('#profile').getAttribute('data-flight-id'),f.flight_id);}
+  for(const f of document.trajectories){await page.selectOption('#flight-select',f.flight_id);assert.equal(await page.locator('#profile').getAttribute('data-flight-id'),f.flight_id);assert.ok((await page.textContent('#insight-title')).startsWith(f.flight_id+':'));}
   await page.click('#fit-all');
   assert.ok(await page.evaluate(()=>flights.every(f=>{const p=screen(positionAt(f));return p.x>10&&p.x<width-10&&p.y>10&&p.y<height-10;})));
   const scale=await page.evaluate(()=>camera.scale);await page.click('#zoom-in');assert.ok(await page.evaluate(()=>camera.scale)>scale);
@@ -85,6 +103,7 @@ const near=(a,b,e=1e-7)=>assert.ok(Math.abs(a-b)<e,`${a} != ${b}`);
   await page.setViewportSize({width:390,height:844});await page.evaluate(()=>window.scrollTo(0,0));
   assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));
   assert.ok(await page.evaluate(()=>document.querySelector('.playback').getBoundingClientRect().top<document.querySelector('.inspector').getBoundingClientRect().top));
+  assert.ok(await page.evaluate(()=>Array.from(document.querySelectorAll('.tour button')).every(e=>e.getBoundingClientRect().width>80)));
   await page.screenshot({path:'/tmp/dtl-email-mobile.png',fullPage:true});
   await page.click('#story-conflict');assert.ok(await page.evaluate(()=>activeEvents().length>0));
   await page.click('#mode-plan');assert.equal(await page.evaluate(()=>activeEvents().length),0);

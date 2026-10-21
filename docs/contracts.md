@@ -191,3 +191,14 @@ infinite cylinders; the profile shows their altitude slices along the route.
 `--github-url` adds the full-project link. All animation data is embedded and
 works offline; file downloads remain relative to the extracted six-file folder.
 The full experiment archive and existing research viewer are preserved.
+
+The compact presentation puts its three guided questions before the workspace.
+It displays original and planned altitude at the same selected time in both
+trajectory modes; switching modes preserves time and aircraft selection. Both
+altitude markers remain on the profile. Whole-flight end-position error and peak
+altitude change are labeled separately from these live readings. The hero's
+150/600 m values describe the submitted plan at 1200 s, not the selected aircraft
+or current mode; the visible maneuver-cost row also describes the submitted fleet.
+Nearest-zone 3D distances and pair horizontal/vertical distances are display
+diagnostics computed from rendered positions. They do not classify events or
+extend the continuous certificate. The event status still uses Python results.
