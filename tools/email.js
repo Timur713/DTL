@@ -9,6 +9,9 @@ const limits=DATA.scenario.airspace,thresholds=DATA.verification.thresholds;
 const witness=DATA.excursion_bounds.strongest;
 let mode='plan',selected=witness.flight_id,time=witness.time_s,playing=false,speed=30,anchorTime=time,anchorWall=0;
 let story='avoidance',secondary=[],cameraMode='focus',camera={x:0,y:0,scale:1};
+let heightView=true;
+const heightFactor=()=>heightView?3:0;
+const displayNorth=p=>p.y+heightFactor()*(p.z||0);
 let width=1,height=1,profilePlot=null,profileKey='',drag=null;
 const canvas=$('map'),ctx=canvas.getContext('2d');
 const fmt=(n,d=0)=>(Object.is(n,-0)?0:n).toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d});
@@ -23,15 +26,17 @@ function plannedAt(f,t){
 const positionAt=(f,t=time)=>f.flight_id&&mode==='plan'?plannedAt(f,t):originalAt(f,t);
 function eventActive(e,t=time){return (t>e.start_s||t===e.start_s&&e.start_inclusive)&&(t<e.end_s||t===e.end_s&&e.end_inclusive);}
 function activeEvents(){return mode==='plan'?[]:DATA.baseline.events.filter(e=>eventActive(e));}
-const screen=p=>({x:width/2+(p.x-camera.x)*camera.scale,y:height/2-(p.y-camera.y)*camera.scale});
+const screen=p=>({x:width/2+(p.x-camera.x)*camera.scale,y:height/2-(displayNorth(p)-camera.y)*camera.scale});
 const world=p=>({x:camera.x+(p.x-width/2)/camera.scale,y:camera.y-(p.y-height/2)/camera.scale});
 function fitPoints(points,minSpan=25000){
- const xs=points.map(p=>p.x),ys=points.map(p=>p.y),xmin=Math.min(...xs),xmax=Math.max(...xs),ymin=Math.min(...ys),ymax=Math.max(...ys);
+ const xs=points.map(p=>p.x),ys=points.map(displayNorth),xmin=Math.min(...xs),xmax=Math.max(...xs),ymin=Math.min(...ys),ymax=Math.max(...ys);
  camera={x:(xmin+xmax)/2,y:(ymin+ymax)/2,scale:Math.min(Math.max(1,width-90)/Math.max(minSpan,xmax-xmin+22000),Math.max(1,height-65)/Math.max(minSpan,ymax-ymin+18000))};
 }
 function updateCamera(){
- if(cameraMode==='all')fitPoints([...flights.map(f=>positionAt(f)),positionAt(threat),positionAt(target)],100000);
- else if(cameraMode==='focus')fitPoints([positionAt(byId.get(selected)),...(secondary.length?secondary.map(id=>positionAt(byId.get(id))):[positionAt(threat)])]);
+ // Frame both alternatives so switching plan cannot recenter away the difference.
+ const both=f=>[originalAt(f,time),plannedAt(f,time)];
+ if(cameraMode==='all')fitPoints([...flights.flatMap(both),positionAt(threat),positionAt(target)],100000);
+ else if(cameraMode==='focus')fitPoints([...both(byId.get(selected)),...(secondary.length?secondary.flatMap(id=>both(byId.get(id))):[positionAt(threat)])]);
 }
 function line(a,b,color,width=1,dash=[]){ctx.beginPath();ctx.setLineDash(dash);ctx.strokeStyle=color;ctx.lineWidth=width;ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();ctx.setLineDash([]);}
 function niceStep(n){const p=10**Math.floor(Math.log10(n)),q=n/p;return (q<=1?1:q<=2?2:q<=5?5:10)*p;}
@@ -46,7 +51,7 @@ function grid(){
 }
 function zone(obj,radius,color,label){
  const p=screen(positionAt(obj)),r=radius*camera.scale;
- ctx.beginPath();ctx.arc(p.x,p.y,r,0,Math.PI*2);ctx.fillStyle=color+'10';ctx.fill();ctx.strokeStyle=color+'b0';ctx.lineWidth=1.3;ctx.setLineDash([5,4]);ctx.stroke();ctx.setLineDash([]);
+ ctx.beginPath();ctx.ellipse(p.x,p.y,r,r*Math.sqrt(1+heightFactor()**2),0,0,Math.PI*2);ctx.fillStyle=color+'10';ctx.fill();ctx.strokeStyle=color+'b0';ctx.lineWidth=1.3;ctx.setLineDash([5,4]);ctx.stroke();ctx.setLineDash([]);
  ctx.save();ctx.translate(p.x,p.y);ctx.strokeStyle=color;ctx.fillStyle=color;ctx.lineWidth=2;
  if(label==='Threat'){ctx.rotate(Math.PI/4);ctx.fillRect(-5,-5,10,10);}
  else{ctx.beginPath();ctx.arc(0,0,6,0,2*Math.PI);ctx.moveTo(-10,0);ctx.lineTo(10,0);ctx.moveTo(0,-10);ctx.lineTo(0,10);ctx.stroke();}
@@ -56,6 +61,7 @@ function aircraft(f,current){
  const p=screen(positionAt(f)),chosen=f.flight_id===selected,partner=secondary.includes(f.flight_id),danger=current.has(f.flight_id);
  if(p.x<-30||p.x>width+30||p.y<-30||p.y>height+30)return;
  if(danger||chosen||partner){ctx.beginPath();ctx.arc(p.x,p.y,chosen?19:16,0,Math.PI*2);ctx.fillStyle=danger?'#d6536517':chosen?'#087f7810':'#646e9510';ctx.fill();ctx.strokeStyle=danger?'#d65365':chosen?'#087f78':'#6c78a1';ctx.lineWidth=chosen?1.6:1;ctx.stroke();}
+ if(heightView){const state=positionAt(f),ground=screen({...state,z:0});line(ground,p,chosen?'#087f7850':'#879ba71c',chosen?1.3:.6,[3,4]);ctx.beginPath();ctx.ellipse(ground.x,ground.y,chosen?5:2,2,0,0,Math.PI*2);ctx.fillStyle='#879ba744';ctx.fill();}
  ctx.save();ctx.translate(p.x,p.y);ctx.rotate(Math.atan2(f.vx_mps,f.vy_mps));const scale=chosen?1.05:.75;ctx.scale(scale,scale);
  ctx.beginPath();ctx.moveTo(0,-11);for(const [x,y] of [[2,-3],[9,2],[9,4],[2,2],[2,8],[4,10],[-4,10],[-2,8],[-2,2],[-9,4],[-9,2],[-2,-3]])ctx.lineTo(x,y);ctx.closePath();ctx.fillStyle=danger?'#c04459':chosen?'#087f78':partner?'#68749b':'#879ba7';ctx.fill();ctx.strokeStyle='white';ctx.lineWidth=.8;ctx.stroke();ctx.restore();
  if($('labels').checked||chosen||partner||danger){ctx.font=chosen?'650 11px system-ui':'10px system-ui';ctx.textAlign='left';ctx.lineWidth=4;ctx.strokeStyle='#f6fafb';const label=f.flight_id+((chosen||partner)?' · '+fmt(positionAt(f).z)+' m':'');ctx.strokeText(label,p.x+21,p.y-7);ctx.fillStyle=danger?'#b84154':chosen?'#086e67':'#5c7481';ctx.fillText(label,p.x+21,p.y-7);}
@@ -65,7 +71,7 @@ function relation(events){
  const first=positionAt(byId.get(selected)),second=positionAt(byId.get(secondary[0])),a=screen(first),b=screen(second);
  // Two aircraft may each have a zone event without violating their mutual separation.
  const danger=events.some(e=>e.type==='aircraft_aircraft'&&e.participants.includes(selected)&&e.participants.includes(secondary[0])),color=danger?'#c64d60':'#647ba0';
- ctx.beginPath();ctx.arc(a.x,a.y,thresholds.horizontal_m*camera.scale,0,Math.PI*2);ctx.setLineDash([3,5]);ctx.strokeStyle=color+'55';ctx.lineWidth=1;ctx.stroke();ctx.setLineDash([]);
+ if(!heightView){ctx.beginPath();ctx.arc(a.x,a.y,thresholds.horizontal_m*camera.scale,0,Math.PI*2);ctx.setLineDash([3,5]);ctx.strokeStyle=color+'55';ctx.lineWidth=1;ctx.stroke();ctx.setLineDash([]);}
  line(a,b,color,1.4,[4,4]);const x=(a.x+b.x)/2,y=(a.y+b.y)/2;
  const text=`${fmt(Math.hypot(first.x-second.x,first.y-second.y)/1000,2)} km XY · ${fmt(Math.abs(first.z-second.z))} m vertical`;
  ctx.font='600 10px system-ui';const w=ctx.measureText(text).width;ctx.fillStyle='#ffffffed';ctx.fillRect(x-w/2-7,y-19,w+14,19);ctx.fillStyle=color;ctx.textAlign='center';ctx.fillText(text,x,y-6);
@@ -74,11 +80,24 @@ function drawMap(events){
  updateCamera();grid();
  zone(target,thresholds.target_radius_m,'#bf8a28','Target');zone(threat,thresholds.threat_radius_m,'#d65365','Threat');
  if($('routes').checked)for(const f of flights)line(screen(originalAt(f,0)),screen(originalAt(f,T)),'#8299a327',1,[4,4]);
- const f=byId.get(selected);line(screen(originalAt(f,0)),screen(originalAt(f,T)),'#087f782b',1.1,[4,5]);
- line(screen(originalAt(f,Math.max(0,time-100))),screen(positionAt(f)),'#087f7870',2.3);
+ const f=byId.get(selected);
+ // Display samples draw the verified controls; they do not establish safety.
+ function route(planned,color,dash){
+  const at=t=>planned?plannedAt(f,t):originalAt(f,t);
+  for(let t=0;t<T;t+=10)line(screen(at(t)),screen(at(Math.min(T,t+10))),color,1.4,dash);
+ }
+ route(false,'#b66b2455',[4,5]);if(heightView)route(true,'#087f7860',[]);
+ const at=t=>positionAt(f,t);line(screen(at(Math.max(0,time-10))),screen(at(time)),mode==='plan'?'#087f78':'#b66b24',3);
+ if(heightView){
+  const other=screen(mode==='plan'?originalAt(f,time):plannedAt(f,time)),actual=screen(positionAt(f));
+  line(other,actual,'#8ba4ad',1,[3,4]);ctx.beginPath();ctx.arc(other.x,other.y,7,0,2*Math.PI);ctx.strokeStyle=mode==='plan'?'#b66b24':'#087f78';ctx.lineWidth=1.5;ctx.stroke();
+  ctx.font='10px system-ui';ctx.fillStyle=ctx.strokeStyle;ctx.textAlign='left';ctx.fillText(mode==='plan'?'Original altitude':'Planned altitude',other.x+11,other.y+4);
+ }
  const current=new Set(events.flatMap(e=>e.participants));relation(events);
  for(const f of flights)if(f.flight_id!==selected)aircraft(f,current);aircraft(byId.get(selected),current);
  const outside=flights.filter(f=>{const p=screen(positionAt(f));return p.x<0||p.x>width||p.y<0||p.y>height;}).length;
+ $('view-height').setAttribute('aria-pressed',String(heightView));$('view-top').setAttribute('aria-pressed',String(!heightView));
+ $('view-title').textContent=heightView?'Height perspective':'Top view';$('view-note').textContent=heightView?'Altitude ×3 for visibility · stems reach the ground':'X / Y only: vertical maneuvers are hidden';
  $('map-caption').textContent=`${cameraMode==='all'?'All-aircraft view':cameraMode==='focus'?'Focused view':'Custom view'} · all 40 simulated${outside?' · '+outside+' beyond camera':''}`;
 }
 const NS='http://www.w3.org/2000/svg';
@@ -181,6 +200,7 @@ $('compare-story').onclick=()=>setMode(mode==='plan'?'original':'plan');
 $('play').onclick=()=>{const now=performance.now();updateClock(now);if(!playing&&time>=T)time=0;playing=!playing;anchorTime=time;anchorWall=now;render();};
 $('speed').onchange=e=>{const now=performance.now();updateClock(now);speed=Number(e.target.value);anchorTime=time;anchorWall=now;render();};
 $('time-slider').oninput=e=>seek(e.target.value);
+$('view-height').onclick=()=>{heightView=true;cameraMode='focus';render();};$('view-top').onclick=()=>{heightView=false;cameraMode='focus';render();};
 $('fit-all').onclick=()=>{cameraMode='all';render();};$('focus-flight').onclick=()=>{cameraMode='focus';render();};
 $('zoom-in').onclick=()=>zoom(1.4);$('zoom-out').onclick=()=>zoom(1/1.4);
 for(const id of ['labels','routes'])$(id).onchange=render;

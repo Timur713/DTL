@@ -32,15 +32,27 @@ const near=(a,b,e=1e-7)=>assert.ok(Math.abs(a-b)<e,`${a} != ${b}`);
   // losing the moment. Both live altitude readings remain visible in either mode.
   assert.ok(await page.evaluate(()=>document.querySelector('.tour').getBoundingClientRect().top<document.querySelector('.workspace').getBoundingClientRect().top));
   const initial=await page.evaluate(()=>({time,selected,original:originalAt(byId.get(selected),time).z,planned:plannedAt(byId.get(selected),time).z}));
+  const heightPlan=await page.evaluate(()=>({point:screen(positionAt(byId.get(selected))),camera:{...camera}}));
   const readAltitude=async id=>Number((await page.textContent(id)).replace(/[^\d.-]/g,''));
   near(await readAltitude('#original-altitude'),initial.original,.5);
   near(await readAltitude('#planned-altitude'),initial.planned,.5);
   await page.click('#compare-story');
   assert.equal(await page.evaluate(()=>mode),'original');
+  const heightOriginal=await page.evaluate(()=>({point:screen(positionAt(byId.get(selected))),camera:{...camera}}));
+  assert.deepEqual(heightOriginal.camera,heightPlan.camera);
+  near(heightOriginal.point.x,heightPlan.point.x);
+  near(heightOriginal.point.y-heightPlan.point.y,3*(initial.planned-initial.original)*heightPlan.camera.scale);
+  assert.ok(Math.abs(heightOriginal.point.y-heightPlan.point.y)>20);
   assert.deepEqual(await page.evaluate(()=>({time,selected})),{time:initial.time,selected:initial.selected});
   assert.ok(await page.locator('#original-reading').evaluate(e=>e.classList.contains('selected-reading')));
   near(await readAltitude('#planned-altitude'),initial.planned,.5);
   await page.click('#compare-story');assert.equal(await page.evaluate(()=>mode),'plan');
+  await page.click('#view-top');
+  const topPlan=await page.evaluate(()=>screen(positionAt(byId.get(selected))));
+  await page.click('#mode-original');
+  const topOriginal=await page.evaluate(()=>screen(positionAt(byId.get(selected))));
+  near(topOriginal.x,topPlan.x);near(topOriginal.y,topPlan.y);
+  await page.click('#mode-plan');await page.click('#view-height');
   assert.ok((await page.textContent('#maneuver-cost')).includes('6,150 m'));
   // Every plane, six times, matches the independent Python trajectory output.
   for(const t of [0,100,230,440,600,1200]){

@@ -202,3 +202,14 @@ or current mode; the visible maneuver-cost row also describes the submitted flee
 Nearest-zone 3D distances and pair horizontal/vertical distances are display
 diagnostics computed from rendered positions. They do not classify events or
 extend the continuous certificate. The event status still uses Python results.
+
+The compact canvas defaults to a height perspective, with a Top view toggle.
+Its display projection is `u = x`, `v = y + 3*z` before camera scaling; ×3 height
+exaggeration is labeled. Ground stems and the alternative altitude ghost distinguish
+the unchanged XY route from its vertical maneuver. Both plans share camera framing
+at a given time, so mode switching cannot conceal the height difference by
+recentering. A radius-R sphere projects to an ellipse with semiaxes `R` and
+`sqrt(10)*R` in height view, and a circle in top view. Outlines remain projections,
+not conflict tests; projected overlaps do not imply 3D proximity. The full-flight
+route lines are display samples of saved controls. All authoritative states and
+the continuous verification remain unchanged.

@@ -1,5 +1,16 @@
 # Validation of the integrated result
 
+## Visible vertical maneuvers — October 21, 2026
+
+The compact canvas now defaults to a labeled ×3 height projection, with ground
+stems, both trajectory traces, an alternative-altitude ghost and a Top view toggle.
+Browser regressions verify that switching plans preserves camera/time/selection
+and changes the selected aircraft's projected height by exactly `3*delta_z*scale`.
+Switching plans in Top view preserves its screen position, as expected for fixed XY.
+The five compact export tests and compact browser suite passed; baseline/analysis
+browser suites and isolated ZIP extraction were checked again. No source inputs,
+rules, controls, numerical trajectory states or safety results changed.
+
 ## Reviewer presentation refinement — October 21, 2026
 
 The compact viewer now places its three guided questions above the workspace,
