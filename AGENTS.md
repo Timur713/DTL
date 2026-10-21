@@ -1,5 +1,14 @@
 # Working on DTL_task
 
+## Navigation and current result
+
+- `docs/README.md` is the repository map, including module responsibilities and reproduction order.
+- `email_delivery/START_HERE.html` is the reviewer entry point; `DTL_email.zip` is its six-file email attachment.
+- `submission/` is the selected result, plan `pass2-b8f763f4b8b0`; start with its `README.md`, `segments.json`, `verification.json` and `manifest.json`.
+- `reports/` preserves baseline and search history, not multiple competing submissions. `baseline.html` is the full research viewer.
+- Preserve existing paths: saved experiment provenance and tests refer to them. Do not edit generated presentation or delivery files directly; use their builders in `tools/`.
+- The optional `DTL_submission.zip` is ignored because it duplicates the full repository. Keep the compact email ZIP tracked.
+
 ## Purpose and sources of truth
 
 The project studies trajectory conflicts involving 40 aircraft, a drone and a target zone. It is a research model, not a certified air traffic control system. Use English for user communications, project documentation, the UI, comments and reports; identifiers and code also use English.

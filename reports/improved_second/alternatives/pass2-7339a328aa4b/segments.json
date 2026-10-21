@@ -1,0 +1,1339 @@
+{
+  "duration_s": 1200,
+  "mode_id": "nominal",
+  "model": "nominal_vertical_fleet",
+  "profile_id": "metric",
+  "schema_version": "1.0",
+  "source_sha256": "684df056456775d8fbd6fd5bb6a871d2eefa834235ca1bc599e77cd1437cf36c",
+  "trajectories": [
+    {
+      "duration_s": 1200.0,
+      "flight_id": "F001",
+      "initial_state": {
+        "alt_m": 10800.0,
+        "vx_mps": -221.66,
+        "vy_mps": -13.3,
+        "vz_mps": 0.0,
+        "x_m": 55229.9,
+        "y_m": 13710.6
+      },
+      "mode_id": "nominal",
+      "model": "piecewise_constant_vertical_acceleration",
+      "schema_version": "1.0",
+      "segments": [
+        {
+          "az_mps2": 0,
+          "duration_s": 1200
+        }
+      ],
+      "source_sha256": "0403de8887ee6e6563ec9cbe966171b981ff6fea5e919bb3abeae74cf231a4f2",
+      "units": "SI: m, s, m/s, m/s^2"
+    },
+    {
+      "duration_s": 1200.0,
+      "flight_id": "F002",
+      "initial_state": {
+        "alt_m": 5100.0,
+        "vx_mps": 227.3,
+        "vy_mps": 13.64,
+        "vz_mps": 0.0,
+        "x_m": -141503.6,
+        "y_m": 2483.2
+      },
+      "mode_id": "nominal",
+      "model": "piecewise_constant_vertical_acceleration",
+      "schema_version": "1.0",
+      "segments": [
+        {
+          "az_mps2": 0,
+          "duration_s": 493.0
+        },
+        {
+          "az_mps2": 0.5,
+          "duration_s": 30.0
+        },
+        {
+          "az_mps2": 0.0,
+          "duration_s": 10.0
+        },
+        {
+          "az_mps2": -0.5,
+          "duration_s": 30.0
+        },
+        {
+          "az_mps2": 0,
+          "duration_s": 46.0
+        },
+        {
+          "az_mps2": -0.5,
+          "duration_s": 30.0
+        },
+        {
+          "az_mps2": 0.0,
+          "duration_s": 10.0
+        },
+        {
+          "az_mps2": 0.5,
+          "duration_s": 30.0
+        },
+        {
+          "az_mps2": 0,
+          "duration_s": 521.0
+        }
+      ],
+      "source_sha256": "6b826774c6a8a5abf8e4e55229c13cb1b9ba31fcc2a808628b62bde654301eea",
+      "units": "SI: m, s, m/s, m/s^2"
+    },
+    {
+      "duration_s": 1200.0,
+      "flight_id": "F003",
+      "initial_state": {
+        "alt_m": 7800.0,
+        "vx_mps": -239.09,
+        "vy_mps": -14.35,
+        "vz_mps": 0.0,
+        "x_m": 59278.7,
+        "y_m": 15342.7
+      },
+      "mode_id": "nominal",
+      "model": "piecewise_constant_vertical_acceleration",
+      "schema_version": "1.0",
+      "segments": [
+        {
+          "az_mps2": 0,
+          "duration_s": 1200
+        }
+      ],
+      "source_sha256": "416f6183e53f45a83299f85a8f122b059c596076476f421af361d09c23486a49",
+      "units": "SI: m, s, m/s, m/s^2"
+    },
+    {
+      "duration_s": 1200.0,
+      "flight_id": "F004",
+      "initial_state": {
+        "alt_m": 3300.0,
+        "vx_mps": 0.0,
+        "vy_mps": -212.65,
+        "vz_mps": 0.0,
+        "x_m": -19122.1,
+        "y_m": 113550.7
+      },
+      "mode_id": "nominal",
+      "model": "piecewise_constant_vertical_acceleration",
+      "schema_version": "1.0",
+      "segments": [
+        {
+          "az_mps2": 0.5,
+          "duration_s": 30.0
+        },
+        {
+          "az_mps2": 0.0,
+          "duration_s": 350.0
+        },
+        {
+          "az_mps2": -0.5,
+          "duration_s": 30.0
+        },
+        {
+          "az_mps2": 0,
+          "duration_s": 59.0
+        },
+        {
+          "az_mps2": -0.5,
+          "duration_s": 30.0
+        },
+        {
+          "az_mps2": 0.0,
+          "duration_s": 350.0
+        },
+        {
+          "az_mps2": 0.5,
+          "duration_s": 30.0
+        },
+        {
+          "az_mps2": 0,
+          "duration_s": 321.0
+        }
+      ],
+      "source_sha256": "00f1aaf6e523ce513bfdc1a2e25dc1f7381aa88a3e8709d6c512d46a4dec04f6",
+      "units": "SI: m, s, m/s, m/s^2"
+    },
+    {
+      "duration_s": 1200.0,
+      "flight_id": "F005",
+      "initial_state": {
+        "alt_m": 7800.0,
+        "vx_mps": -218.1,
+        "vy_mps": -13.09,
+        "vz_mps": 0.0,
+        "x_m": 169941.7,
+        "y_m": 724.1
+      },
+      "mode_id": "nominal",
+      "model": "piecewise_constant_vertical_acceleration",
+      "schema_version": "1.0",
+      "segments": [
+        {
+          "az_mps2": 0,
+          "duration_s": 1200
+        }
+      ],
+      "source_sha256": "f9a56195bfbef3d956d322c2cd5f1cf2d1dda0e54ac9a718958a50d4e3f92b62",
+      "units": "SI: m, s, m/s, m/s^2"
+    },
+    {
+      "duration_s": 1200.0,
+      "flight_id": "F006",
+      "initial_state": {
+        "alt_m": 9600.0,
+        "vx_mps": -225.76,
+        "vy_mps": -13.55,
+        "vz_mps": 0.0,
+        "x_m": 121118.0,
+        "y_m": -2457.5
+      },
+      "mode_id": "nominal",
+      "model": "piecewise_constant_vertical_acceleration",
+      "schema_version": "1.0",
+      "segments": [
+        {
+          "az_mps2": 0,
+          "duration_s": 1200
+        }
+      ],
+      "source_sha256": "a248f1313e0fc807424705c92e16bd20b9436515cdfffed9ab5e4e944779a676",
+      "units": "SI: m, s, m/s, m/s^2"
+    },
+    {
+      "duration_s": 1200.0,
+      "flight_id": "F007",
+      "initial_state": {
+        "alt_m": 6300.0,
+        "vx_mps": 205.94,
+        "vy_mps": 138.95,
+        "vz_mps": 0.0,
+        "x_m": -150347.0,
+        "y_m": 137392.7
+      },
+      "mode_id": "nominal",
+      "model": "piecewise_constant_vertical_acceleration",
+      "schema_version": "1.0",
+      "segments": [
+        {
+          "az_mps2": 0,
+          "duration_s": 1200
+        }
+      ],
+      "source_sha256": "ffca02c1ee1de49c933eae112692c21c52238b685e072a8646dc16f518e0e89a",
+      "units": "SI: m, s, m/s, m/s^2"
+    },
+    {
+      "duration_s": 1200.0,
+      "flight_id": "F008",
+      "initial_state": {
+        "alt_m": 6900.0,
+        "vx_mps": 0.0,
+        "vy_mps": -230.26,
+        "vz_mps": 0.0,
+        "x_m": -19400.6,
+        "y_m": -33639.2
+      },
+      "mode_id": "nominal",
+      "model": "piecewise_constant_vertical_acceleration",
+      "schema_version": "1.0",
+      "segments": [
+        {
+          "az_mps2": 0,
+          "duration_s": 1200
+        }
+      ],
+      "source_sha256": "685e3a67cbbfb198cdde1d0cabac247bad8cf932935a35f8aa81b745098172ff",
+      "units": "SI: m, s, m/s, m/s^2"
+    },
+    {
+      "duration_s": 1200.0,
+      "flight_id": "F009",
+      "initial_state": {
+        "alt_m": 9300.0,
+        "vx_mps": 165.42,
+        "vy_mps": 158.96,
+        "vz_mps": 0.0,
+        "x_m": 38030.8,
+        "y_m": -5679.0
+      },
+      "mode_id": "nominal",
+      "model": "piecewise_constant_vertical_acceleration",
+      "schema_version": "1.0",
+      "segments": [
+        {
+          "az_mps2": 0,
+          "duration_s": 1200
+        }
+      ],
+      "source_sha256": "0b5ad9e64504084bd969a3443df1b51f5f7b763c5b2ad680b994d679b88a4c6d",
+      "units": "SI: m, s, m/s, m/s^2"
+    },
+    {
+      "duration_s": 1200.0,
+      "flight_id": "F010",
+      "initial_state": {
+        "alt_m": 9900.0,
+        "vx_mps": 225.37,
+        "vy_mps": 13.52,
+        "vz_mps": 0.0,
+        "x_m": -82137.7,
+        "y_m": -16756.3
+      },
+      "mode_id": "nominal",
+      "model": "piecewise_constant_vertical_acceleration",
+      "schema_version": "1.0",
+      "segments": [
+        {
+          "az_mps2": 0,
+          "duration_s": 1200
+        }
+      ],
+      "source_sha256": "4818181b60e5de7cb5fa5d3c1f1848ace51f16ccc840d4068cda380346b14937",
+      "units": "SI: m, s, m/s, m/s^2"
+    },
+    {
+      "duration_s": 1200.0,
+      "flight_id": "F011",
+      "initial_state": {
+        "alt_m": 3900.0,
+        "vx_mps": 0.0,
+        "vy_mps": -227.53,
+        "vz_mps": 0.0,
+        "x_m": -18389.6,
+        "y_m": 106541.0
+      },
+      "mode_id": "nominal",
+      "model": "piecewise_constant_vertical_acceleration",
+      "schema_version": "1.0",
+      "segments": [
+        {
+          "az_mps2": 0.5,
+          "duration_s": 30.0
+        },
+        {
+          "az_mps2": 0.0,
+          "duration_s": 90.0
+        },
+        {
+          "az_mps2": -0.5,
+          "duration_s": 30.0
+        },
+        {
+          "az_mps2": -0.5,
+          "duration_s": 30.0
+        },
+        {
+          "az_mps2": 0.0,
+          "duration_s": 90.0
+        },
+        {
+          "az_mps2": 0.5,
+          "duration_s": 30.0
+        },
+        {
+          "az_mps2": 0.0,
+          "duration_s": 900.0
+        }
+      ],
+      "source_sha256": "8cbc7d28e3c372e664b0b5e54838a262642d70ca81b4daa369491aac82ccd851",
+      "units": "SI: m, s, m/s, m/s^2"
+    },
+    {
+      "duration_s": 1200.0,
+      "flight_id": "F012",
+      "initial_state": {
+        "alt_m": 4200.0,
+        "vx_mps": -219.52,
+        "vy_mps": -13.17,
+        "vz_mps": 0.0,
+        "x_m": 85193.8,
+        "y_m": -4207.9
+      },
+      "mode_id": "nominal",
+      "model": "piecewise_constant_vertical_acceleration",
+      "schema_version": "1.0",
+      "segments": [
+        {
+          "az_mps2": 0.0,
+          "duration_s": 188.0
+        },
+        {
+          "az_mps2": 0.5,
+          "duration_s": 30.0
+        },
+        {
+          "az_mps2": 0.0,
+          "duration_s": 10.0
+        },
+        {
+          "az_mps2": -0.5,
+          "duration_s": 30.0
+        },
+        {
+          "az_mps2": 0.0,
+          "duration_s": 79.0
+        },
+        {
+          "az_mps2": -0.5,
+          "duration_s": 30.0
+        },
+        {
+          "az_mps2": 0.0,
+          "duration_s": 10.0
+        },
+        {
+          "az_mps2": 0.5,
+          "duration_s": 30.0
+        },
+        {
+          "az_mps2": 0.0,
+          "duration_s": 793.0
+        }
+      ],
+      "source_sha256": "dea13e33b5f82e165042854232711e01e678b1b737576fa4279caff8bec27c0b",
+      "units": "SI: m, s, m/s, m/s^2"
+    },
+    {
+      "duration_s": 1200.0,
+      "flight_id": "F013",
+      "initial_state": {
+        "alt_m": 4200.0,
+        "vx_mps": -247.49,
+        "vy_mps": -14.85,
+        "vz_mps": 0.0,
+        "x_m": 164586.1,
+        "y_m": -240.7
+      },
+      "mode_id": "nominal",
+      "model": "piecewise_constant_vertical_acceleration",
+      "schema_version": "1.0",
+      "segments": [
+        {
+          "az_mps2": 0.0,
+          "duration_s": 354.0
+        },
+        {
+          "az_mps2": 0.5,
+          "duration_s": 30.0
+        },
+        {
+          "az_mps2": 0.0,
+          "duration_s": 30.0
+        },
+        {
+          "az_mps2": -0.5,
+          "duration_s": 30.0
+        },
+        {
+          "az_mps2": 0.0,
+          "duration_s": 756.0
+        }
+      ],
+      "source_sha256": "41e3715ce45c7e30bb05262d71266940124dfe0a50d45d73c476fd413ca45b9a",
+      "units": "SI: m, s, m/s, m/s^2"
+    },
+    {
+      "duration_s": 1200.0,
+      "flight_id": "F014",
+      "initial_state": {
+        "alt_m": 8100.0,
+        "vx_mps": 0.0,
+        "vy_mps": -227.33,
+        "vz_mps": 0.0,
+        "x_m": -20070.8,
+        "y_m": -183423.7
+      },
+      "mode_id": "nominal",
+      "model": "piecewise_constant_vertical_acceleration",
+      "schema_version": "1.0",
+      "segments": [
+        {
+          "az_mps2": 0,
+          "duration_s": 1200
+        }
+      ],
+      "source_sha256": "27353e28b266d3b5f7df5c62efce8d064f9aebfe55e98ab78084b3f749fa56dc",
+      "units": "SI: m, s, m/s, m/s^2"
+    },
+    {
+      "duration_s": 1200.0,
+      "flight_id": "F015",
+      "initial_state": {
+        "alt_m": 5700.0,
+        "vx_mps": 240.56,
+        "vy_mps": 32.87,
+        "vz_mps": 0.0,
+        "x_m": 41114.7,
+        "y_m": -159934.3
+      },
+      "mode_id": "nominal",
+      "model": "piecewise_constant_vertical_acceleration",
+      "schema_version": "1.0",
+      "segments": [
+        {
+          "az_mps2": 0,
+          "duration_s": 1200
+        }
+      ],
+      "source_sha256": "8256a01e64f7875a07f6f93a1786891948d5a46f8637916c7cffb67b8ab97f08",
+      "units": "SI: m, s, m/s, m/s^2"
+    },
+    {
+      "duration_s": 1200.0,
+      "flight_id": "F016",
+      "initial_state": {
+        "alt_m": 6000.0,
+        "vx_mps": -219.84,
+        "vy_mps": -13.19,
+        "vz_mps": 0.0,
+        "x_m": 120076.0,
+        "y_m": -4039.8
+      },
+      "mode_id": "nominal",
+      "model": "piecewise_constant_vertical_acceleration",
+      "schema_version": "1.0",
+      "segments": [
+        {
+          "az_mps2": 0,
+          "duration_s": 1200
+        }
+      ],
+      "source_sha256": "5a9213eed392e801d0c251939d1f04a9bafdb0ffae98208dff5c5c91e1ccbf84",
+      "units": "SI: m, s, m/s, m/s^2"
+    },
+    {
+      "duration_s": 1200.0,
+      "flight_id": "F017",
+      "initial_state": {
+        "alt_m": 3300.0,
+        "vx_mps": 235.54,
+        "vy_mps": 14.13,
+        "vz_mps": 0.0,
+        "x_m": -61709.5,
+        "y_m": 8985.8
+      },
+      "mode_id": "nominal",
+      "model": "piecewise_constant_vertical_acceleration",
+      "schema_version": "1.0",
+      "segments": [
+        {
+          "az_mps2": 0,
+          "duration_s": 1200
+        }
+      ],
+      "source_sha256": "195aa06f3b41bb166d8b00aaac4029c98d1918e5eb918eea8cb3cc9da912db77",
+      "units": "SI: m, s, m/s, m/s^2"
+    },
+    {
+      "duration_s": 1200.0,
+      "flight_id": "F018",
+      "initial_state": {
+        "alt_m": 3600.0,
+        "vx_mps": -0.0,
+        "vy_mps": 245.59,
+        "vz_mps": 0.0,
+        "x_m": -19132.4,
+        "y_m": -88490.8
+      },
+      "mode_id": "nominal",
+      "model": "piecewise_constant_vertical_acceleration",
+      "schema_version": "1.0",
+      "segments": [
+        {
+          "az_mps2": 0.5,
+          "duration_s": 30.0
+        },
+        {
+          "az_mps2": 0.0,
+          "duration_s": 350.0
+        },
+        {
+          "az_mps2": -0.5,
+          "duration_s": 30.0
+        },
+        {
+          "az_mps2": 0.0,
+          "duration_s": 140.0
+        },
+        {
+          "az_mps2": -0.5,
+          "duration_s": 30.0
+        },
+        {
+          "az_mps2": 0.0,
+          "duration_s": 360.0
+        },
+        {
+          "az_mps2": 0.5,
+          "duration_s": 30.0
+        },
+        {
+          "az_mps2": 0.0,
+          "duration_s": 230.0
+        }
+      ],
+      "source_sha256": "cb52eda871353eff02e8a6ec7a3e012966f3cb5e0ed4d3394dc292d7e4b23937",
+      "units": "SI: m, s, m/s, m/s^2"
+    },
+    {
+      "duration_s": 1200.0,
+      "flight_id": "F019",
+      "initial_state": {
+        "alt_m": 10200.0,
+        "vx_mps": -217.13,
+        "vy_mps": -13.03,
+        "vz_mps": 0.0,
+        "x_m": 173628.1,
+        "y_m": 1208.6
+      },
+      "mode_id": "nominal",
+      "model": "piecewise_constant_vertical_acceleration",
+      "schema_version": "1.0",
+      "segments": [
+        {
+          "az_mps2": 0,
+          "duration_s": 1200
+        }
+      ],
+      "source_sha256": "51e4f65c3912879e8115cd5d09d0b7d1da3de9a6f892e9c17ccda6359e4a3a01",
+      "units": "SI: m, s, m/s, m/s^2"
+    },
+    {
+      "duration_s": 1200.0,
+      "flight_id": "F020",
+      "initial_state": {
+        "alt_m": 8100.0,
+        "vx_mps": -229.98,
+        "vy_mps": 38.67,
+        "vz_mps": 0.0,
+        "x_m": 26286.1,
+        "y_m": -7477.7
+      },
+      "mode_id": "nominal",
+      "model": "piecewise_constant_vertical_acceleration",
+      "schema_version": "1.0",
+      "segments": [
+        {
+          "az_mps2": 0,
+          "duration_s": 1200
+        }
+      ],
+      "source_sha256": "3f257dead4b70472b1f1ac3e0467b6ac195d19cff6297b04709b369cf7611e36",
+      "units": "SI: m, s, m/s, m/s^2"
+    },
+    {
+      "duration_s": 1200.0,
+      "flight_id": "F021",
+      "initial_state": {
+        "alt_m": 10200.0,
+        "vx_mps": -221.43,
+        "vy_mps": -13.29,
+        "vz_mps": 0.0,
+        "x_m": 192761.2,
+        "y_m": 3141.0
+      },
+      "mode_id": "nominal",
+      "model": "piecewise_constant_vertical_acceleration",
+      "schema_version": "1.0",
+      "segments": [
+        {
+          "az_mps2": 0,
+          "duration_s": 1200
+        }
+      ],
+      "source_sha256": "ec405ad68d022d5b04d3c8f2333ad065cfa6159de0c4a4e9a4de1108e7ed8cd8",
+      "units": "SI: m, s, m/s, m/s^2"
+    },
+    {
+      "duration_s": 1200.0,
+      "flight_id": "F022",
+      "initial_state": {
+        "alt_m": 6300.0,
+        "vx_mps": 232.21,
+        "vy_mps": 13.93,
+        "vz_mps": 0.0,
+        "x_m": -117828.4,
+        "y_m": -18513.3
+      },
+      "mode_id": "nominal",
+      "model": "piecewise_constant_vertical_acceleration",
+      "schema_version": "1.0",
+      "segments": [
+        {
+          "az_mps2": 0,
+          "duration_s": 1200
+        }
+      ],
+      "source_sha256": "b92fea00ce9453019cf274ef07870b88c32e764da72d4c4042902a2e33bc439a",
+      "units": "SI: m, s, m/s, m/s^2"
+    },
+    {
+      "duration_s": 1200.0,
+      "flight_id": "F023",
+      "initial_state": {
+        "alt_m": 3600.0,
+        "vx_mps": -213.99,
+        "vy_mps": -12.84,
+        "vz_mps": 0.0,
+        "x_m": 157827.2,
+        "y_m": 615.9
+      },
+      "mode_id": "nominal",
+      "model": "piecewise_constant_vertical_acceleration",
+      "schema_version": "1.0",
+      "segments": [
+        {
+          "az_mps2": 0.0,
+          "duration_s": 392.0
+        },
+        {
+          "az_mps2": 0.5,
+          "duration_s": 30.0
+        },
+        {
+          "az_mps2": 0.0,
+          "duration_s": 30.0
+        },
+        {
+          "az_mps2": -0.5,
+          "duration_s": 30.0
+        },
+        {
+          "az_mps2": 0.0,
+          "duration_s": 718.0
+        }
+      ],
+      "source_sha256": "8337d448895eb0d5212bf3a79e72017f5cd11a5b5aa9d39a0a43adc571fbf712",
+      "units": "SI: m, s, m/s, m/s^2"
+    },
+    {
+      "duration_s": 1200.0,
+      "flight_id": "F024",
+      "initial_state": {
+        "alt_m": 6000.0,
+        "vx_mps": -0.0,
+        "vy_mps": 234.28,
+        "vz_mps": 0.0,
+        "x_m": -19649.4,
+        "y_m": 158638.8
+      },
+      "mode_id": "nominal",
+      "model": "piecewise_constant_vertical_acceleration",
+      "schema_version": "1.0",
+      "segments": [
+        {
+          "az_mps2": 0,
+          "duration_s": 1200
+        }
+      ],
+      "source_sha256": "7db130be1f2f0eac9b60b716169d35ba8bb9e2df24c8d16274ad09ce73dee56e",
+      "units": "SI: m, s, m/s, m/s^2"
+    },
+    {
+      "duration_s": 1200.0,
+      "flight_id": "F025",
+      "initial_state": {
+        "alt_m": 4500.0,
+        "vx_mps": 234.94,
+        "vy_mps": 14.1,
+        "vz_mps": 0.0,
+        "x_m": -84733.0,
+        "y_m": 6478.8
+      },
+      "mode_id": "nominal",
+      "model": "piecewise_constant_vertical_acceleration",
+      "schema_version": "1.0",
+      "segments": [
+        {
+          "az_mps2": 0,
+          "duration_s": 1200
+        }
+      ],
+      "source_sha256": "7dfdf1e83749b64636880956a16da6a4326567c6d8ef7afe190f5daa802bc469",
+      "units": "SI: m, s, m/s, m/s^2"
+    },
+    {
+      "duration_s": 1200.0,
+      "flight_id": "F026",
+      "initial_state": {
+        "alt_m": 3900.0,
+        "vx_mps": 219.37,
+        "vy_mps": 13.16,
+        "vz_mps": 0.0,
+        "x_m": -65951.4,
+        "y_m": -12247.0
+      },
+      "mode_id": "nominal",
+      "model": "piecewise_constant_vertical_acceleration",
+      "schema_version": "1.0",
+      "segments": [
+        {
+          "az_mps2": 0.0,
+          "duration_s": 305.0
+        },
+        {
+          "az_mps2": 0.5,
+          "duration_s": 20.0
+        },
+        {
+          "az_mps2": 0.0,
+          "duration_s": 10.0
+        },
+        {
+          "az_mps2": -0.5,
+          "duration_s": 20.0
+        },
+        {
+          "az_mps2": 0.0,
+          "duration_s": 72.0
+        },
+        {
+          "az_mps2": -0.5,
+          "duration_s": 20.0
+        },
+        {
+          "az_mps2": 0.0,
+          "duration_s": 10.0
+        },
+        {
+          "az_mps2": 0.5,
+          "duration_s": 20.0
+        },
+        {
+          "az_mps2": 0.0,
+          "duration_s": 723.0
+        }
+      ],
+      "source_sha256": "334b162d3fd33ba3354573314e1cf6d0003317c387d695a2268d7a72ddacabfc",
+      "units": "SI: m, s, m/s, m/s^2"
+    },
+    {
+      "duration_s": 1200.0,
+      "flight_id": "F027",
+      "initial_state": {
+        "alt_m": 4500.0,
+        "vx_mps": 0.0,
+        "vy_mps": -218.88,
+        "vz_mps": 0.0,
+        "x_m": -20612.5,
+        "y_m": -32424.5
+      },
+      "mode_id": "nominal",
+      "model": "piecewise_constant_vertical_acceleration",
+      "schema_version": "1.0",
+      "segments": [
+        {
+          "az_mps2": -0.5,
+          "duration_s": 30.0
+        },
+        {
+          "az_mps2": 0.0,
+          "duration_s": 30.0
+        },
+        {
+          "az_mps2": 0.5,
+          "duration_s": 30.0
+        },
+        {
+          "az_mps2": 0.0,
+          "duration_s": 36.0
+        },
+        {
+          "az_mps2": 0.5,
+          "duration_s": 30.0
+        },
+        {
+          "az_mps2": 0.0,
+          "duration_s": 30.0
+        },
+        {
+          "az_mps2": -0.5,
+          "duration_s": 30.0
+        },
+        {
+          "az_mps2": 0.0,
+          "duration_s": 984.0
+        }
+      ],
+      "source_sha256": "56e1ad94c20621d0de0675d3833c4b333a96d8f38e0a042563627495df076da9",
+      "units": "SI: m, s, m/s, m/s^2"
+    },
+    {
+      "duration_s": 1200.0,
+      "flight_id": "F028",
+      "initial_state": {
+        "alt_m": 6600.0,
+        "vx_mps": 183.04,
+        "vy_mps": -144.86,
+        "vz_mps": 0.0,
+        "x_m": -176710.1,
+        "y_m": 190387.1
+      },
+      "mode_id": "nominal",
+      "model": "piecewise_constant_vertical_acceleration",
+      "schema_version": "1.0",
+      "segments": [
+        {
+          "az_mps2": 0,
+          "duration_s": 1200
+        }
+      ],
+      "source_sha256": "0189d3b0689420d6b7ced8412cb05e0f443d4ae6b0b197be7f501598d4574fab",
+      "units": "SI: m, s, m/s, m/s^2"
+    },
+    {
+      "duration_s": 1200.0,
+      "flight_id": "F029",
+      "initial_state": {
+        "alt_m": 8700.0,
+        "vx_mps": 243.09,
+        "vy_mps": 14.59,
+        "vz_mps": 0.0,
+        "x_m": -86533.0,
+        "y_m": -16285.0
+      },
+      "mode_id": "nominal",
+      "model": "piecewise_constant_vertical_acceleration",
+      "schema_version": "1.0",
+      "segments": [
+        {
+          "az_mps2": 0,
+          "duration_s": 1200
+        }
+      ],
+      "source_sha256": "265181bdd0002cf4e9fa76b3a3216fa2883517a4b1a59721f8f049cfebfa8b18",
+      "units": "SI: m, s, m/s, m/s^2"
+    },
+    {
+      "duration_s": 1200.0,
+      "flight_id": "F030",
+      "initial_state": {
+        "alt_m": 3900.0,
+        "vx_mps": -107.65,
+        "vy_mps": -202.52,
+        "vz_mps": 0.0,
+        "x_m": 109682.1,
+        "y_m": 142984.8
+      },
+      "mode_id": "nominal",
+      "model": "piecewise_constant_vertical_acceleration",
+      "schema_version": "1.0",
+      "segments": [
+        {
+          "az_mps2": 0.0,
+          "duration_s": 550.0
+        },
+        {
+          "az_mps2": -0.375,
+          "duration_s": 20.0
+        },
+        {
+          "az_mps2": 0.375,
+          "duration_s": 20.0
+        },
+        {
+          "az_mps2": 0.0,
+          "duration_s": 460.0
+        },
+        {
+          "az_mps2": 0.5,
+          "duration_s": 20.0
+        },
+        {
+          "az_mps2": 0.0,
+          "duration_s": 10.0
+        },
+        {
+          "az_mps2": -0.5,
+          "duration_s": 20.0
+        },
+        {
+          "az_mps2": 0.0,
+          "duration_s": 100.0
+        }
+      ],
+      "source_sha256": "71747a47e4f1dd53adf8e45c108dc556737a2bc6fa7a566772378d8640618789",
+      "units": "SI: m, s, m/s, m/s^2"
+    },
+    {
+      "duration_s": 1200.0,
+      "flight_id": "F031",
+      "initial_state": {
+        "alt_m": 3000.0,
+        "vx_mps": -0.0,
+        "vy_mps": 218.03,
+        "vz_mps": 0.0,
+        "x_m": -19201.2,
+        "y_m": -78864.7
+      },
+      "mode_id": "nominal",
+      "model": "piecewise_constant_vertical_acceleration",
+      "schema_version": "1.0",
+      "segments": [
+        {
+          "az_mps2": 0.5,
+          "duration_s": 30.0
+        },
+        {
+          "az_mps2": 0.0,
+          "duration_s": 350.0
+        },
+        {
+          "az_mps2": -0.5,
+          "duration_s": 30.0
+        },
+        {
+          "az_mps2": 0.0,
+          "duration_s": 78.0
+        },
+        {
+          "az_mps2": -0.5,
+          "duration_s": 30.0
+        },
+        {
+          "az_mps2": 0.0,
+          "duration_s": 350.0
+        },
+        {
+          "az_mps2": 0.5,
+          "duration_s": 30.0
+        },
+        {
+          "az_mps2": 0.0,
+          "duration_s": 302.0
+        }
+      ],
+      "source_sha256": "f030126fe83eb916822c44e5c5a5244d4c2a820a54fb28498b081885ada01e2d",
+      "units": "SI: m, s, m/s, m/s^2"
+    },
+    {
+      "duration_s": 1200.0,
+      "flight_id": "F032",
+      "initial_state": {
+        "alt_m": 4200.0,
+        "vx_mps": 49.03,
+        "vy_mps": -235.0,
+        "vz_mps": 0.0,
+        "x_m": -42425.3,
+        "y_m": 174053.4
+      },
+      "mode_id": "nominal",
+      "model": "piecewise_constant_vertical_acceleration",
+      "schema_version": "1.0",
+      "segments": [
+        {
+          "az_mps2": 0,
+          "duration_s": 1200
+        }
+      ],
+      "source_sha256": "89fff908e94a88cd5dff1b0c486bdcda08002b1a97eb4e05117c8d6870f5aaa7",
+      "units": "SI: m, s, m/s, m/s^2"
+    },
+    {
+      "duration_s": 1200.0,
+      "flight_id": "F033",
+      "initial_state": {
+        "alt_m": 6900.0,
+        "vx_mps": 236.09,
+        "vy_mps": 14.17,
+        "vz_mps": 0.0,
+        "x_m": -143277.9,
+        "y_m": -17375.4
+      },
+      "mode_id": "nominal",
+      "model": "piecewise_constant_vertical_acceleration",
+      "schema_version": "1.0",
+      "segments": [
+        {
+          "az_mps2": 0,
+          "duration_s": 1200
+        }
+      ],
+      "source_sha256": "592dcfb2b4e3ba7e607d158e8f54c7aa46f8b52ef7afb9f06ff582f9c72a0686",
+      "units": "SI: m, s, m/s, m/s^2"
+    },
+    {
+      "duration_s": 1200.0,
+      "flight_id": "F034",
+      "initial_state": {
+        "alt_m": 3600.0,
+        "vx_mps": -0.0,
+        "vy_mps": 229.04,
+        "vz_mps": 0.0,
+        "x_m": -21649.4,
+        "y_m": -72586.2
+      },
+      "mode_id": "nominal",
+      "model": "piecewise_constant_vertical_acceleration",
+      "schema_version": "1.0",
+      "segments": [
+        {
+          "az_mps2": 0.5,
+          "duration_s": 30.0
+        },
+        {
+          "az_mps2": 0.0,
+          "duration_s": 380.0
+        },
+        {
+          "az_mps2": -0.5,
+          "duration_s": 30.0
+        },
+        {
+          "az_mps2": 0,
+          "duration_s": 110.0
+        },
+        {
+          "az_mps2": -0.5,
+          "duration_s": 30.0
+        },
+        {
+          "az_mps2": 0.0,
+          "duration_s": 370.0
+        },
+        {
+          "az_mps2": 0.5,
+          "duration_s": 30.0
+        },
+        {
+          "az_mps2": 0,
+          "duration_s": 220.0
+        }
+      ],
+      "source_sha256": "e296695b8da57ac657cd55ee38b0f2aaebecaef8cb543f8229bb21720ef3396f",
+      "units": "SI: m, s, m/s, m/s^2"
+    },
+    {
+      "duration_s": 1200.0,
+      "flight_id": "F035",
+      "initial_state": {
+        "alt_m": 7800.0,
+        "vx_mps": -231.49,
+        "vy_mps": -13.89,
+        "vz_mps": 0.0,
+        "x_m": 153312.6,
+        "y_m": 20863.2
+      },
+      "mode_id": "nominal",
+      "model": "piecewise_constant_vertical_acceleration",
+      "schema_version": "1.0",
+      "segments": [
+        {
+          "az_mps2": 0,
+          "duration_s": 1200
+        }
+      ],
+      "source_sha256": "b046aa41b3976c6968f00dfce4014a427a58c145a8d676d1533f71c976d0bea6",
+      "units": "SI: m, s, m/s, m/s^2"
+    },
+    {
+      "duration_s": 1200.0,
+      "flight_id": "F036",
+      "initial_state": {
+        "alt_m": 9300.0,
+        "vx_mps": 235.42,
+        "vy_mps": 14.13,
+        "vz_mps": 0.0,
+        "x_m": -41381.0,
+        "y_m": 9560.9
+      },
+      "mode_id": "nominal",
+      "model": "piecewise_constant_vertical_acceleration",
+      "schema_version": "1.0",
+      "segments": [
+        {
+          "az_mps2": 0,
+          "duration_s": 1200
+        }
+      ],
+      "source_sha256": "88af1d9315cfde2b58d5550fb6ec88f8a9b047580a174c8c41b011b29a4eccc0",
+      "units": "SI: m, s, m/s, m/s^2"
+    },
+    {
+      "duration_s": 1200.0,
+      "flight_id": "F037",
+      "initial_state": {
+        "alt_m": 4500.0,
+        "vx_mps": 234.75,
+        "vy_mps": 14.08,
+        "vz_mps": 0.0,
+        "x_m": -129036.2,
+        "y_m": -15868.8
+      },
+      "mode_id": "nominal",
+      "model": "piecewise_constant_vertical_acceleration",
+      "schema_version": "1.0",
+      "segments": [
+        {
+          "az_mps2": 0.0,
+          "duration_s": 538.0
+        },
+        {
+          "az_mps2": 0.5,
+          "duration_s": 20.0
+        },
+        {
+          "az_mps2": 0.0,
+          "duration_s": 10.0
+        },
+        {
+          "az_mps2": -0.5,
+          "duration_s": 20.0
+        },
+        {
+          "az_mps2": 0.0,
+          "duration_s": 102.0
+        },
+        {
+          "az_mps2": -0.5,
+          "duration_s": 20.0
+        },
+        {
+          "az_mps2": 0.0,
+          "duration_s": 10.0
+        },
+        {
+          "az_mps2": 0.5,
+          "duration_s": 20.0
+        },
+        {
+          "az_mps2": 0.0,
+          "duration_s": 460.0
+        }
+      ],
+      "source_sha256": "13c605fc76af22710cb7f1b3fbbb4b85d9f5f0b99fa152d74476df12c4b8e710",
+      "units": "SI: m, s, m/s, m/s^2"
+    },
+    {
+      "duration_s": 1200.0,
+      "flight_id": "F038",
+      "initial_state": {
+        "alt_m": 8100.0,
+        "vx_mps": 225.58,
+        "vy_mps": 13.53,
+        "vz_mps": 0.0,
+        "x_m": -108303.6,
+        "y_m": 5756.0
+      },
+      "mode_id": "nominal",
+      "model": "piecewise_constant_vertical_acceleration",
+      "schema_version": "1.0",
+      "segments": [
+        {
+          "az_mps2": -0.5,
+          "duration_s": 30.0
+        },
+        {
+          "az_mps2": 0.0,
+          "duration_s": 10.0
+        },
+        {
+          "az_mps2": 0.5,
+          "duration_s": 30.0
+        },
+        {
+          "az_mps2": 0.0,
+          "duration_s": 336.0
+        },
+        {
+          "az_mps2": 0.5,
+          "duration_s": 30.0
+        },
+        {
+          "az_mps2": 0.0,
+          "duration_s": 10.0
+        },
+        {
+          "az_mps2": -0.5,
+          "duration_s": 30.0
+        },
+        {
+          "az_mps2": 0.0,
+          "duration_s": 724.0
+        }
+      ],
+      "source_sha256": "55e9b1ec8f82a37c3f4d54b222e8e3a041a0329fbe9d3868019dc2f4dd1dc55e",
+      "units": "SI: m, s, m/s, m/s^2"
+    },
+    {
+      "duration_s": 1200.0,
+      "flight_id": "F039",
+      "initial_state": {
+        "alt_m": 3900.0,
+        "vx_mps": 0.0,
+        "vy_mps": -232.15,
+        "vz_mps": 0.0,
+        "x_m": -20024.0,
+        "y_m": 183354.3
+      },
+      "mode_id": "nominal",
+      "model": "piecewise_constant_vertical_acceleration",
+      "schema_version": "1.0",
+      "segments": [
+        {
+          "az_mps2": 0,
+          "duration_s": 550.0
+        },
+        {
+          "az_mps2": 0.375,
+          "duration_s": 20.0
+        },
+        {
+          "az_mps2": -0.375,
+          "duration_s": 20.0
+        },
+        {
+          "az_mps2": 0.0,
+          "duration_s": 460.0
+        },
+        {
+          "az_mps2": -0.5,
+          "duration_s": 20.0
+        },
+        {
+          "az_mps2": 0.0,
+          "duration_s": 10.0
+        },
+        {
+          "az_mps2": 0.5,
+          "duration_s": 20.0
+        },
+        {
+          "az_mps2": 0.0,
+          "duration_s": 100.0
+        }
+      ],
+      "source_sha256": "b2b869a1a0c6b7570614d72f6638b62fceb33101e5905a98528354e62b5e8f54",
+      "units": "SI: m, s, m/s, m/s^2"
+    },
+    {
+      "duration_s": 1200.0,
+      "flight_id": "F040",
+      "initial_state": {
+        "alt_m": 3000.0,
+        "vx_mps": -228.04,
+        "vy_mps": -1.06,
+        "vz_mps": 0.0,
+        "x_m": -150579.7,
+        "y_m": -107933.4
+      },
+      "mode_id": "nominal",
+      "model": "piecewise_constant_vertical_acceleration",
+      "schema_version": "1.0",
+      "segments": [
+        {
+          "az_mps2": 0,
+          "duration_s": 1200
+        }
+      ],
+      "source_sha256": "58b4448a3136ddf1e2244859e86b261629cfadd7dc13b1d59aef902fcac255b9",
+      "units": "SI: m, s, m/s, m/s^2"
+    }
+  ],
+  "variant_id": "base"
+}

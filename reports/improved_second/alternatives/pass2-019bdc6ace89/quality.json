@@ -1,0 +1,484 @@
+{
+  "accumulated_altitude_deviation_m_s": 14592698.979485566,
+  "bounds": {
+    "accumulated_altitude_deviation_m_s": {
+      "lower_exact": "1500772042147500752400404315401154460228114782178585446463551839198575/102844034832575377634685573909834406561420991602098741459288064",
+      "upper_exact": "750386021073750376200202157700577230114057392431566436787706858137475/51422017416287688817342786954917203280710495801049370729644032"
+    },
+    "changed_aircraft_count": {
+      "lower_exact": "14",
+      "upper_exact": "14"
+    },
+    "max_altitude_excursion_m": {
+      "lower_exact": "6300",
+      "upper_exact": "6300"
+    },
+    "max_endpoint_deviation_m": {
+      "lower_exact": "900",
+      "upper_exact": "900"
+    },
+    "reversal_count": {
+      "lower_exact": "11",
+      "upper_exact": "11"
+    },
+    "total_endpoint_deviation_m": {
+      "lower_exact": "2400",
+      "upper_exact": "2400"
+    },
+    "vertical_travel_m": {
+      "lower_exact": "59100",
+      "upper_exact": "59100"
+    }
+  },
+  "changed_aircraft_count": 14,
+  "definition": "Original endpoint at T; no airport, landing or arrival-delay semantics. Reversals ignore zero-speed holds and segmentation.",
+  "max_altitude_excursion_m": 6300.0,
+  "max_endpoint_deviation_m": 900.0,
+  "per_aircraft": [
+    {
+      "accumulated_altitude_deviation_m_s": 0.0,
+      "changed": false,
+      "endpoint_deviation_m": 0.0,
+      "flight_id": "F001",
+      "max_altitude_excursion_m": 0.0,
+      "reversal_count": 0,
+      "terminal_altitude_offset_m": 0.0,
+      "terminal_vz_mps": 0.0,
+      "vertical_travel_m": 0.0
+    },
+    {
+      "accumulated_altitude_deviation_m_s": 69600.0,
+      "changed": true,
+      "endpoint_deviation_m": 0.0,
+      "flight_id": "F002",
+      "max_altitude_excursion_m": 600.0,
+      "reversal_count": 1,
+      "terminal_altitude_offset_m": 0.0,
+      "terminal_vz_mps": 0.0,
+      "vertical_travel_m": 1200.0
+    },
+    {
+      "accumulated_altitude_deviation_m_s": 0.0,
+      "changed": false,
+      "endpoint_deviation_m": 0.0,
+      "flight_id": "F003",
+      "max_altitude_excursion_m": 0.0,
+      "reversal_count": 0,
+      "terminal_altitude_offset_m": 0.0,
+      "terminal_vz_mps": 0.0,
+      "vertical_travel_m": 0.0
+    },
+    {
+      "accumulated_altitude_deviation_m_s": 2844300.0,
+      "changed": true,
+      "endpoint_deviation_m": 0.0,
+      "flight_id": "F004",
+      "max_altitude_excursion_m": 5700.0,
+      "reversal_count": 1,
+      "terminal_altitude_offset_m": 0.0,
+      "terminal_vz_mps": 0.0,
+      "vertical_travel_m": 11400.0
+    },
+    {
+      "accumulated_altitude_deviation_m_s": 0.0,
+      "changed": false,
+      "endpoint_deviation_m": 0.0,
+      "flight_id": "F005",
+      "max_altitude_excursion_m": 0.0,
+      "reversal_count": 0,
+      "terminal_altitude_offset_m": 0.0,
+      "terminal_vz_mps": 0.0,
+      "vertical_travel_m": 0.0
+    },
+    {
+      "accumulated_altitude_deviation_m_s": 0.0,
+      "changed": false,
+      "endpoint_deviation_m": 0.0,
+      "flight_id": "F006",
+      "max_altitude_excursion_m": 0.0,
+      "reversal_count": 0,
+      "terminal_altitude_offset_m": 0.0,
+      "terminal_vz_mps": 0.0,
+      "vertical_travel_m": 0.0
+    },
+    {
+      "accumulated_altitude_deviation_m_s": 0.0,
+      "changed": false,
+      "endpoint_deviation_m": 0.0,
+      "flight_id": "F007",
+      "max_altitude_excursion_m": 0.0,
+      "reversal_count": 0,
+      "terminal_altitude_offset_m": 0.0,
+      "terminal_vz_mps": 0.0,
+      "vertical_travel_m": 0.0
+    },
+    {
+      "accumulated_altitude_deviation_m_s": 0.0,
+      "changed": false,
+      "endpoint_deviation_m": 0.0,
+      "flight_id": "F008",
+      "max_altitude_excursion_m": 0.0,
+      "reversal_count": 0,
+      "terminal_altitude_offset_m": 0.0,
+      "terminal_vz_mps": 0.0,
+      "vertical_travel_m": 0.0
+    },
+    {
+      "accumulated_altitude_deviation_m_s": 0.0,
+      "changed": false,
+      "endpoint_deviation_m": 0.0,
+      "flight_id": "F009",
+      "max_altitude_excursion_m": 0.0,
+      "reversal_count": 0,
+      "terminal_altitude_offset_m": 0.0,
+      "terminal_vz_mps": 0.0,
+      "vertical_travel_m": 0.0
+    },
+    {
+      "accumulated_altitude_deviation_m_s": 0.0,
+      "changed": false,
+      "endpoint_deviation_m": 0.0,
+      "flight_id": "F010",
+      "max_altitude_excursion_m": 0.0,
+      "reversal_count": 0,
+      "terminal_altitude_offset_m": 0.0,
+      "terminal_vz_mps": 0.0,
+      "vertical_travel_m": 0.0
+    },
+    {
+      "accumulated_altitude_deviation_m_s": 270000.0,
+      "changed": true,
+      "endpoint_deviation_m": 0.0,
+      "flight_id": "F011",
+      "max_altitude_excursion_m": 1800.0,
+      "reversal_count": 1,
+      "terminal_altitude_offset_m": 0.0,
+      "terminal_vz_mps": 0.0,
+      "vertical_travel_m": 3600.0
+    },
+    {
+      "accumulated_altitude_deviation_m_s": 89400.0,
+      "changed": true,
+      "endpoint_deviation_m": 0.0,
+      "flight_id": "F012",
+      "max_altitude_excursion_m": 600.0,
+      "reversal_count": 1,
+      "terminal_altitude_offset_m": 0.0,
+      "terminal_vz_mps": 0.0,
+      "vertical_travel_m": 1200.0
+    },
+    {
+      "accumulated_altitude_deviation_m_s": 720900.0,
+      "changed": true,
+      "endpoint_deviation_m": 900.0,
+      "flight_id": "F013",
+      "max_altitude_excursion_m": 900.0,
+      "reversal_count": 0,
+      "terminal_altitude_offset_m": 900.0,
+      "terminal_vz_mps": 0.0,
+      "vertical_travel_m": 900.0
+    },
+    {
+      "accumulated_altitude_deviation_m_s": 0.0,
+      "changed": false,
+      "endpoint_deviation_m": 0.0,
+      "flight_id": "F014",
+      "max_altitude_excursion_m": 0.0,
+      "reversal_count": 0,
+      "terminal_altitude_offset_m": 0.0,
+      "terminal_vz_mps": 0.0,
+      "vertical_travel_m": 0.0
+    },
+    {
+      "accumulated_altitude_deviation_m_s": 0.0,
+      "changed": false,
+      "endpoint_deviation_m": 0.0,
+      "flight_id": "F015",
+      "max_altitude_excursion_m": 0.0,
+      "reversal_count": 0,
+      "terminal_altitude_offset_m": 0.0,
+      "terminal_vz_mps": 0.0,
+      "vertical_travel_m": 0.0
+    },
+    {
+      "accumulated_altitude_deviation_m_s": 0.0,
+      "changed": false,
+      "endpoint_deviation_m": 0.0,
+      "flight_id": "F016",
+      "max_altitude_excursion_m": 0.0,
+      "reversal_count": 0,
+      "terminal_altitude_offset_m": 0.0,
+      "terminal_vz_mps": 0.0,
+      "vertical_travel_m": 0.0
+    },
+    {
+      "accumulated_altitude_deviation_m_s": 0.0,
+      "changed": false,
+      "endpoint_deviation_m": 0.0,
+      "flight_id": "F017",
+      "max_altitude_excursion_m": 0.0,
+      "reversal_count": 0,
+      "terminal_altitude_offset_m": 0.0,
+      "terminal_vz_mps": 0.0,
+      "vertical_travel_m": 0.0
+    },
+    {
+      "accumulated_altitude_deviation_m_s": 3171398.9794855663,
+      "changed": true,
+      "endpoint_deviation_m": 150.0,
+      "flight_id": "F018",
+      "max_altitude_excursion_m": 5700.0,
+      "reversal_count": 1,
+      "terminal_altitude_offset_m": -150.0,
+      "terminal_vz_mps": 0.0,
+      "vertical_travel_m": 11550.0
+    },
+    {
+      "accumulated_altitude_deviation_m_s": 0.0,
+      "changed": false,
+      "endpoint_deviation_m": 0.0,
+      "flight_id": "F019",
+      "max_altitude_excursion_m": 0.0,
+      "reversal_count": 0,
+      "terminal_altitude_offset_m": 0.0,
+      "terminal_vz_mps": 0.0,
+      "vertical_travel_m": 0.0
+    },
+    {
+      "accumulated_altitude_deviation_m_s": 0.0,
+      "changed": false,
+      "endpoint_deviation_m": 0.0,
+      "flight_id": "F020",
+      "max_altitude_excursion_m": 0.0,
+      "reversal_count": 0,
+      "terminal_altitude_offset_m": 0.0,
+      "terminal_vz_mps": 0.0,
+      "vertical_travel_m": 0.0
+    },
+    {
+      "accumulated_altitude_deviation_m_s": 0.0,
+      "changed": false,
+      "endpoint_deviation_m": 0.0,
+      "flight_id": "F021",
+      "max_altitude_excursion_m": 0.0,
+      "reversal_count": 0,
+      "terminal_altitude_offset_m": 0.0,
+      "terminal_vz_mps": 0.0,
+      "vertical_travel_m": 0.0
+    },
+    {
+      "accumulated_altitude_deviation_m_s": 0.0,
+      "changed": false,
+      "endpoint_deviation_m": 0.0,
+      "flight_id": "F022",
+      "max_altitude_excursion_m": 0.0,
+      "reversal_count": 0,
+      "terminal_altitude_offset_m": 0.0,
+      "terminal_vz_mps": 0.0,
+      "vertical_travel_m": 0.0
+    },
+    {
+      "accumulated_altitude_deviation_m_s": 686700.0,
+      "changed": true,
+      "endpoint_deviation_m": 900.0,
+      "flight_id": "F023",
+      "max_altitude_excursion_m": 900.0,
+      "reversal_count": 0,
+      "terminal_altitude_offset_m": 900.0,
+      "terminal_vz_mps": 0.0,
+      "vertical_travel_m": 900.0
+    },
+    {
+      "accumulated_altitude_deviation_m_s": 0.0,
+      "changed": false,
+      "endpoint_deviation_m": 0.0,
+      "flight_id": "F024",
+      "max_altitude_excursion_m": 0.0,
+      "reversal_count": 0,
+      "terminal_altitude_offset_m": 0.0,
+      "terminal_vz_mps": 0.0,
+      "vertical_travel_m": 0.0
+    },
+    {
+      "accumulated_altitude_deviation_m_s": 0.0,
+      "changed": false,
+      "endpoint_deviation_m": 0.0,
+      "flight_id": "F025",
+      "max_altitude_excursion_m": 0.0,
+      "reversal_count": 0,
+      "terminal_altitude_offset_m": 0.0,
+      "terminal_vz_mps": 0.0,
+      "vertical_travel_m": 0.0
+    },
+    {
+      "accumulated_altitude_deviation_m_s": 36600.0,
+      "changed": true,
+      "endpoint_deviation_m": 0.0,
+      "flight_id": "F026",
+      "max_altitude_excursion_m": 300.0,
+      "reversal_count": 1,
+      "terminal_altitude_offset_m": 0.0,
+      "terminal_vz_mps": 0.0,
+      "vertical_travel_m": 600.0
+    },
+    {
+      "accumulated_altitude_deviation_m_s": 113400.0,
+      "changed": true,
+      "endpoint_deviation_m": 0.0,
+      "flight_id": "F027",
+      "max_altitude_excursion_m": 900.0,
+      "reversal_count": 1,
+      "terminal_altitude_offset_m": 0.0,
+      "terminal_vz_mps": 0.0,
+      "vertical_travel_m": 1800.0
+    },
+    {
+      "accumulated_altitude_deviation_m_s": 0.0,
+      "changed": false,
+      "endpoint_deviation_m": 0.0,
+      "flight_id": "F028",
+      "max_altitude_excursion_m": 0.0,
+      "reversal_count": 0,
+      "terminal_altitude_offset_m": 0.0,
+      "terminal_vz_mps": 0.0,
+      "vertical_travel_m": 0.0
+    },
+    {
+      "accumulated_altitude_deviation_m_s": 0.0,
+      "changed": false,
+      "endpoint_deviation_m": 0.0,
+      "flight_id": "F029",
+      "max_altitude_excursion_m": 0.0,
+      "reversal_count": 0,
+      "terminal_altitude_offset_m": 0.0,
+      "terminal_vz_mps": 0.0,
+      "vertical_travel_m": 0.0
+    },
+    {
+      "accumulated_altitude_deviation_m_s": 33600.0,
+      "changed": true,
+      "endpoint_deviation_m": 300.0,
+      "flight_id": "F030",
+      "max_altitude_excursion_m": 300.0,
+      "reversal_count": 0,
+      "terminal_altitude_offset_m": 300.0,
+      "terminal_vz_mps": 0.0,
+      "vertical_travel_m": 300.0
+    },
+    {
+      "accumulated_altitude_deviation_m_s": 2781600.0,
+      "changed": true,
+      "endpoint_deviation_m": 0.0,
+      "flight_id": "F031",
+      "max_altitude_excursion_m": 5700.0,
+      "reversal_count": 1,
+      "terminal_altitude_offset_m": 0.0,
+      "terminal_vz_mps": 0.0,
+      "vertical_travel_m": 11400.0
+    },
+    {
+      "accumulated_altitude_deviation_m_s": 0.0,
+      "changed": false,
+      "endpoint_deviation_m": 0.0,
+      "flight_id": "F032",
+      "max_altitude_excursion_m": 0.0,
+      "reversal_count": 0,
+      "terminal_altitude_offset_m": 0.0,
+      "terminal_vz_mps": 0.0,
+      "vertical_travel_m": 0.0
+    },
+    {
+      "accumulated_altitude_deviation_m_s": 0.0,
+      "changed": false,
+      "endpoint_deviation_m": 0.0,
+      "flight_id": "F033",
+      "max_altitude_excursion_m": 0.0,
+      "reversal_count": 0,
+      "terminal_altitude_offset_m": 0.0,
+      "terminal_vz_mps": 0.0,
+      "vertical_travel_m": 0.0
+    },
+    {
+      "accumulated_altitude_deviation_m_s": 3486000.0,
+      "changed": true,
+      "endpoint_deviation_m": 150.0,
+      "flight_id": "F034",
+      "max_altitude_excursion_m": 6300.0,
+      "reversal_count": 1,
+      "terminal_altitude_offset_m": 150.0,
+      "terminal_vz_mps": 0.0,
+      "vertical_travel_m": 12450.0
+    },
+    {
+      "accumulated_altitude_deviation_m_s": 0.0,
+      "changed": false,
+      "endpoint_deviation_m": 0.0,
+      "flight_id": "F035",
+      "max_altitude_excursion_m": 0.0,
+      "reversal_count": 0,
+      "terminal_altitude_offset_m": 0.0,
+      "terminal_vz_mps": 0.0,
+      "vertical_travel_m": 0.0
+    },
+    {
+      "accumulated_altitude_deviation_m_s": 0.0,
+      "changed": false,
+      "endpoint_deviation_m": 0.0,
+      "flight_id": "F036",
+      "max_altitude_excursion_m": 0.0,
+      "reversal_count": 0,
+      "terminal_altitude_offset_m": 0.0,
+      "terminal_vz_mps": 0.0,
+      "vertical_travel_m": 0.0
+    },
+    {
+      "accumulated_altitude_deviation_m_s": 45600.0,
+      "changed": true,
+      "endpoint_deviation_m": 0.0,
+      "flight_id": "F037",
+      "max_altitude_excursion_m": 300.0,
+      "reversal_count": 1,
+      "terminal_altitude_offset_m": 0.0,
+      "terminal_vz_mps": 0.0,
+      "vertical_travel_m": 600.0
+    },
+    {
+      "accumulated_altitude_deviation_m_s": 243600.0,
+      "changed": true,
+      "endpoint_deviation_m": 0.0,
+      "flight_id": "F038",
+      "max_altitude_excursion_m": 600.0,
+      "reversal_count": 1,
+      "terminal_altitude_offset_m": 0.0,
+      "terminal_vz_mps": 0.0,
+      "vertical_travel_m": 1200.0
+    },
+    {
+      "accumulated_altitude_deviation_m_s": 0.0,
+      "changed": false,
+      "endpoint_deviation_m": 0.0,
+      "flight_id": "F039",
+      "max_altitude_excursion_m": 0.0,
+      "reversal_count": 0,
+      "terminal_altitude_offset_m": 0.0,
+      "terminal_vz_mps": 0.0,
+      "vertical_travel_m": 0.0
+    },
+    {
+      "accumulated_altitude_deviation_m_s": 0.0,
+      "changed": false,
+      "endpoint_deviation_m": 0.0,
+      "flight_id": "F040",
+      "max_altitude_excursion_m": 0.0,
+      "reversal_count": 0,
+      "terminal_altitude_offset_m": 0.0,
+      "terminal_vz_mps": 0.0,
+      "vertical_travel_m": 0.0
+    }
+  ],
+  "reversal_count": 11,
+  "schema_version": "1.0",
+  "terminal_vertical_speed_zero": true,
+  "total_endpoint_deviation_m": 2400.0,
+  "vertical_travel_m": 59100.0
+}

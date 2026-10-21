@@ -1,0 +1,313 @@
+{
+  "archive_pruning": [],
+  "archive_size": 10,
+  "candidate_evaluations": 3000,
+  "independent_verifications": 82,
+  "jobs": [
+    {
+      "evaluations": 11,
+      "final_seed": "pass2-87ef91443058",
+      "moves": 2,
+      "priority": "max_endpoint_deviation_m",
+      "start_seed": "reference",
+      "stop": "family_exhausted"
+    },
+    {
+      "evaluations": 11,
+      "final_seed": "pass2-ebb6692a131f",
+      "moves": 2,
+      "priority": "max_endpoint_deviation_m",
+      "start_seed": "alt-5c0a7daf73c4",
+      "stop": "family_exhausted"
+    },
+    {
+      "evaluations": 11,
+      "final_seed": "pass2-db6d7ff9b8b0",
+      "moves": 2,
+      "priority": "max_endpoint_deviation_m",
+      "start_seed": "alt-c0db93e2592c",
+      "stop": "family_exhausted"
+    },
+    {
+      "evaluations": 11,
+      "final_seed": "pass2-264a0900bb2d",
+      "moves": 2,
+      "priority": "max_endpoint_deviation_m",
+      "start_seed": "alt-3b0cd621b8fc",
+      "stop": "family_exhausted"
+    },
+    {
+      "evaluations": 4,
+      "final_seed": "pass2-87ef91443058",
+      "moves": 2,
+      "priority": "total_endpoint_deviation_m",
+      "start_seed": "reference",
+      "stop": "family_exhausted"
+    },
+    {
+      "evaluations": 23,
+      "final_seed": "alt-5c0a7daf73c4",
+      "moves": 0,
+      "priority": "total_endpoint_deviation_m",
+      "start_seed": "alt-5c0a7daf73c4",
+      "stop": "family_exhausted"
+    },
+    {
+      "evaluations": 4,
+      "final_seed": "pass2-db6d7ff9b8b0",
+      "moves": 2,
+      "priority": "total_endpoint_deviation_m",
+      "start_seed": "alt-c0db93e2592c",
+      "stop": "family_exhausted"
+    },
+    {
+      "evaluations": 4,
+      "final_seed": "pass2-264a0900bb2d",
+      "moves": 2,
+      "priority": "total_endpoint_deviation_m",
+      "start_seed": "alt-3b0cd621b8fc",
+      "stop": "family_exhausted"
+    },
+    {
+      "evaluations": 105,
+      "final_seed": "pass2-e16eb5ee38b5",
+      "moves": 5,
+      "priority": "max_altitude_excursion_m",
+      "start_seed": "reference",
+      "stop": "moves_cap"
+    },
+    {
+      "evaluations": 365,
+      "final_seed": "pass2-48bbc0ae1b3a",
+      "moves": 1,
+      "priority": "max_altitude_excursion_m",
+      "start_seed": "alt-5c0a7daf73c4",
+      "stop": "candidate_budget"
+    },
+    {
+      "evaluations": 105,
+      "final_seed": "pass2-abf233d5be4a",
+      "moves": 5,
+      "priority": "max_altitude_excursion_m",
+      "start_seed": "alt-c0db93e2592c",
+      "stop": "moves_cap"
+    },
+    {
+      "evaluations": 105,
+      "final_seed": "pass2-e1f132ce8e8f",
+      "moves": 5,
+      "priority": "max_altitude_excursion_m",
+      "start_seed": "alt-3b0cd621b8fc",
+      "stop": "moves_cap"
+    },
+    {
+      "evaluations": 154,
+      "final_seed": "pass2-7937dba38b03",
+      "moves": 5,
+      "priority": "accumulated_altitude_deviation_m_s",
+      "start_seed": "reference",
+      "stop": "moves_cap"
+    },
+    {
+      "evaluations": 279,
+      "final_seed": "pass2-46de10ecbe7a",
+      "moves": 4,
+      "priority": "accumulated_altitude_deviation_m_s",
+      "start_seed": "alt-5c0a7daf73c4",
+      "stop": "candidate_budget"
+    },
+    {
+      "evaluations": 154,
+      "final_seed": "pass2-7339a328aa4b",
+      "moves": 5,
+      "priority": "accumulated_altitude_deviation_m_s",
+      "start_seed": "alt-c0db93e2592c",
+      "stop": "moves_cap"
+    },
+    {
+      "evaluations": 278,
+      "final_seed": "pass2-aa4a3e2ac226",
+      "moves": 5,
+      "priority": "accumulated_altitude_deviation_m_s",
+      "start_seed": "alt-3b0cd621b8fc",
+      "stop": "moves_cap"
+    },
+    {
+      "evaluations": 140,
+      "final_seed": "pass2-a0c87a11d2bd",
+      "moves": 5,
+      "priority": "vertical_travel_m",
+      "start_seed": "reference",
+      "stop": "moves_cap"
+    },
+    {
+      "evaluations": 91,
+      "final_seed": "pass2-46de10ecbe7a",
+      "moves": 4,
+      "priority": "vertical_travel_m",
+      "start_seed": "alt-5c0a7daf73c4",
+      "stop": "candidate_budget"
+    },
+    {
+      "evaluations": 140,
+      "final_seed": "pass2-9eda3b947447",
+      "moves": 5,
+      "priority": "vertical_travel_m",
+      "start_seed": "alt-c0db93e2592c",
+      "stop": "moves_cap"
+    },
+    {
+      "evaluations": 132,
+      "final_seed": "pass2-6329f0951863",
+      "moves": 5,
+      "priority": "vertical_travel_m",
+      "start_seed": "alt-3b0cd621b8fc",
+      "stop": "moves_cap"
+    },
+    {
+      "evaluations": 78,
+      "final_seed": "pass2-a0c87a11d2bd",
+      "moves": 5,
+      "priority": "changed_aircraft_count",
+      "start_seed": "reference",
+      "stop": "moves_cap"
+    },
+    {
+      "evaluations": 91,
+      "final_seed": "pass2-46de10ecbe7a",
+      "moves": 4,
+      "priority": "changed_aircraft_count",
+      "start_seed": "alt-5c0a7daf73c4",
+      "stop": "candidate_budget"
+    },
+    {
+      "evaluations": 75,
+      "final_seed": "pass2-9eda3b947447",
+      "moves": 5,
+      "priority": "changed_aircraft_count",
+      "start_seed": "alt-c0db93e2592c",
+      "stop": "moves_cap"
+    },
+    {
+      "evaluations": 100,
+      "final_seed": "pass2-6329f0951863",
+      "moves": 5,
+      "priority": "changed_aircraft_count",
+      "start_seed": "alt-3b0cd621b8fc",
+      "stop": "moves_cap"
+    },
+    {
+      "evaluations": 78,
+      "final_seed": "pass2-a0c87a11d2bd",
+      "moves": 5,
+      "priority": "reversal_count",
+      "start_seed": "reference",
+      "stop": "moves_cap"
+    },
+    {
+      "evaluations": 276,
+      "final_seed": "pass2-78a606928d0b",
+      "moves": 5,
+      "priority": "reversal_count",
+      "start_seed": "alt-5c0a7daf73c4",
+      "stop": "moves_cap"
+    },
+    {
+      "evaluations": 75,
+      "final_seed": "pass2-9eda3b947447",
+      "moves": 5,
+      "priority": "reversal_count",
+      "start_seed": "alt-c0db93e2592c",
+      "stop": "moves_cap"
+    },
+    {
+      "evaluations": 100,
+      "final_seed": "pass2-6329f0951863",
+      "moves": 5,
+      "priority": "reversal_count",
+      "start_seed": "alt-3b0cd621b8fc",
+      "stop": "moves_cap"
+    }
+  ],
+  "limits": {
+    "candidates_per_turn": 12,
+    "max_archive_size": 32,
+    "max_candidate_evaluations": 3000,
+    "max_independent_verifications": 200,
+    "max_moves_per_job": 5,
+    "max_seconds": 900,
+    "nearby_offsets_m": [
+      -600,
+      -300,
+      -150,
+      150,
+      300,
+      600
+    ],
+    "peak_offsets_m": [
+      4800,
+      4950,
+      5100,
+      5250,
+      5400,
+      5550,
+      5700,
+      5850,
+      6000,
+      6150
+    ],
+    "return_times_s": [
+      400,
+      430,
+      460,
+      490,
+      520,
+      550,
+      600,
+      650
+    ],
+    "schema_version": "2.0",
+    "seed_ids": [
+      "reference",
+      "alt-5c0a7daf73c4",
+      "alt-c0db93e2592c",
+      "alt-3b0cd621b8fc"
+    ],
+    "start_times_s": [
+      0,
+      15,
+      30,
+      60
+    ],
+    "target_aircraft": [
+      "F004",
+      "F018",
+      "F031",
+      "F034"
+    ],
+    "terminal_times_s": [
+      550,
+      650,
+      750,
+      850,
+      950,
+      1050
+    ],
+    "time_shifts_s": [
+      -60,
+      -30,
+      30,
+      60
+    ]
+  },
+  "rejected_safety": 1502,
+  "seed_ids": [
+    "reference",
+    "alt-5c0a7daf73c4",
+    "alt-c0db93e2592c",
+    "alt-3b0cd621b8fc"
+  ],
+  "stop_reason": "candidate_budget",
+  "unresolved_candidates": 0,
+  "verified_feasible_count": 72
+}

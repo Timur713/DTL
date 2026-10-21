@@ -1,0 +1,39 @@
+{
+  "aircraft_checks": 40,
+  "aircraft_count": 40,
+  "checker": "airspace.checker",
+  "counts_by_type": {
+    "aircraft_aircraft": 0,
+    "aircraft_target": 0,
+    "aircraft_threat": 0,
+    "altitude": 0,
+    "motion": 0
+  },
+  "duration_s": 1200.0,
+  "events": [],
+  "fleet_sha256": "5572c56163d0aa8e6c805ef0756d10add613842ec72d5646595b17916014c376",
+  "mode_id": "nominal",
+  "numerical_method": "exact_rational_sturm_sign_cells",
+  "pair_checks": 780,
+  "profile_id": "metric",
+  "root_limits": {
+    "bits": 36,
+    "max_depth": 160,
+    "max_nodes": 10000
+  },
+  "schema_version": "1.0",
+  "thresholds": {
+    "alt_max_m": 12000,
+    "alt_min_m": 3000,
+    "horizontal_m": 9260.0,
+    "target_alt_m": 0,
+    "target_radius_m": 5000,
+    "threat_radius_m": 5000,
+    "vertical_m": 300.0
+  },
+  "unresolved": [],
+  "unresolved_count": 0,
+  "variant_id": "base",
+  "verified_safe": true,
+  "violation_count": 0
+}

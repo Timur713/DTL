@@ -1,0 +1,35 @@
+{
+  "establishes_full_horizon_robustness": false,
+  "interpretation": "Opposing bounded altitude errors at T can invalidate nominal separation. No probability or error dynamics is assumed.",
+  "scope": "endpoint_snapshot_only",
+  "witnesses": [
+    {
+      "aircraft": [
+        "F018",
+        "F034"
+      ],
+      "horizontal_distance_squared_exact": "549511954/25",
+      "nominal_separation_exact": "300",
+      "nominal_separation_m": 300.0,
+      "per_aircraft_error_bound_m": 1.0,
+      "possible_separation_exact": "298",
+      "possible_separation_m": 298.0,
+      "time_s": 1200.0,
+      "vertical_threshold_m": 300.0
+    },
+    {
+      "aircraft": [
+        "F030",
+        "F039"
+      ],
+      "horizontal_distance_squared_exact": "1172328173/50",
+      "nominal_separation_exact": "300",
+      "nominal_separation_m": 300.0,
+      "per_aircraft_error_bound_m": 1.0,
+      "possible_separation_exact": "298",
+      "possible_separation_m": 298.0,
+      "time_s": 1200.0,
+      "vertical_threshold_m": 300.0
+    }
+  ]
+}

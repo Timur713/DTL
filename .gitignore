@@ -25,3 +25,7 @@ test-results/
 !.env.example
 
 # Keep baseline.html, reports/, fixtures and source inputs versioned.
+
+# Optional full-project export duplicates the repository; regenerate on demand.
+/DTL_submission.zip
+# The compact six-file DTL_email.zip is intentionally versioned for reviewers.

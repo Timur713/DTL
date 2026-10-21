@@ -1,0 +1,65 @@
+{
+  "attainability": "Necessary scenario-specific bounds; attainability requires full continuous verification.",
+  "derivation": "Fixed XY at T forces |delta_i-delta_j+baseline_dz| >= V. Triangle inequality gives |delta_i|+|delta_j| >= V-|baseline_dz| and max >= (V-|baseline_dz|)/2. Sum only disjoint pairs.",
+  "disjoint_pairs": [
+    {
+      "aircraft": [
+        "F018",
+        "F034"
+      ],
+      "baseline_vertical_distance_m": 0.0,
+      "horizontal_distance_squared_exact": "549511954/25",
+      "necessary_max_deviation_exact": "150",
+      "necessary_max_deviation_m": 150.0,
+      "necessary_sum_deviation_exact": "300",
+      "necessary_sum_deviation_m": 300.0
+    },
+    {
+      "aircraft": [
+        "F030",
+        "F039"
+      ],
+      "baseline_vertical_distance_m": 0.0,
+      "horizontal_distance_squared_exact": "1172328173/50",
+      "necessary_max_deviation_exact": "150",
+      "necessary_max_deviation_m": 150.0,
+      "necessary_sum_deviation_exact": "300",
+      "necessary_sum_deviation_m": 300.0
+    }
+  ],
+  "duration_s": 1200.0,
+  "horizontal_threshold_m": 9260.0,
+  "max_endpoint_deviation_lower_bound_exact": "150",
+  "max_endpoint_deviation_lower_bound_m": 150.0,
+  "schema_version": "1.0",
+  "source_sha256": "684df056456775d8fbd6fd5bb6a871d2eefa834235ca1bc599e77cd1437cf36c",
+  "terminal_conflict_pairs": [
+    {
+      "aircraft": [
+        "F018",
+        "F034"
+      ],
+      "baseline_vertical_distance_m": 0.0,
+      "horizontal_distance_squared_exact": "549511954/25",
+      "necessary_max_deviation_exact": "150",
+      "necessary_max_deviation_m": 150.0,
+      "necessary_sum_deviation_exact": "300",
+      "necessary_sum_deviation_m": 300.0
+    },
+    {
+      "aircraft": [
+        "F030",
+        "F039"
+      ],
+      "baseline_vertical_distance_m": 0.0,
+      "horizontal_distance_squared_exact": "1172328173/50",
+      "necessary_max_deviation_exact": "150",
+      "necessary_max_deviation_m": 150.0,
+      "necessary_sum_deviation_exact": "300",
+      "necessary_sum_deviation_m": 300.0
+    }
+  ],
+  "total_endpoint_deviation_lower_bound_exact": "600",
+  "total_endpoint_deviation_lower_bound_m": 600.0,
+  "vertical_threshold_m": 300.0
+}

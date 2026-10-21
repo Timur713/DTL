@@ -7,6 +7,9 @@ The baseline `maneuvers_implemented=false` flag continues to describe the affine
 baseline pipeline. The vertical model reads its numerical limits from the same
 configuration; it has its own schema and is not an analysis report or UI payload.
 
+A separate [nominal planner and independent continuous checker](nominal-planning.md)
+now use this API; conflict detection remains outside `airspace.vertical` itself.
+
 ## Mathematics and validation
 
 Use SI units and the source east/north/geometric-altitude coordinate system.

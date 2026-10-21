@@ -1,0 +1,109 @@
+{
+  "archive_pruning": [
+    {
+      "at_evaluation": 325,
+      "reason": "archive capacity; objective extrema then normalized crowding",
+      "removed_ids": [
+        "alt-d9dce40cc426"
+      ]
+    },
+    {
+      "at_evaluation": 334,
+      "reason": "archive capacity; objective extrema then normalized crowding",
+      "removed_ids": [
+        "alt-a8df7a6bfd19"
+      ]
+    },
+    {
+      "at_evaluation": 337,
+      "reason": "archive capacity; objective extrema then normalized crowding",
+      "removed_ids": [
+        "alt-cc4a4a3dd8f5"
+      ]
+    }
+  ],
+  "archive_size": 8,
+  "candidate_evaluations": 360,
+  "independent_verifications": 29,
+  "limits": {
+    "max_archive_size": 8,
+    "max_candidate_evaluations": 360,
+    "max_independent_verifications": 48,
+    "max_moves_per_strategy": 6,
+    "max_seconds": 300,
+    "offset_multiples": [
+      -2,
+      -1,
+      1,
+      2
+    ],
+    "return_shifts_s": [
+      -120,
+      -60,
+      -30,
+      30,
+      60,
+      120
+    ],
+    "return_times_s": [
+      550,
+      650,
+      750,
+      850,
+      950
+    ],
+    "schema_version": "1.0",
+    "start_shifts_s": [
+      -60,
+      -30,
+      -15,
+      15,
+      30,
+      60
+    ]
+  },
+  "reference_nondominated": false,
+  "rejected_safety": 172,
+  "rejected_terminal_speed": 0,
+  "stop_reason": "candidate_budget",
+  "strategies": [
+    {
+      "accepted_moves": 4,
+      "evaluations": 60,
+      "final_seed": "alt-5c0a7daf73c4",
+      "primary_objective": "max_endpoint_deviation_m"
+    },
+    {
+      "accepted_moves": 4,
+      "evaluations": 60,
+      "final_seed": "alt-d9dce40cc426",
+      "primary_objective": "total_endpoint_deviation_m"
+    },
+    {
+      "accepted_moves": 2,
+      "evaluations": 60,
+      "final_seed": "alt-c0db93e2592c",
+      "primary_objective": "accumulated_altitude_deviation_m_s"
+    },
+    {
+      "accepted_moves": 4,
+      "evaluations": 60,
+      "final_seed": "alt-a8df7a6bfd19",
+      "primary_objective": "vertical_travel_m"
+    },
+    {
+      "accepted_moves": 5,
+      "evaluations": 60,
+      "final_seed": "alt-3b0cd621b8fc",
+      "primary_objective": "changed_aircraft_count"
+    },
+    {
+      "accepted_moves": 0,
+      "evaluations": 60,
+      "final_seed": "reference",
+      "primary_objective": "reversal_count"
+    }
+  ],
+  "unresolved_candidates": 0,
+  "verified_feasible_count": 21
+}

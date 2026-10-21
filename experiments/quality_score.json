@@ -1,0 +1,16 @@
+{
+  "schema_version": "1.0",
+  "score": "experimental_frozen_reference_J",
+  "weights": {
+    "max_endpoint_deviation_m": 0.60,
+    "total_endpoint_deviation_m": 0.25,
+    "accumulated_altitude_deviation_m_s": 0.10,
+    "vertical_travel_m": 0.05
+  },
+  "reference_scales": {
+    "max_endpoint_deviation_m": 6300,
+    "total_endpoint_deviation_m": 14100,
+    "accumulated_altitude_deviation_m_s": 19809900,
+    "vertical_travel_m": 47700
+  }
+}

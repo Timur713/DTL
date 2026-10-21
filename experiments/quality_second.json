@@ -1,0 +1,71 @@
+{
+  "schema_version": "2.0",
+  "max_candidate_evaluations": 3000,
+  "max_independent_verifications": 200,
+  "max_archive_size": 32,
+  "max_seconds": 900,
+  "max_moves_per_job": 5,
+  "candidates_per_turn": 12,
+  "seed_ids": [
+    "reference",
+    "alt-5c0a7daf73c4",
+    "alt-c0db93e2592c",
+    "alt-3b0cd621b8fc"
+  ],
+  "target_aircraft": [
+    "F004",
+    "F018",
+    "F031",
+    "F034"
+  ],
+  "terminal_times_s": [
+    550,
+    650,
+    750,
+    850,
+    950,
+    1050
+  ],
+  "peak_offsets_m": [
+    4800,
+    4950,
+    5100,
+    5250,
+    5400,
+    5550,
+    5700,
+    5850,
+    6000,
+    6150
+  ],
+  "start_times_s": [
+    0,
+    15,
+    30,
+    60
+  ],
+  "return_times_s": [
+    400,
+    430,
+    460,
+    490,
+    520,
+    550,
+    600,
+    650
+  ],
+  "nearby_offsets_m": [
+    -600,
+    -300,
+    -150,
+    150,
+    300,
+    600
+  ],
+  "time_shifts_s": [
+    -60,
+    -30,
+    30,
+    60
+  ]
+}

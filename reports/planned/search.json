@@ -1,0 +1,224 @@
+{
+  "accepted_repairs": [
+    {
+      "flight_id": "F020",
+      "introduced_pair_events": 0,
+      "offset_m": 300.0,
+      "plateau_move": false,
+      "removed_pair_events": 1,
+      "removed_unary_events": 0,
+      "return_start_s": 342.0,
+      "start_s": 200
+    },
+    {
+      "flight_id": "F012",
+      "introduced_pair_events": 0,
+      "offset_m": 600.0,
+      "plateau_move": false,
+      "removed_pair_events": 0,
+      "removed_unary_events": 1,
+      "return_start_s": 337.0,
+      "start_s": 188
+    },
+    {
+      "flight_id": "F026",
+      "introduced_pair_events": 1,
+      "offset_m": 300.0,
+      "plateau_move": false,
+      "removed_pair_events": 0,
+      "removed_unary_events": 1,
+      "return_start_s": 427.0,
+      "start_s": 305
+    },
+    {
+      "flight_id": "F034",
+      "introduced_pair_events": 2,
+      "offset_m": 5400.0,
+      "plateau_move": false,
+      "removed_pair_events": 1,
+      "removed_unary_events": 1,
+      "return_start_s": 453.0,
+      "start_s": 0
+    },
+    {
+      "flight_id": "F027",
+      "introduced_pair_events": 0,
+      "offset_m": -600.0,
+      "plateau_move": false,
+      "removed_pair_events": 1,
+      "removed_unary_events": 0,
+      "return_start_s": 126.0,
+      "start_s": 0
+    },
+    {
+      "flight_id": "F004",
+      "introduced_pair_events": 1,
+      "offset_m": 5400.0,
+      "plateau_move": false,
+      "removed_pair_events": 0,
+      "removed_unary_events": 1,
+      "return_start_s": 500.0,
+      "start_s": 0
+    },
+    {
+      "flight_id": "F011",
+      "introduced_pair_events": 0,
+      "offset_m": 1800.0,
+      "plateau_move": false,
+      "removed_pair_events": 1,
+      "removed_unary_events": 0,
+      "return_start_s": 150.0,
+      "start_s": 0
+    },
+    {
+      "flight_id": "F018",
+      "introduced_pair_events": 2,
+      "offset_m": 5400.0,
+      "plateau_move": false,
+      "removed_pair_events": 1,
+      "removed_unary_events": 1,
+      "return_start_s": 480.0,
+      "start_s": 0
+    },
+    {
+      "flight_id": "F018",
+      "introduced_pair_events": 1,
+      "offset_m": 5400.0,
+      "plateau_move": false,
+      "removed_pair_events": 2,
+      "removed_unary_events": 0,
+      "return_start_s": null,
+      "start_s": 2
+    },
+    {
+      "flight_id": "F018",
+      "introduced_pair_events": 0,
+      "offset_m": 5700.0,
+      "plateau_move": false,
+      "removed_pair_events": 1,
+      "removed_unary_events": 0,
+      "return_start_s": null,
+      "start_s": 0
+    },
+    {
+      "flight_id": "F031",
+      "introduced_pair_events": 3,
+      "offset_m": 5700.0,
+      "plateau_move": false,
+      "removed_pair_events": 0,
+      "removed_unary_events": 1,
+      "return_start_s": 488.0,
+      "start_s": 0
+    },
+    {
+      "flight_id": "F027",
+      "introduced_pair_events": 0,
+      "offset_m": -900.0,
+      "plateau_move": false,
+      "removed_pair_events": 1,
+      "removed_unary_events": 0,
+      "return_start_s": 126.0,
+      "start_s": 0
+    },
+    {
+      "flight_id": "F038",
+      "introduced_pair_events": 0,
+      "offset_m": -600.0,
+      "plateau_move": false,
+      "removed_pair_events": 1,
+      "removed_unary_events": 0,
+      "return_start_s": 406.0,
+      "start_s": 0
+    },
+    {
+      "flight_id": "F013",
+      "introduced_pair_events": 0,
+      "offset_m": 900.0,
+      "plateau_move": false,
+      "removed_pair_events": 1,
+      "removed_unary_events": 1,
+      "return_start_s": null,
+      "start_s": 354
+    },
+    {
+      "flight_id": "F002",
+      "introduced_pair_events": 0,
+      "offset_m": 600.0,
+      "plateau_move": false,
+      "removed_pair_events": 0,
+      "removed_unary_events": 1,
+      "return_start_s": 639.0,
+      "start_s": 493
+    },
+    {
+      "flight_id": "F023",
+      "introduced_pair_events": 2,
+      "offset_m": 900.0,
+      "plateau_move": false,
+      "removed_pair_events": 0,
+      "removed_unary_events": 1,
+      "return_start_s": 687.0,
+      "start_s": 512
+    },
+    {
+      "flight_id": "F023",
+      "introduced_pair_events": 1,
+      "offset_m": 900.0,
+      "plateau_move": false,
+      "removed_pair_events": 2,
+      "removed_unary_events": 0,
+      "return_start_s": null,
+      "start_s": 392
+    },
+    {
+      "flight_id": "F037",
+      "introduced_pair_events": 0,
+      "offset_m": 300.0,
+      "plateau_move": false,
+      "removed_pair_events": 1,
+      "removed_unary_events": 0,
+      "return_start_s": 690.0,
+      "start_s": 538
+    },
+    {
+      "flight_id": "F030",
+      "introduced_pair_events": 0,
+      "offset_m": 300.0,
+      "plateau_move": false,
+      "removed_pair_events": 1,
+      "removed_unary_events": 0,
+      "return_start_s": null,
+      "start_s": 1063
+    },
+    {
+      "flight_id": "F004",
+      "introduced_pair_events": 1,
+      "offset_m": 5700.0,
+      "plateau_move": true,
+      "removed_pair_events": 1,
+      "removed_unary_events": 0,
+      "return_start_s": 499.0,
+      "start_s": 0
+    },
+    {
+      "flight_id": "F034",
+      "introduced_pair_events": 0,
+      "offset_m": 6300.0,
+      "plateau_move": false,
+      "removed_pair_events": 1,
+      "removed_unary_events": 0,
+      "return_start_s": null,
+      "start_s": 0
+    }
+  ],
+  "cache_hits": 13633,
+  "candidate_attempts": 7959,
+  "invalid_candidates": 0,
+  "max_candidates": 20000,
+  "max_repairs": 40,
+  "rejected_candidates": 7938,
+  "status": "verified_safe",
+  "stop_reason": "verified_safe",
+  "unresolved_candidates": 0,
+  "witness_rejections": 6826
+}

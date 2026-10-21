@@ -1,0 +1,748 @@
+{
+  "controls_unchanged": true,
+  "experiment": "configured_alternative_vertical_threshold",
+  "experimental_rules_sha256": "d9fb00a58387cfd16f22c402883a50f5af58d562b5c77ea8a554b20ce5cfa381",
+  "original_rules_sha256": "0c8c813b2d183823fd6c51714bc3aeb64b837fd4c306d81a087edd2d09df88d3",
+  "rules": {
+    "assumptions": {
+      "aircraft_destination": "original_baseline_position_at_duration_s",
+      "coordinate_system": "local_cartesian_east_north_geometric_altitude",
+      "excluded": [
+        "maneuver_planning",
+        "wake_turbulence",
+        "6DOF",
+        "wing_geometry",
+        "terrain",
+        "weather",
+        "earth_curvature",
+        "regulatory_compliance_claim"
+      ],
+      "motion": "p(t) = p0 + v*t for all aircraft and threat over [0,1200]",
+      "target_motion": "static_xyz",
+      "threat_after_target_xy": "continue_same_velocity_and_altitude",
+      "unknown": [
+        "aircraft_type",
+        "mass",
+        "flight_envelope",
+        "equipment",
+        "RVSM_approval",
+        "pressure_altitude",
+        "navigation_accuracy",
+        "surveillance_service",
+        "wind",
+        "threat_effects"
+      ],
+      "vehicle_geometry": "point_with_protected_volume"
+    },
+    "comparison": {
+      "distance_epsilon_m": 1e-07,
+      "distance_violation_operator": "strict_less_than",
+      "epsilon_is_physical_buffer": false,
+      "epsilon_policy": "numerical_root_residual_only_never_expand_or_shrink_safety_thresholds",
+      "equality_is_safe": true,
+      "horizon_closed": true,
+      "method": "continuous_affine_motion_quadratic_intervals",
+      "time_epsilon_s": 1e-09
+    },
+    "defaults": {
+      "mode_id": "nominal",
+      "profile_id": "metric",
+      "variant_id": "base"
+    },
+    "delays": {
+      "communication_s": 0,
+      "execution_s": 0,
+      "observation_s": 0,
+      "positive_delays_supported": false
+    },
+    "duration_s": 1200,
+    "modes": [
+      {
+        "error_bounds": {
+          "position_horizontal_m": 0,
+          "position_vertical_m": 0,
+          "velocity_horizontal_mps": 0,
+          "velocity_vertical_mps": 0
+        },
+        "id": "nominal",
+        "label": "Exact initial states",
+        "severity": "nominal_violation"
+      },
+      {
+        "error_bounds": {
+          "position_horizontal_m": 100,
+          "position_vertical_m": 20,
+          "velocity_horizontal_mps": 1,
+          "velocity_vertical_mps": 0.1
+        },
+        "id": "bounded_stress",
+        "label": "Bounded errors: loss of guarantee",
+        "severity": "possible_violation"
+      }
+    ],
+    "motion_limits": {
+      "aircraft": {
+        "bank_abs_max_deg": 25,
+        "gravity_mps2": 9.80665,
+        "horizontal_acceleration_abs_max_mps2": 0.5,
+        "horizontal_acceleration_definition": "absolute_derivative_of_horizontal_speed_not_total_horizontal_vector_acceleration",
+        "horizontal_speed_max_mps": 260,
+        "horizontal_speed_min_mps": 200,
+        "turn_rate_formula": "g * tan(bank_abs_max_deg * pi / 180) / horizontal_speed_mps",
+        "turn_rate_unit": "rad/s",
+        "vertical_acceleration_abs_max_mps2": 0.5,
+        "vertical_speed_abs_max_mps": 15,
+        "wind_mps": [
+          0,
+          0,
+          0
+        ]
+      },
+      "baseline_acceleration_mps2": [
+        0,
+        0,
+        0
+      ],
+      "baseline_turn_rate_radps": 0,
+      "checks_apply_to": "all_admissible_constant_velocity_aircraft_trajectories_in_selected_mode",
+      "maneuvers_implemented": false,
+      "model": "generic_jet_assumption",
+      "stress_horizontal_speed_interval": "[max(0, norm(v_xy) - velocity_horizontal_mps), norm(v_xy) + velocity_horizontal_mps]",
+      "stress_vertical_speed_interval": "[vz - velocity_vertical_mps, vz + velocity_vertical_mps]",
+      "velocity_error_constant_over_horizon": true
+    },
+    "profiles": [
+      {
+        "horizontal_m": 9260,
+        "id": "metric",
+        "label": "Saved-control sensitivity: Feet reference: 9260 m / 304.8 m",
+        "vertical_m": 304.8
+      },
+      {
+        "horizontal_m": 9260,
+        "id": "feet_reference",
+        "label": "Feet reference: 9260 m / 304.8 m",
+        "vertical_m": 304.8
+      }
+    ],
+    "schema_version": "1.1",
+    "sensitivity": {
+      "expected_run_count": 20,
+      "method": "one_parameter_at_a_time",
+      "run_product": [
+        "profiles",
+        "modes",
+        "variants"
+      ],
+      "target_radius_m": [
+        3000,
+        5000,
+        10000
+      ],
+      "threat_radius_m": [
+        3000,
+        5000,
+        10000
+      ],
+      "variants": [
+        {
+          "id": "base",
+          "label": "Base radii",
+          "overrides": {}
+        },
+        {
+          "id": "threat_3000",
+          "label": "Drone: 3000 m",
+          "overrides": {
+            "threat_radius_m": 3000
+          }
+        },
+        {
+          "id": "threat_10000",
+          "label": "Drone: 10000 m",
+          "overrides": {
+            "threat_radius_m": 10000
+          }
+        },
+        {
+          "id": "target_3000",
+          "label": "Target: 3000 m",
+          "overrides": {
+            "target_radius_m": 3000
+          }
+        },
+        {
+          "id": "target_10000",
+          "label": "Target: 10000 m",
+          "overrides": {
+            "target_radius_m": 10000
+          }
+        }
+      ],
+      "vertical_m": [
+        304.8
+      ]
+    },
+    "sources": [
+      {
+        "id": "faa_horizontal",
+        "role": "conditional_5_NM_reference_not_universal_rule",
+        "sections": [
+          "5-5-4"
+        ],
+        "url": "https://www.faa.gov/air_traffic/publications/atpubs/atc_html/chap5_section_5.html"
+      },
+      {
+        "id": "faa_vertical",
+        "role": "conditional_1000_ft_reference",
+        "sections": [
+          "4-5-1"
+        ],
+        "url": "https://www.faa.gov/air_traffic/publications/atpubs/atc_html/chap4_section_5.html"
+      },
+      {
+        "id": "icao_rvsm",
+        "role": "300_m_1000_ft_published_convention_not_exact_conversion",
+        "sections": [
+          "official_product_description"
+        ],
+        "url": "https://store.icao.int/en/manual-on-implementation-vertical-separation-doc-9574"
+      },
+      {
+        "id": "eurocontrol_mtcd",
+        "role": "separation_and_growing_uncertainty_design_reference",
+        "sections": [
+          "3.1.1.4-3.1.1.11"
+        ],
+        "url": "https://www.eurocontrol.int/sites/default/files/publication/files/EUROCONTROL-SPEC-0139%20MTCD%20Ed%202.0.pdf"
+      },
+      {
+        "id": "nasa_daidalus",
+        "role": "separate_uncertainty_and_kinematics_design_reference_no_algorithm_or_threshold_adoption",
+        "sections": [
+          "Introduction",
+          "Adding Sensor Uncertainty",
+          "Horizontal Direction Bands",
+          "Horizontal Speed Bands",
+          "Vertical Speed Bands"
+        ],
+        "url": "https://nasa.github.io/daidalus/"
+      },
+      {
+        "id": "eurocontrol_bada",
+        "role": "type_specific_performance_reference_no_BADA_dataset_used",
+        "sections": [
+          "Replicate the performance of any aircraft",
+          "Access procedure"
+        ],
+        "url": "https://www.eurocontrol.int/model/bada"
+      }
+    ],
+    "uncertainty": {
+      "applies_to": [
+        "aircraft",
+        "threat"
+      ],
+      "horizontal_formula": "position_horizontal_m + velocity_horizontal_mps * t",
+      "horizontal_set": "euclidean_disk",
+      "interpretation": "deterministic_bounds_not_probabilities",
+      "pair_combination": "sum_of_individual_bounds",
+      "reference_time_s": 0,
+      "reset_on_frame": false,
+      "sphere_error_bound": "horizontal_plus_vertical",
+      "target_exact": true,
+      "vertical_formula": "position_vertical_m + velocity_vertical_mps * t",
+      "vertical_set": "symmetric_interval"
+    },
+    "units": "SI: m, s, m/s, m/s^2; angles explicitly labelled",
+    "zones": {
+      "aircraft": {
+        "shape": "relative_cylinder",
+        "thresholds_from": "profile",
+        "violation": "horizontal_distance < horizontal_m AND absolute_vertical_distance < vertical_m"
+      },
+      "altitude": {
+        "allowed_boundary_inclusive": true,
+        "applies_to": "aircraft",
+        "bounds_from": "scenario.airspace",
+        "max_key": "alt_max_m",
+        "min_key": "alt_min_m",
+        "stress_rule": "z - e_z < alt_min_m OR z + e_z > alt_max_m"
+      },
+      "horizontal_airspace": {
+        "bounds_from": "scenario.airspace",
+        "retain_objects_outside": true,
+        "safety_constraint": false
+      },
+      "target": {
+        "center_alt_m": 0,
+        "radius_m": 5000,
+        "shape": "sphere",
+        "stress_expansion": "e_h_aircraft + e_z_aircraft",
+        "violation": "distance_3d < effective_radius"
+      },
+      "threat": {
+        "radius_m": 5000,
+        "shape": "sphere",
+        "stress_expansion": "e_h_aircraft + e_z_aircraft + e_h_threat + e_z_threat",
+        "violation": "distance_3d < effective_radius"
+      }
+    }
+  },
+  "verification": {
+    "aircraft_checks": 40,
+    "aircraft_count": 40,
+    "checker": "airspace.checker",
+    "counts_by_type": {
+      "aircraft_aircraft": 16,
+      "aircraft_target": 0,
+      "aircraft_threat": 0,
+      "altitude": 0,
+      "motion": 0
+    },
+    "duration_s": 1200.0,
+    "events": [
+      {
+        "end_bracket": {
+          "lower_exact": "418314423393181/1099511627776",
+          "lower_s": 380.4547517512956,
+          "upper_exact": "836628846786383/2199023255552",
+          "upper_s": 380.45475175130514
+        },
+        "end_inclusive": false,
+        "end_s": 380.45475175130036,
+        "participants": [
+          "F003",
+          "F038"
+        ],
+        "rule_id": "aircraft_separation",
+        "start_bracket": {
+          "lower_exact": "23414151892327/68719476736",
+          "lower_s": 340.7207534812478,
+          "upper_exact": "749252860554485/2199023255552",
+          "upper_s": 340.72075348125736
+        },
+        "start_inclusive": false,
+        "start_s": 340.7207534812526,
+        "type": "aircraft_aircraft",
+        "witness_exact": "1585881707340847/4398046511104",
+        "witness_s": 360.5877526162765
+      },
+      {
+        "end_bracket": {
+          "lower_exact": "15843802505105/34359738368",
+          "lower_s": 461.11534189854865,
+          "upper_exact": "2028006720653499/4398046511104",
+          "upper_s": 461.11534189856206
+        },
+        "end_inclusive": false,
+        "end_s": 461.11534189855536,
+        "participants": [
+          "F004",
+          "F018"
+        ],
+        "rule_id": "aircraft_separation",
+        "start_bracket": {
+          "lower_exact": "1850257569557817/4398046511104",
+          "lower_s": 420.69986410702245,
+          "upper_exact": "462564392389469/1099511627776",
+          "upper_s": 420.69986410703586
+        },
+        "start_inclusive": false,
+        "start_s": 420.69986410702916,
+        "type": "aircraft_aircraft",
+        "witness_exact": "969566072552829/2199023255552",
+        "witness_s": 440.90760300279226
+      },
+      {
+        "end_bracket": {
+          "lower_exact": "514869684846757/1099511627776",
+          "lower_s": 468.2712504716228,
+          "upper_exact": "2059478739387087/4398046511104",
+          "upper_s": 468.2712504716362
+        },
+        "end_inclusive": false,
+        "end_s": 468.2712504716295,
+        "participants": [
+          "F004",
+          "F031"
+        ],
+        "rule_id": "aircraft_separation",
+        "start_bracket": {
+          "lower_exact": "1870361878485483/4398046511104",
+          "lower_s": 425.27105472015205,
+          "upper_exact": "935180939242771/2199023255552",
+          "upper_s": 425.27105472016547
+        },
+        "start_inclusive": false,
+        "start_s": 425.27105472015876,
+        "type": "aircraft_aircraft",
+        "witness_exact": "1964920308936285/4398046511104",
+        "witness_s": 446.77115259589414
+      },
+      {
+        "end_bracket": {
+          "lower_exact": "4141049466267375/8796093022208",
+          "lower_s": 470.78281866872373,
+          "upper_exact": "2070524733133725/4398046511104",
+          "upper_s": 470.78281866873226
+        },
+        "end_inclusive": false,
+        "end_s": 470.782818668728,
+        "participants": [
+          "F006",
+          "F010"
+        ],
+        "rule_id": "aircraft_separation",
+        "start_bracket": {
+          "lower_exact": "947494004164725/2199023255552",
+          "lower_s": 430.8703883747171,
+          "upper_exact": "3789976016658975/8796093022208",
+          "upper_s": 430.8703883747256
+        },
+        "start_inclusive": false,
+        "start_s": 430.87038837472136,
+        "type": "aircraft_aircraft",
+        "witness_exact": "3965512741463175/8796093022208",
+        "witness_s": 450.8266035217247
+      },
+      {
+        "end_bracket": {
+          "lower_exact": "8648580495890817/17592186044416",
+          "lower_s": 491.6148836793364,
+          "upper_exact": "2162145123972737/4398046511104",
+          "upper_s": 491.61488367934385
+        },
+        "end_inclusive": false,
+        "end_s": 491.6148836793401,
+        "participants": [
+          "F012",
+          "F037"
+        ],
+        "rule_id": "aircraft_separation",
+        "start_bracket": {
+          "lower_exact": "1984642851945819/4398046511104",
+          "lower_s": 451.2555396890591,
+          "upper_exact": "7938571407783407/17592186044416",
+          "upper_s": 451.25553968906655
+        },
+        "start_inclusive": false,
+        "start_s": 451.25553968906286,
+        "type": "aircraft_aircraft",
+        "witness_exact": "1036696993979639/2199023255552",
+        "witness_s": 471.4352116842015
+      },
+      {
+        "end_bracket": {
+          "lower_exact": "18083520624379347/35184372088832",
+          "lower_s": 513.9645686648279,
+          "upper_exact": "36167041248759487/70368744177664",
+          "upper_s": 513.9645686648391
+        },
+        "end_inclusive": false,
+        "end_s": 513.9645686648335,
+        "participants": [
+          "F011",
+          "F012"
+        ],
+        "rule_id": "aircraft_separation",
+        "start_bracket": {
+          "lower_exact": "8329593678855459/17592186044416",
+          "lower_s": 473.4825824275196,
+          "upper_exact": "33318374715422629/70368744177664",
+          "upper_s": 473.4825824275309
+        },
+        "start_inclusive": false,
+        "start_s": 473.48258242752524,
+        "type": "aircraft_aircraft",
+        "witness_exact": "69485415964181323/140737488355328",
+        "witness_s": 493.72357554617935
+      },
+      {
+        "end_bracket": {
+          "lower_exact": "4809249876715875/8796093022208",
+          "lower_s": 546.7484102968996,
+          "upper_exact": "2404624938357975/4398046511104",
+          "upper_s": 546.7484102969081
+        },
+        "end_inclusive": false,
+        "end_s": 546.7484102969038,
+        "participants": [
+          "F016",
+          "F022"
+        ],
+        "rule_id": "aircraft_separation",
+        "start_bracket": {
+          "lower_exact": "2224807257603225/4398046511104",
+          "lower_s": 505.86260331402286,
+          "upper_exact": "4449614515206525/8796093022208",
+          "upper_s": 505.8626033140314
+        },
+        "start_inclusive": false,
+        "start_s": 505.8626033140271,
+        "type": "aircraft_aircraft",
+        "witness_exact": "289339512247575/549755813888",
+        "witness_s": 526.3055068054655
+      },
+      {
+        "end_bracket": {
+          "lower_exact": "10423060377321521/17592186044416",
+          "lower_s": 592.4823868395788,
+          "upper_exact": "5211530188660851/8796093022208",
+          "upper_s": 592.4823868395891
+        },
+        "end_inclusive": false,
+        "end_s": 592.482386839584,
+        "participants": [
+          "F035",
+          "F038"
+        ],
+        "rule_id": "aircraft_separation",
+        "start_bracket": {
+          "lower_exact": "9712950278630599/17592186044416",
+          "lower_s": 552.1173010624011,
+          "upper_exact": "2428237569657695/4398046511104",
+          "upper_s": 552.1173010624113
+        },
+        "start_inclusive": false,
+        "start_s": 552.1173010624062,
+        "type": "aircraft_aircraft",
+        "witness_exact": "20136010655952301/35184372088832",
+        "witness_s": 572.2998439509951
+      },
+      {
+        "end_bracket": {
+          "lower_exact": "5263537179802725/8796093022208",
+          "lower_s": 598.3948972019249,
+          "upper_exact": "328971073737675/549755813888",
+          "upper_s": 598.3948972019334
+        },
+        "end_inclusive": false,
+        "end_s": 598.3948972019291,
+        "participants": [
+          "F010",
+          "F019"
+        ],
+        "rule_id": "aircraft_separation",
+        "start_bracket": {
+          "lower_exact": "4911002948465475/8796093022208",
+          "lower_s": 558.3163952525723,
+          "upper_exact": "2455501474232775/4398046511104",
+          "upper_s": 558.3163952525808
+        },
+        "start_inclusive": false,
+        "start_s": 558.3163952525765,
+        "type": "aircraft_aircraft",
+        "witness_exact": "10174540128268275/17592186044416",
+        "witness_s": 578.3556462272529
+      },
+      {
+        "end_bracket": {
+          "lower_exact": "1379553766298535/2199023255552",
+          "lower_s": 627.348420629703,
+          "upper_exact": "689776883149283/1099511627776",
+          "upper_s": 627.3484206297171
+        },
+        "end_inclusive": false,
+        "end_s": 627.3484206297101,
+        "participants": [
+          "F013",
+          "F037"
+        ],
+        "rule_id": "aircraft_separation",
+        "start_bracket": {
+          "lower_exact": "1297209406920499/2199023255552",
+          "lower_s": 589.9025413420982,
+          "upper_exact": "648604703460265/1099511627776",
+          "upper_s": 589.9025413421123
+        },
+        "start_inclusive": false,
+        "start_s": 589.9025413421052,
+        "type": "aircraft_aircraft",
+        "witness_exact": "2676763173219065/4398046511104",
+        "witness_s": 608.6254809859076
+      },
+      {
+        "end_bracket": {
+          "lower_exact": "2792598430511925/4398046511104",
+          "lower_s": 634.9633691824977,
+          "upper_exact": "5585196861023925/8796093022208",
+          "upper_s": 634.9633691825062
+        },
+        "end_inclusive": false,
+        "end_s": 634.963369182502,
+        "participants": [
+          "F010",
+          "F021"
+        ],
+        "rule_id": "aircraft_separation",
+        "start_bracket": {
+          "lower_exact": "5246609396386425/8796093022208",
+          "lower_s": 596.4704310356893,
+          "upper_exact": "1311652349096625/2199023255552",
+          "upper_s": 596.4704310356979
+        },
+        "start_inclusive": false,
+        "start_s": 596.4704310356935,
+        "type": "aircraft_aircraft",
+        "witness_exact": "5415903128705175/8796093022208",
+        "witness_s": 615.7169001090978
+      },
+      {
+        "end_bracket": {
+          "lower_exact": "719500376620565/1099511627776",
+          "lower_s": 654.3817804600303,
+          "upper_exact": "179875094155145/274877906944",
+          "upper_s": 654.381780460044
+        },
+        "end_inclusive": false,
+        "end_s": 654.3817804600371,
+        "participants": [
+          "F023",
+          "F037"
+        ],
+        "rule_id": "aircraft_separation",
+        "start_bracket": {
+          "lower_exact": "680193117320573/1099511627776",
+          "lower_s": 618.6320363854729,
+          "upper_exact": "1360386234641177/2199023255552",
+          "upper_s": 618.632036385487
+        },
+        "start_inclusive": false,
+        "start_s": 618.63203638548,
+        "type": "aircraft_aircraft",
+        "witness_exact": "2789751350749977/4398046511104",
+        "witness_s": 634.3160181927435
+      },
+      {
+        "end_bracket": {
+          "lower_exact": "15171658755747505/17592186044416",
+          "lower_s": 862.4089534662007,
+          "upper_exact": "3792914688936915/4398046511104",
+          "upper_s": 862.4089534662096
+        },
+        "end_inclusive": false,
+        "end_s": 862.4089534662052,
+        "participants": [
+          "F023",
+          "F039"
+        ],
+        "rule_id": "aircraft_separation",
+        "start_bracket": {
+          "lower_exact": "14109018170090525/17592186044416",
+          "lower_s": 802.0048295572067,
+          "upper_exact": "1763627271261335/2199023255552",
+          "upper_s": 802.0048295572155
+        },
+        "start_inclusive": false,
+        "start_s": 802.0048295572111,
+        "type": "aircraft_aircraft",
+        "witness_exact": "29280676925838185/35184372088832",
+        "witness_s": 832.2068915117081
+      },
+      {
+        "end_bracket": {
+          "lower_exact": "72341117766583575/70368744177664",
+          "lower_s": 1028.0291145162375,
+          "upper_exact": "18085279441646025/17592186044416",
+          "upper_s": 1028.029114516245
+        },
+        "end_inclusive": false,
+        "end_s": 1028.0291145162414,
+        "participants": [
+          "F030",
+          "F032"
+        ],
+        "rule_id": "aircraft_separation",
+        "start_bracket": {
+          "lower_exact": "4012893245109525/4398046511104",
+          "lower_s": 912.4262863018714,
+          "upper_exact": "64206291921752925/70368744177664",
+          "upper_s": 912.4262863018789
+        },
+        "start_inclusive": false,
+        "start_s": 912.4262863018752,
+        "type": "aircraft_aircraft",
+        "witness_exact": "34136852422084125/35184372088832",
+        "witness_s": 970.2277004090582
+      },
+      {
+        "end_bracket": {
+          "lower_exact": "1200",
+          "lower_s": 1200.0,
+          "upper_exact": "1200",
+          "upper_s": 1200.0
+        },
+        "end_inclusive": true,
+        "end_s": 1200.0,
+        "participants": [
+          "F018",
+          "F034"
+        ],
+        "rule_id": "aircraft_separation",
+        "start_bracket": {
+          "lower_exact": "265427115094135/274877906944",
+          "lower_s": 965.618219539956,
+          "upper_exact": "530854230188275/549755813888",
+          "upper_s": 965.6182195399651
+        },
+        "start_inclusive": false,
+        "start_s": 965.6182195399606,
+        "type": "aircraft_aircraft",
+        "witness_exact": "1064117369659635/1099511627776",
+        "witness_s": 967.8091097699826
+      },
+      {
+        "end_bracket": {
+          "lower_exact": "1200",
+          "lower_s": 1200.0,
+          "upper_exact": "1200",
+          "upper_s": 1200.0
+        },
+        "end_inclusive": true,
+        "end_s": 1200.0,
+        "participants": [
+          "F030",
+          "F039"
+        ],
+        "rule_id": "aircraft_separation",
+        "start_bracket": {
+          "lower_exact": "5029193560081805/4398046511104",
+          "lower_s": 1143.5062242712331,
+          "upper_exact": "1257298390020465/1099511627776",
+          "upper_s": 1143.5062242712456
+        },
+        "start_inclusive": false,
+        "start_s": 1143.5062242712393,
+        "type": "aircraft_aircraft",
+        "witness_exact": "2576712343351665/2199023255552",
+        "witness_s": 1171.7531121356228
+      }
+    ],
+    "fleet_sha256": "839a02e6ca6c7be30020b9b2d57f3f175707907f9f7926a66ce89613d3ea6bf8",
+    "mode_id": "nominal",
+    "numerical_method": "exact_rational_sturm_sign_cells",
+    "pair_checks": 780,
+    "profile_id": "metric",
+    "root_limits": {
+      "bits": 36,
+      "max_depth": 160,
+      "max_nodes": 10000
+    },
+    "schema_version": "1.0",
+    "thresholds": {
+      "alt_max_m": 12000,
+      "alt_min_m": 3000,
+      "horizontal_m": 9260.0,
+      "target_alt_m": 0,
+      "target_radius_m": 5000,
+      "threat_radius_m": 5000,
+      "vertical_m": 304.8
+    },
+    "unresolved": [],
+    "unresolved_count": 0,
+    "variant_id": "base",
+    "verified_safe": false,
+    "violation_count": 16
+  }
+}

@@ -121,3 +121,73 @@ The interval is always clipped to `[0,duration_s]`; inclusivity is calculated fr
 For real data at base/nominal, the expected counts are 3 aircraft pairs in metric and 24 in feet_reference; these pairs have no initial violations. This checks calculations, rather than providing a target for fitting rules. The full report also accounts for threat, target, altitude and dynamics.
 
 Sphere example: target `(0,0,0)`, R=5000, aircraft `(-6000,0,3000)` with velocity `(200,0,0)`, T=60. The expected target interval is `(10,50)` s, with a 3D minimum of 3000 m at t=30. At altitude 5000 m the same trajectory only touches the sphere and creates no event; at 8100 m it passes above it. For a stationary aircraft `(0,0,5100)` with only vertical error `20+0.1*t`, the stress interval at T=1200 is `(800,1200]`.
+
+## Additive saved-plan comparison payload
+
+The baseline schema and all 20 runs remain unchanged. Generated HTML may also
+contain `DATA.planning`, schema `1.0`, prepared by `airspace.replay` from the
+saved nominal solution and accepted repair history. Its authoritative contract
+is [comparison-ui.md](comparison-ui.md). Replay/final intervals come from Python;
+the UI evaluates saved motion for display and does not detect conflicts.
+Only Final plan view receives the independently verified nominal safety badge;
+all replay steps are labeled search candidates. `--baseline-only` omits this
+additive payload and retains the existing baseline viewer.
+
+## Selected submission and evidence payload
+
+`tools/build_submission.py` independently verifies a saved endpoint-bound-attaining
+plan and exports `submission/`. Its selection configuration is separate from
+safety rules. The CSV contains every aircraft at every uniform-grid time and
+every segment join; rational timestamps are preserved. `segments.json` remains
+authoritative. `manifest.json` contains SHA-256 file hashes, without timestamps.
+
+When the default second-pass data and a valid delivery are present, the generator
+adds `DATA.submission`, schema 1.0. It verifies delivery hashes and exact agreement
+with the already independently rechecked alternative's controls, quality and
+verification. The reviewer panel selects this existing alternative; it introduces
+no additional trajectories, detector or quality metric implementation in JS.
+Historical baseline/reference/quality payloads and initial baseline view remain.
+
+The evidence includes an independent necessary excursion bound from horizontal
+CPA and sphere geometry, certified rational square-root brackets, exact terminal
+altitude-error counterexamples, and a separate full continuous recheck using the
+configured alternative vertical threshold. Threshold sensitivity is not an
+uncertainty model. These diagnostics do not change primary rules or extend the
+nominal certificate. Details: [submission.md](submission.md).
+
+## Additive quality alternatives
+
+`DATA.quality_alternatives`, current schema `2.0`, is prepared and independently checked
+by `airspace.alternatives`. Its contract is [quality-improvement.md](quality-improvement.md):
+authoritative saved segment definitions, continuous quality bounds, Python
+reference differences, verification runs, source/reference provenance and shared
+profile versions. Only independently verified nominal alternatives are exposed.
+The preserved first-pass archive uses six objectives. Current schema 2.0
+comparison and second-pass dominance use seven, including maximum excursion;
+experimental J stays outside dominance. See [second-pass-quality.md](second-pass-quality.md). Endpoint deviation has no airport-arrival semantics.
+`--reference-only` omits this payload but retains saved-reference comparison and
+its search replay. The original baseline schema and all 20 variants are unchanged.
+
+## Compact email presentation, schema 1.0
+
+`tools/build_email.py` creates `email_delivery/` and `DTL_email.zip`. The archive
+contains exactly six flat files: `START_HERE.html`, `README.md`, `trajectories.csv`,
+`rules.json`, `segments.json`, `verification.json`. The CSV, rules and motion
+controls are byte-identical copies of the selected submission. The report retains
+the original certificate in `certificate`, plus quality, source snapshots,
+bound/sensitivity witnesses and hashes of the other five files. Its wrapper
+schema is `email-delivery-1.0`; it is not the original checker's root schema.
+
+The dedicated template/script embed only the submitted solution and nominal
+original routes. The builder independently rechecks both fleets. The viewer opens
+on the submitted plan at the F031 sphere witness time. It provides mode switching,
+all 40 aircraft, playback/seeking, camera controls, an altitude profile and three
+guided moments. JS propagates saved controls for display and compares time with
+Python-certified intervals. It does not calculate authoritative quality or detect
+conflicts. Profile sphere bands and event-root display values are diagnostic.
+The map shows horizontal projections of spheres, explicitly distinguished from
+infinite cylinders; the profile shows their altitude slices along the route.
+
+`--github-url` adds the full-project link. All animation data is embedded and
+works offline; file downloads remain relative to the extracted six-file folder.
+The full experiment archive and existing research viewer are preserved.

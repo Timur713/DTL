@@ -1,5 +1,10 @@
 # Model and rules for analyzing baseline motion
 
+The selected final delivery and its additional geometric/sensitivity evidence are
+described in [submission.md](submission.md). The original endpoint is an en-route
+reference at 1200 s, not an airport. The nominal maneuver certificate applies to
+the existing rules; independent diagnostic experiments do not change those rules.
+
 This is a research model of source trajectories over 1200 s. `rules.json` contains the thresholds and limits selected for the baseline analyzer and interface. The baseline has no maneuvers, optimization, conflict resolution or claims that source motion is safe. The analysis detects violations of the selected rules and shows how conclusions depend on those rules and bounded errors. A separate nominal [vertical trajectory model](vertical-model.md) now supports supplied maneuver schedules and motion/altitude validation; it does not change this baseline or check maneuver conflict safety.
 
 ## Inputs and model scope
@@ -174,3 +179,12 @@ Threshold equality defines an open boundary. At t0/T, a boundary is closed only 
 ## Limits of conclusions and future questions
 
 All parameters needed for the current source analysis have been selected; unknown source information is explicitly left unknown. There are no blocking questions for this stage. Selecting admissible maneuvers, joint dynamic feasibility, the criterion for returning to the destination, time/route margins and optimization priorities belong to a future planner. Until it exists, do not claim safety has been achieved, present the baseline as a safe route or promise to eliminate initial violations. The absence of nominal events proves only compliance with our source-model rules; the absence of bounded_stress events gives a sufficient guarantee only within the declared bounds, kinematics and geometry.
+
+## Separate nominal planning milestone
+
+The [nominal planning pipeline](nominal-planning.md) now searches bounded vertical
+schedules and independently checks all aircraft against the same metric / nominal /
+base rules. Its own output contract and results under `reports/planned/` are separate
+from the baseline analysis above. Terminal altitude deviations are allowed and
+reported explicitly. This does not extend bounded-stress assumptions to maneuvers,
+change the primary baseline, or establish real-aircraft flight-envelope feasibility.

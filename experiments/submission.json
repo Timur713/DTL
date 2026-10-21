@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0",
+  "selection": "attain_both_endpoint_bounds_then_lexicographic",
+  "tie_break_objectives": [
+    "max_altitude_excursion_m",
+    "accumulated_altitude_deviation_m_s",
+    "vertical_travel_m",
+    "changed_aircraft_count",
+    "reversal_count"
+  ],
+  "sample_step_s": 1,
+  "include_all_segment_joins": true,
+  "endpoint_altitude_error_probe_m": 1,
+  "vertical_reference_sensitivity": true
+}
